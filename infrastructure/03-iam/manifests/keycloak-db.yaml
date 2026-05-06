@@ -7,7 +7,10 @@ spec:
 ---
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: postgres, namespace: auth }
+metadata: 
+  name: postgres
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "3" }
 spec:
   replicas: 1
   selector: { matchLabels: { app: postgres } }
