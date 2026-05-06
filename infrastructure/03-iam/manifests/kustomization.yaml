@@ -9,5 +9,5 @@ resources:
   - external-secrets.yaml
   - ingress.yaml
 
-commonLabels:
+labels:
   app.kubernetes.io/part-of: iam-stack
