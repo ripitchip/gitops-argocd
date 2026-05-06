@@ -1,0 +1,9 @@
+metadata:
+  name: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2" # Priorité maximale
+spec:
+  source:
+    helm:
+      values: |
+        installCRDs: true
