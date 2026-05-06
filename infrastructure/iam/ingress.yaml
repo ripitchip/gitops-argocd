@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak-ingress
+  namespace: auth
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" 
+spec:
+  ingressClassName: traefik
+  tls: [{ hosts: ["auth.foobarbaz.fr"], secretName: keycloak-cert-tls }]
+  rules:
+    - host: "auth.foobarbaz.fr"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: keycloak, port: { number: 8080 } }

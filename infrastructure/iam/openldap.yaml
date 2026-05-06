@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: ldap-sa, namespace: auth }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: openldap, namespace: auth }
+spec:
+  selector: { app: openldap }
+  ports:
+    - { name: ldap, port: 389, targetPort: 1389 }
+    - { name: ldaps, port: 636, targetPort: 1636 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: openldap, namespace: auth }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: openldap } }
+  template:
+    metadata: { labels: { app: openldap } }
+    spec:
+      serviceAccountName: ldap-sa
+      securityContext: { fsGroup: 1001 }
+      containers:
+        - name: openldap
+          image: bitnamilegacy/openldap:2.6.10
+          env:
+            - { name: LDAP_ROOT, value: "dc=home,dc=local" }
+            - { name: LDAP_ADMIN_USERNAME, value: "admin" }
+            - name: LDAP_ADMIN_PASSWORD
+              valueFrom: { secretKeyRef: { name: ldap-passwords, key: admin-password } }
+            - name: LDAP_JWT_SECRET
+              valueFrom: { secretKeyRef: { name: ldap-passwords, key: jwt-secret } }
+            - name: LDAP_KEY_SEED
+              valueFrom: { secretKeyRef: { name: ldap-passwords, key: key-seed } }
+          ports:
+            - { containerPort: 1389 }
+            - { containerPort: 1636 }
+          volumeMounts:
+            - { name: ldap-data, mountPath: /bitnami/openldap }
+      volumes:
+        - name: ldap-data
+          persistentVolumeClaim: { claimName: openldap-pvc-static }
