@@ -1,6 +1,10 @@
 apiVersion: v1
 kind: ServiceAccount
-metadata: { name: ldap-sa, namespace: auth }
+metadata:
+  name: ldap-sa
+  namespace: auth
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 ---
 apiVersion: v1
 kind: Service
