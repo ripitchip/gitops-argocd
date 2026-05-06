@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://helm.releases.hashicorp.com'
+    chart: vault
+    targetRevision: 0.28.0
+    helm:
+      values: |
+        server:
+          dataStorage:
+            enabled: true
+            size: 10Gi
+            storageClass: "" 
+            mountPath: "/vault/data"
+          standalone:
+            config: |
+              ui = true
+              listener "tcp" {
+                tls_disable = 1
+                address = "[::]:8200"
+                cluster_address = "[::]:8201"
+              }
+              storage "raft" {
+                path = "/vault/data"
+              }
+          ingress:
+            enabled: true
+            ingressClassName: "traefik"
+            hosts:
+              - host: "vault.foobarbaz.fr"
+            annotations:
+              cert-manager.io/cluster-issuer: "letsencrypt-prod"
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            tls:
+              - secretName: vault-tls-cert
+                hosts:
+                  - "vault.foobarbaz.fr"
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: vault
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
