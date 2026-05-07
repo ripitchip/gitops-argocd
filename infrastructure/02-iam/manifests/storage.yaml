@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolume
-metadata: { name: openldap-pv-static }
+metadata: 
+  name: openldap-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
   capacity: { storage: 5Gi }
   accessModes: [ReadWriteOnce]
@@ -12,7 +14,10 @@ spec:
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
-metadata: { name: openldap-pvc-static, namespace: auth }
+metadata: 
+  name: openldap-pvc-static
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
   storageClassName: truenas-nfs
   accessModes: [ReadWriteOnce]
@@ -21,7 +26,9 @@ spec:
 ---
 apiVersion: v1
 kind: PersistentVolume
-metadata: { name: keycloak-db-pv-static }
+metadata: 
+  name: keycloak-db-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
   capacity: { storage: 10Gi }
   accessModes: [ReadWriteOnce]
@@ -33,7 +40,10 @@ spec:
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
-metadata: { name: keycloak-db-pvc-static, namespace: auth }
+metadata: 
+  name: keycloak-db-pvc-static
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
   storageClassName: truenas-nfs
   accessModes: [ReadWriteOnce]
@@ -42,7 +52,9 @@ spec:
 ---
 apiVersion: v1
 kind: PersistentVolume
-metadata: { name: keycloak-providers-pv-static }
+metadata: 
+  name: keycloak-providers-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
   capacity: { storage: 1Gi }
   accessModes: [ReadWriteOnce]
@@ -54,7 +66,10 @@ spec:
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
-metadata: { name: keycloak-providers-pvc-static, namespace: auth }
+metadata: 
+  name: keycloak-providers-pvc-static
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
   storageClassName: truenas-nfs
   accessModes: [ReadWriteOnce]

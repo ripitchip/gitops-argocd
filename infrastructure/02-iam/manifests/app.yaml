@@ -1,4 +1,4 @@
-# --- POSTGRES (Service + Deployment) ---
+# --- POSTGRES ---
 apiVersion: v1
 kind: Service
 metadata: { name: postgres, namespace: auth }
@@ -8,7 +8,10 @@ spec:
 ---
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: postgres, namespace: auth }
+metadata: 
+  name: postgres
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "5" }
 spec:
   replicas: 1
   selector: { matchLabels: { app: postgres } }
@@ -28,12 +31,12 @@ spec:
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
-              subPath: v2-vault # Force une nouvelle init avec le mot de passe Vault
+              subPath: v2-vault
       volumes:
         - name: postgres-data
           persistentVolumeClaim: { claimName: keycloak-db-pvc-static }
 ---
-# --- OPENLDAP (Service + Deployment) ---
+# --- OPENLDAP ---
 apiVersion: v1
 kind: Service
 metadata: { name: openldap, namespace: auth }
@@ -45,7 +48,10 @@ spec:
 ---
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: openldap, namespace: auth }
+metadata: 
+  name: openldap
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "5" }
 spec:
   replicas: 1
   strategy: { type: Recreate }
@@ -60,15 +66,15 @@ spec:
           env:
             - { name: LDAP_ROOT, value: "dc=home,dc=local" }
             - { name: LDAP_ADMIN_USERNAME, value: "admin" }
-            - name: LDAP_ADMIN_PASSWORD
-              valueFrom: { secretKeyRef: { name: ldap-passwords, key: admin-password } }
+            - { name: LDAP_ADMIN_PASSWORD
+              valueFrom: { secretKeyRef: { name: ldap-passwords, key: admin-password } } }
             - { name: ORG_GROUPS_ENABLED, value: "true" }
           volumeMounts: [{ name: ldap-data, mountPath: /bitnami/openldap }]
       volumes:
         - name: ldap-data
           persistentVolumeClaim: { claimName: openldap-pvc-static }
 ---
-# --- KEYCLOAK (Service + StatefulSet) ---
+# --- KEYCLOAK ---
 apiVersion: v1
 kind: Service
 metadata: { name: keycloak, namespace: auth }
@@ -78,7 +84,10 @@ spec:
 ---
 apiVersion: apps/v1
 kind: StatefulSet
-metadata: { name: keycloak, namespace: auth }
+metadata: 
+  name: keycloak
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "10" } # Keycloak en dernier après la DB
 spec:
   serviceName: keycloak
   replicas: 1
@@ -114,7 +123,6 @@ spec:
       volumes:
         - name: keycloak-providers-volume
           persistentVolumeClaim: { claimName: keycloak-providers-pvc-static }
----
 # --- INGRESS ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -122,6 +130,7 @@ metadata:
   name: keycloak-ingress
   namespace: auth
   annotations:
+    argocd.argoproj.io/sync-wave: "15" # <--- DERNIÈRE ÉTAPE
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     cert-manager.io/cluster-issuer: "letsencrypt-prod" 
 spec:
