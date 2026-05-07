@@ -27,7 +27,7 @@ spec:
           dataStorage:
             enabled: true
             size: 10Gi
-            storageClass: ""
+            storageClass: "" # TRÈS IMPORTANT: vide pour qu'il cherche la PVC existante
             mountPath: "/vault/data"
           ingress:
             enabled: true
@@ -46,13 +46,6 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: vault
   
-  ignoreDifferences:
-    - group: admissionregistration.k8s.io
-      kind: MutatingWebhookConfiguration
-      name: vault-agent-injector-cfg
-      jsonPointers:
-        - /webhooks/0/clientConfig/caBundle
-
   syncPolicy:
     automated:
       prune: true
@@ -60,3 +53,11 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - Replace=true
+      - SkipDryRunOnMissingResource=true 
+
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: vault-agent-injector-cfg
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
