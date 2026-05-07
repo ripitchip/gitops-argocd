@@ -12,6 +12,14 @@ spec:
     helm:
       values: |
         server:
+          extraInitContainers:
+            - name: fix-permissions
+              image: busybox
+              command: ["sh", "-c", "chown -R 100:1000 /vault/data && chmod -R 700 /vault/data"]
+              volumeMounts:
+                - name: data
+                  mountPath: /vault/data
+
           standalone:
             enabled: true
             config: |
@@ -23,17 +31,19 @@ spec:
               }
               storage "raft" {
                 path = "/vault/data"
+                node_id = "vault-0"
               }
 
           dataStorage:
             enabled: false
 
           extraVolumes:
-            - type: pvc
-              name: data-vault-0
+            - name: data
+              persistentVolumeClaim:
+                claimName: data-vault-0
 
           extraVolumeMounts:
-            - name: data-vault-0
+            - name: data
               mountPath: "/vault/data"
               readOnly: false
 
