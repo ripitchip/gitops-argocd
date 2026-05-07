@@ -12,12 +12,8 @@ spec:
     helm:
       values: |
         server:
-          dataStorage:
-            enabled: true
-            size: 10Gi
-            storageClass: "" 
-            mountPath: "/vault/data"
           standalone:
+            enabled: true
             config: |
               ui = true
               listener "tcp" {
@@ -28,11 +24,17 @@ spec:
               storage "raft" {
                 path = "/vault/data"
               }
+          dataStorage:
+            enabled: true
+            size: 10Gi
+            storageClass: ""
+            mountPath: "/vault/data"
           ingress:
             enabled: true
             ingressClassName: "traefik"
             hosts:
               - host: "vault.foobarbaz.fr"
+                paths: ["/"]
             annotations:
               cert-manager.io/cluster-issuer: "letsencrypt-prod"
               traefik.ingress.kubernetes.io/router.entrypoints: websecure
@@ -44,7 +46,6 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: vault
   
-  # --- AJOUT ICI POUR CORRIGER LE OUTOFSYNC DU WEBHOOK ---
   ignoreDifferences:
     - group: admissionregistration.k8s.io
       kind: MutatingWebhookConfiguration
@@ -58,3 +59,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - Replace=true
