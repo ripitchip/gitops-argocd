@@ -27,3 +27,4 @@ spec:
       - CreateNamespace=true
       - Replace=true
       - SkipDryRunOnMissingResource=true
+      - ServerSideApply=true
