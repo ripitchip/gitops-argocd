@@ -3,5 +3,4 @@ kind: Kustomization
 
 resources:
   - 01-system/external-secrets/release.yaml
-  - 02-security/vault/
-  # - 03-iam/keycloak-app-definition.yaml
+  # - 02-iam/keycloak-app-definition.yaml
