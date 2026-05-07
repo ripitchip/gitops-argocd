@@ -24,11 +24,19 @@ spec:
               storage "raft" {
                 path = "/vault/data"
               }
+
           dataStorage:
-            enabled: true
-            size: 10Gi
-            storageClass: "" # TRÈS IMPORTANT: vide pour qu'il cherche la PVC existante
-            mountPath: "/vault/data"
+            enabled: false
+
+          extraVolumes:
+            - type: pvc
+              name: data-vault-0
+
+          extraVolumeMounts:
+            - name: data-vault-0
+              mountPath: "/vault/data"
+              readOnly: false
+
           ingress:
             enabled: true
             ingressClassName: "traefik"
