@@ -6,5 +6,7 @@ resources:
   - storage.yaml
   - app.yaml
 
-commonLabels:
-  app.kubernetes.io/part-of: iam-stack
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: iam-stack
+    includeSelectors: true

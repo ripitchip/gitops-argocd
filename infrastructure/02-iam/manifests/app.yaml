@@ -66,8 +66,8 @@ spec:
           env:
             - { name: LDAP_ROOT, value: "dc=home,dc=local" }
             - { name: LDAP_ADMIN_USERNAME, value: "admin" }
-            - { name: LDAP_ADMIN_PASSWORD
-              valueFrom: { secretKeyRef: { name: ldap-passwords, key: admin-password } } }
+            - { name: LDAP_ADMIN_PASSWORD,
+                valueFrom: { secretKeyRef: { name: ldap-passwords, key: admin-password } } }
             - { name: ORG_GROUPS_ENABLED, value: "true" }
           volumeMounts: [{ name: ldap-data, mountPath: /bitnami/openldap }]
       volumes:
@@ -87,7 +87,7 @@ kind: StatefulSet
 metadata: 
   name: keycloak
   namespace: auth
-  annotations: { argocd.argoproj.io/sync-wave: "10" } # Keycloak en dernier après la DB
+  annotations: { argocd.argoproj.io/sync-wave: "10" }
 spec:
   serviceName: keycloak
   replicas: 1
@@ -105,7 +105,8 @@ spec:
           args: ["start", "--http-enabled=true"]
           env:
             - { name: KC_BOOTSTRAP_ADMIN_USERNAME, value: "admin" }
-            - { name: KC_BOOTSTRAP_ADMIN_PASSWORD, valueFrom: { secretKeyRef: { name: keycloak-passwords, key: admin-password } } }
+            - { name: KC_BOOTSTRAP_ADMIN_PASSWORD,
+                valueFrom: { secretKeyRef: { name: keycloak-passwords, key: admin-password } } }
             - { name: KC_HTTP_ENABLED, value: "true" }
             - { name: KC_PROXY_HEADERS, value: "xforwarded" }
             - { name: KC_HOSTNAME, value: "auth.foobarbaz.fr" }
@@ -116,13 +117,15 @@ spec:
             - { name: KC_DB_URL_HOST, value: "postgres" }
             - { name: KC_DB_URL_DATABASE, value: "keycloak" }
             - { name: KC_DB_USERNAME, value: "keycloak" }
-            - { name: KC_DB_PASSWORD, valueFrom: { secretKeyRef: { name: keycloak-passwords, key: admin-password } } }
+            - { name: KC_DB_PASSWORD,
+                valueFrom: { secretKeyRef: { name: keycloak-passwords, key: admin-password } } }
           volumeMounts:
             - name: keycloak-providers-volume
               mountPath: /opt/keycloak/providers
       volumes:
         - name: keycloak-providers-volume
           persistentVolumeClaim: { claimName: keycloak-providers-pvc-static }
+---
 # --- INGRESS ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -130,7 +133,7 @@ metadata:
   name: keycloak-ingress
   namespace: auth
   annotations:
-    argocd.argoproj.io/sync-wave: "15" # <--- DERNIÈRE ÉTAPE
+    argocd.argoproj.io/sync-wave: "15"
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     cert-manager.io/cluster-issuer: "letsencrypt-prod" 
 spec:
