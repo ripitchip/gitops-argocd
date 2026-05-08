@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata: { name: vaultwarden, namespace: pass }
+spec:
+  selector: { app: vaultwarden }
+  ports: [{ name: http, port: 80, targetPort: 80 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultwarden
+  namespace: pass
+  annotations: { argocd.argoproj.io/sync-wave: "5" }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: vaultwarden } }
+  template:
+    metadata: { labels: { app: vaultwarden } }
+    spec:
+      containers:
+        - name: vaultwarden
+          image: vaultwarden/server:latest
+          env:
+            - { name: DOMAIN, value: "https://pass.foobarbaz.fr" }
+            - { name: SIGNUPS_ALLOWED, value: "false" }
+            - { name: ROCKET_PORT, value: "80" }
+            - name: ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef: { name: vaultwarden-passwords, key: admin-token }
+          volumeMounts:
+            - { name: vw-data, mountPath: /data }
+      volumes:
+        - name: vw-data
+          persistentVolumeClaim: { claimName: pass-vw-pvc-static }
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vaultwarden-ingress
+  namespace: pass
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: traefik
+  tls: [{ hosts: ["pass.foobarbaz.fr"], secretName: pass-cert-tls }]
+  rules:
+    - host: "pass.foobarbaz.fr"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: vaultwarden, port: { number: 80 } }
