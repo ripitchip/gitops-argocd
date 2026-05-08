@@ -31,7 +31,7 @@ spec:
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
-              subPath: v2-vault
+              subPath: postgres-data
       volumes:
         - name: postgres-data
           persistentVolumeClaim: { claimName: keycloak-db-pvc-static }
@@ -69,7 +69,8 @@ spec:
             - { name: LDAP_ADMIN_PASSWORD,
                 valueFrom: { secretKeyRef: { name: ldap-passwords, key: admin-password } } }
             - { name: ORG_GROUPS_ENABLED, value: "true" }
-          volumeMounts: [{ name: ldap-data, mountPath: /bitnami/openldap }]
+          volumeMounts:
+            - { name: ldap-data, mountPath: /bitnami/openldap, subPath: ldap-data }
       volumes:
         - name: ldap-data
           persistentVolumeClaim: { claimName: openldap-pvc-static }
@@ -122,6 +123,7 @@ spec:
           volumeMounts:
             - name: keycloak-providers-volume
               mountPath: /opt/keycloak/providers
+              subPath: providers-data
       volumes:
         - name: keycloak-providers-volume
           persistentVolumeClaim: { claimName: keycloak-providers-pvc-static }
