@@ -1,0 +1,95 @@
+# --- 1. DEFAULT DENY ALL ---
+# Blocks all traffic by default
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: auth
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+# --- 2. CORE DNS ACCESS ---
+# Allows service name resolution via kube-system
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: auth
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels: { kubernetes.io/metadata.name: kube-system }
+      ports:
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }
+---
+# --- 3. DATABASE ACCESS (POSTGRES) ---
+# Allows Keycloak to reach Postgres
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-keycloak-to-postgres
+  namespace: auth
+spec:
+  podSelector: { matchLabels: { app: postgres } }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: { matchLabels: { app: keycloak } }
+      ports:
+        - { protocol: TCP, port: 5432 }
+---
+# --- 4. DIRECTORY ACCESS (LDAP) ---
+# Allows Keycloak to reach OpenLDAP
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-keycloak-to-openldap
+  namespace: auth
+spec:
+  podSelector: { matchLabels: { app: openldap } }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: { matchLabels: { app: keycloak } }
+      ports:
+        - { protocol: TCP, port: 389 }
+        - { protocol: TCP, port: 636 }
+---
+# --- 5. EXTERNAL INGRESS (TRAEFIK) ---
+# Allows Traefik to route traffic to Keycloak
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-traefik-to-keycloak
+  namespace: auth
+spec:
+  podSelector: { matchLabels: { app: keycloak } }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels: { kubernetes.io/metadata.name: traefik }
+      ports:
+        - { protocol: TCP, port: 8080 }
+---
+# --- 6. SECRET MANAGEMENT (VAULT) ---
+# Allows egress to Vault namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-to-vault
+  namespace: auth
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels: { kubernetes.io/metadata.name: vault }
+      ports:
+        - { protocol: TCP, port: 8200 }
