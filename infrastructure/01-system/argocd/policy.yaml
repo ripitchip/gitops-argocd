@@ -1,0 +1,90 @@
+# --- POLICY 1: REPO SERVER (The only one allowed to talk to Git) ---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: argocd-repo-server-egress
+  namespace: argocd
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-repo-server
+  egress:
+    # 1. Allow DNS to resolve GitHub/GitLab
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    # 2. Limit HTTPS egress to authorized Git providers only
+    - toFQDNs:
+        - matchName: "github.com"
+        - matchPattern: "*.github.com"
+        - matchName: "gitlab.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # 3. Allow internal communication with Redis (Cache)
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: argocd-redis
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+
+---
+# --- POLICY 2: CORE COMPONENTS (API, OIDC, Internal) ---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: argocd-core-egress
+  namespace: argocd
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - argocd-application-controller
+          - argocd-server
+          - argocd-applicationset-controller
+          - argocd-dex-server
+          - argocd-notifications-controller
+  egress:
+    # 1. CRITICAL: Kubernetes API access
+    - toEntities:
+        - kube-apiserver
+    # 2. DNS Resolution
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    # 3. OIDC / KEYCLOAK ACCESS
+    - toFQDNs:
+        - matchName: "auth.foobarbaz.fr"
+    - toEntities:
+        - world
+        - host
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # 4. INTERNAL SERVICE ACCESS
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: auth
+    # 5. Communication between ALL ArgoCD components
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: argocd
