@@ -1,35 +1,44 @@
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
 metadata:
-  name: vault-security-core
+  name: vault-security-hardened
   namespace: vault
 spec:
-  podSelector: { matchLabels: { app.kubernetes.io/name: vault } }
-  policyTypes: [Ingress, Egress]
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: vault
   ingress:
-    - from: [{ podSelector: {} }] # Raft clustering
-    - from:
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: auth }
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: pass }
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: external-secrets }
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: traefik }
-      ports:
-        - { protocol: TCP, port: 8200 }
-        - { protocol: TCP, port: 8201 }
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: vault
+      toPorts:
+        - ports:
+            - port: "8201"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: auth
+        - matchLabels:
+            io.kubernetes.pod.namespace: pass
+        - matchLabels:
+            io.kubernetes.pod.namespace: external-secrets
+        - matchLabels:
+            io.kubernetes.pod.namespace: traefik
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
   egress:
-    - to: [{ podSelector: {} }]
-    # DNS
-    - to:
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: kube-system }
-      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
-    # API KUBERNETES (Crucial pour la validation des tokens)
-    - to:
-        - ipBlock: { cidr: 10.96.0.0/12 }
-      ports:
-        - { protocol: TCP, port: 443 }
-        - { protocol: TCP, port: 6443 }
+    - toEntities:
+        - kube-apiserver
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
