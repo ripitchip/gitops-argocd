@@ -3,9 +3,9 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
+  - policy.yaml
   - external-secrets.yaml
   - storage.yaml
-  - policy.yaml
   - app.yaml
 
 labels:
