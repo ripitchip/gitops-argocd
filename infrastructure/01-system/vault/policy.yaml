@@ -7,7 +7,7 @@ spec:
   podSelector: { matchLabels: { app.kubernetes.io/name: vault } }
   policyTypes: [Ingress, Egress]
   ingress:
-    - from: [podSelector: {}] # Clustering Raft
+    - from: [podSelector: {}]
     - from:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: auth }
@@ -19,9 +19,15 @@ spec:
             matchLabels: { kubernetes.io/metadata.name: traefik }
       ports:
         - { protocol: TCP, port: 8200 }
+        - { protocol: TCP, port: 8201 } # Raft replication
   egress:
     - to: [podSelector: {}]
     - to:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: kube-system }
       ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+    - to: # Vault must check SA tokens against K8s API
+        - ipBlock: { cidr: 10.96.0.0/12 } 
+      ports:
+        - { protocol: TCP, port: 443 }
+        - { protocol: TCP, port: 6443 }

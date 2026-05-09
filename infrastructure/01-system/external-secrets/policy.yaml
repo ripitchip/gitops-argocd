@@ -7,7 +7,7 @@ spec:
   podSelector: {}
   policyTypes: [Ingress, Egress]
   ingress:
-    - from: [podSelector: {}]
+    - from: [podSelector: {}] # Internal webhook communication
   egress:
     - to: [podSelector: {}]
     - to:
@@ -18,8 +18,9 @@ spec:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: vault }
       ports: [{ protocol: TCP, port: 8200 }]
-    - to: # Kubernetes API access
+    - to: # Access to K8s API (Internal + External)
         - ipBlock: { cidr: 0.0.0.0/0 }
+        - ipBlock: { cidr: 10.96.0.0/12 } # Standard K8s Service range
       ports: 
         - { protocol: TCP, port: 443 }
         - { protocol: TCP, port: 6443 }

@@ -7,24 +7,23 @@ spec:
   podSelector: {}
   policyTypes: [Ingress, Egress]
   ingress:
-    # 1. Allow all internal traffic between ArgoCD components
     - from: [{ podSelector: {} }]
-    # 2. Allow access from Traefik for the UI
     - from:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: traefik }
       ports:
-        - { protocol: TCP, port: 8080 }
+        - { protocol: TCP, port: 8080 } # UI/API
+        - { protocol: TCP, port: 8081 } # gRPC
         - { protocol: TCP, port: 443 }
   egress:
-    # 1. Allow all internal traffic
     - to: [{ podSelector: {} }]
-    # 2. Allow DNS
     - to:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: kube-system }
       ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
-    # 3. Allow Access to EVERYTHING (Git + K8s API)
-    # Essential for ArgoCD to avoid "Manifest generation" or "Loading" errors
     - to:
         - ipBlock: { cidr: 0.0.0.0/0 }
+        - ipBlock: { cidr: 10.96.0.0/12 }
+      ports:
+        - { protocol: TCP, port: 443 }
+        - { protocol: TCP, port: 6443 }
