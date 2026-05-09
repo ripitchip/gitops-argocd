@@ -5,33 +5,29 @@ metadata:
   name: auth-security-core
   namespace: auth
 spec:
-  podSelector: {} # Appliqué à TOUS les pods
+  podSelector: {}
   policyTypes: [Ingress, Egress]
   ingress:
-    # --- ALLOW INTRA-NAMESPACE (FIX) ---
-    # Allows pods in 'auth' to talk to each other (clustering, probes)
     - from:
         - podSelector: {}
-    # --- ALLOW TRAFFIC FROM TRAEFIK ---
     - from:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: traefik }
       ports:
         - { protocol: TCP, port: 8080 }
   egress:
-    # --- ALLOW INTRA-NAMESPACE (FIX) ---
     - to:
         - podSelector: {}
-    # --- ALLOW DNS RESOLUTION ---
     - to:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: kube-system }
-      ports:
-        - { protocol: UDP, port: 53 }
-        - { protocol: TCP, port: 53 }
-    # --- ALLOW EXTERNAL VAULT ACCESS ---
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
     - to:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: vault }
+      ports: [{ protocol: TCP, port: 8200 }]
+    # --- ALLOW KUBERNETES API (The Missing Fix) ---
+    - to:
+        - ipBlock: { cidr: 10.96.0.0/12 }
       ports:
-        - { protocol: TCP, port: 8200 }
+        - { protocol: TCP, port: 443 }
