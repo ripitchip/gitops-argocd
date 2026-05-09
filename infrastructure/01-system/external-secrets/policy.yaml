@@ -1,29 +1,45 @@
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
 metadata:
-  name: external-secrets-core
+  name: external-secrets-hardened
   namespace: external-secrets
 spec:
-  podSelector: {}
-  policyTypes: [Ingress, Egress]
+  endpointSelector: {}
   ingress:
-    - from: [{ podSelector: {} }]
+    # 1. Controller to Webhook
+    - fromEndpoints:
+        - {}
+    # 2. Webhook
+    - fromEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "9443"
+              protocol: TCP
   egress:
-    - to: [{ podSelector: {} }]
-    # 1. DNS
-    - to:
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: kube-system }
-      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
-    # 2. Vault
-    - to:
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: vault }
-      ports: [{ protocol: TCP, port: 8200 }]
-    # 3. KUBERNETES API (Internal Service IP + Global)
-    - to:
-        - ipBlock: { cidr: 10.96.0.0/12 } # Allow internal Service range
-        - ipBlock: { cidr: 0.0.0.0/0 }    # Allow external Git/API
-      ports: 
-        - { protocol: TCP, port: 443 }
-        - { protocol: TCP, port: 6443 }
+    # 1. Internal Namespace
+    - toEndpoints:
+        - {}
+    # 2. DNS
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    # 3. Vault
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: vault
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
+    # 4. API Kubernetes
+    - toEntities:
+        - kube-apiserver
