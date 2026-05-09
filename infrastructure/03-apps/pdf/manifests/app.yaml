@@ -42,26 +42,28 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: stirling-pdf
+  name: stirling-pdf-ingress
   namespace: stirling-pdf
   annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: "traefik-security-headers@kubernetescrd"
 spec:
   ingressClassName: traefik
-  rules:
-  - host: pdf.foobarbaz.fr
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: stirling-pdf
-            port:
-              number: 80
   tls:
-  - hosts:
-    - pdf.foobarbaz.fr
-    secretName: stirling-pdf-tls
+    - hosts:
+        - pdf.foobarbaz.fr
+      secretName: stirling-pdf-tls
+  rules:
+    - host: "pdf.foobarbaz.fr"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: stirling-pdf
+                port:
+                  number: 80
