@@ -1,4 +1,4 @@
 resources:
-  - argocd/kustomization.yaml
-  - external-secrets/kustomization.yaml
-  - vault/kustomization.yaml
+  - argocd
+  - external-secrets
+  - vault
