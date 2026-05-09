@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: argocd-security-core
+  namespace: argocd
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from: [podSelector: {}] # Internal talk
+    - from:
+        - namespaceSelector:
+            matchLabels: { kubernetes.io/metadata.name: traefik }
+      ports:
+        - { protocol: TCP, port: 8080 }
+  egress:
+    - to: [podSelector: {}]
+    - to:
+        - namespaceSelector:
+            matchLabels: { kubernetes.io/metadata.name: kube-system }
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+    - to: # Access to Git (GitHub/GitLab) and K8s API
+        - ipBlock: { cidr: 0.0.0.0/0 }

@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: external-secrets-core
+  namespace: external-secrets
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from: [podSelector: {}]
+  egress:
+    - to: [podSelector: {}]
+    - to:
+        - namespaceSelector:
+            matchLabels: { kubernetes.io/metadata.name: kube-system }
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+    - to:
+        - namespaceSelector:
+            matchLabels: { kubernetes.io/metadata.name: vault }
+      ports: [{ protocol: TCP, port: 8200 }]
+    - to: # Kubernetes API access
+        - ipBlock: { cidr: 0.0.0.0/0 }
+      ports: 
+        - { protocol: TCP, port: 443 }
+        - { protocol: TCP, port: 6443 }
