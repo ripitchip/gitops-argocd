@@ -1,33 +1,40 @@
-# --- 1. GLOBAL ISOLATION ---
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
 metadata:
-  name: auth-security-core
+  name: auth-security-hardened
   namespace: auth
 spec:
-  podSelector: {}
-  policyTypes: [Ingress, Egress]
+  endpointSelector: {}
   ingress:
-    - from:
-        - podSelector: {}
-    - from:
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: traefik }
-      ports:
-        - { protocol: TCP, port: 8080 }
+    - fromEndpoints:
+        - {}
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: traefik
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
   egress:
-    - to:
-        - podSelector: {}
-    - to:
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: kube-system }
-      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
-    - to:
-        - namespaceSelector:
-            matchLabels: { kubernetes.io/metadata.name: vault }
-      ports: [{ protocol: TCP, port: 8200 }]
-    # --- ALLOW KUBERNETES API (The Missing Fix) ---
-    - to:
-        - ipBlock: { cidr: 10.96.0.0/12 }
-      ports:
-        - { protocol: TCP, port: 443 }
+    - toEndpoints:
+        - {}
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: vault
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
+    - toEntities:
+        - kube-apiserver
