@@ -7,20 +7,23 @@ spec:
   podSelector: {}
   policyTypes: [Ingress, Egress]
   ingress:
-    - from: [podSelector: {}] # Internal webhook communication
+    - from: [{ podSelector: {} }]
   egress:
-    - to: [podSelector: {}]
+    - to: [{ podSelector: {} }]
+    # 1. DNS
     - to:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: kube-system }
       ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+    # 2. Vault
     - to:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: vault }
       ports: [{ protocol: TCP, port: 8200 }]
-    - to: # Access to K8s API (Internal + External)
-        - ipBlock: { cidr: 0.0.0.0/0 }
-        - ipBlock: { cidr: 10.96.0.0/12 } # Standard K8s Service range
+    # 3. KUBERNETES API (Internal Service IP + Global)
+    - to:
+        - ipBlock: { cidr: 10.96.0.0/12 } # Allow internal Service range
+        - ipBlock: { cidr: 0.0.0.0/0 }    # Allow external Git/API
       ports: 
         - { protocol: TCP, port: 443 }
         - { protocol: TCP, port: 6443 }
