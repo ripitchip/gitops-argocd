@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - storage.yaml
   - external-secrets.yaml
+  - policy.yaml
   - app.yaml
 
 labels:
