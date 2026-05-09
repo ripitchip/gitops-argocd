@@ -1,5 +1,4 @@
 # --- 1. GLOBAL ISOLATION (Namespace: pass) ---
-# Default deny all ingress and egress traffic
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -9,29 +8,24 @@ spec:
   podSelector: {}
   policyTypes: [Ingress, Egress]
   ingress:
-    # Allow intra-namespace traffic for local communication and probes
-    - from:
-        - podSelector: {}
-    # Allow Traefik to route web traffic to Vaultwarden
+    - from: [{ podSelector: {} }]
     - from:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: traefik }
-      ports:
-        - { protocol: TCP, port: 80 }
+      ports: [{ protocol: TCP, port: 80 }]
   egress:
-    # Allow intra-namespace traffic
-    - to:
-        - podSelector: {}
-    # Allow DNS resolution via kube-system
+    - to: [{ podSelector: {} }]
+    # DNS Access
     - to:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: kube-system }
-      ports:
-        - { protocol: UDP, port: 53 }
-        - { protocol: TCP, port: 53 }
-    # Allow connection to Vault for secret synchronization
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+    # Vault Access
     - to:
         - namespaceSelector:
             matchLabels: { kubernetes.io/metadata.name: vault }
+      ports: [{ protocol: TCP, port: 8200 }]
+    - to:
+        - ipBlock: { cidr: 10.96.0.0/12 }
       ports:
-        - { protocol: TCP, port: 8200 }
+        - { protocol: TCP, port: 443 }
