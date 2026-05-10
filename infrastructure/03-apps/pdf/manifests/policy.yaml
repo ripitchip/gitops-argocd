@@ -7,6 +7,15 @@ spec:
   endpointSelector:
     matchLabels:
       app: stirling-pdf
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+            "app.kubernetes.io/name": traefik
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
