@@ -2,3 +2,4 @@ resources:
   - external-secrets
   - vault
   - argocd
+  - cert-manager
