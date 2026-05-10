@@ -33,13 +33,22 @@ spec:
           image: stirlingtools/stirling-pdf:latest
           ports:
             - containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SERVER_FORWARD_HEADERS_STRATEGY
+              value: "native"
+            - name: SYSTEM_BACKENDURL
+              value: "https://pdf.foobarbaz.fr"
+            - name: SECURITY_ENABLELOGIN
+              value: "false"
           resources:
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "200m"
+              memory: "512Mi"
             limits:
               cpu: "1"
-              memory: "1Gi"
+              memory: "2Gi"
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -49,6 +58,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "10"
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: traefik
