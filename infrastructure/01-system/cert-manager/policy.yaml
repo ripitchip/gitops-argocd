@@ -1,0 +1,55 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: cert-manager-hardened
+  namespace: cert-manager
+spec:
+  endpointSelector: {}
+  ingress:
+    # 1. API Server -> Webhook
+    - fromEntities:
+        - kube-apiserver
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "10250"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    # 2. Metrics Collector
+    - fromEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: "9402"
+              protocol: TCP
+    # 3. Internal communication
+    - fromEndpoints:
+        - {}
+  egress:
+    # 1. Internal communication
+    - toEndpoints:
+        - {}
+    # 2. DNS
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    # 3. K8S API
+    - toEntities:
+        - kube-apiserver
+        - host
+    # 4. ACME / External APIs (Fixes Let's Encrypt timeouts)
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
