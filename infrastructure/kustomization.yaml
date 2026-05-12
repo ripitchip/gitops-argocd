@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - 01-system
+  - 01-system/falco/falco-app-definition.yaml
   - 02-iam/keycloak-app-definition.yaml
   - 03-apps/vaultwarden/vaultwarden-app-definition.yaml
   - 03-apps/pdf/stirling-pdf-app-definition.yaml

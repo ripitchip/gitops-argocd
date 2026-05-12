@@ -2,11 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - manifests/namespace.yaml
-  - manifests/storage.yaml
-  - manifests/external-secrets.yaml
-  - manifests/policy.yaml
-  - manifests/app.yaml
+  - namespace.yaml
+  - storage.yaml
+  - external-secrets.yaml
+  - policy.yaml
+  - app.yaml
 
 labels:
   - pairs:
