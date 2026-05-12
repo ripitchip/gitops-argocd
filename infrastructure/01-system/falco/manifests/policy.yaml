@@ -52,6 +52,9 @@ spec:
         - matchPattern: "*.github.com"
         - matchName: "github.com"
         - matchPattern: "*.githubusercontent.com"
+        - matchPattern: "ghcr.io"
+        - matchPattern: "*.ghcr.io"
+        - matchPattern: "*.pkg.github.com"
         - matchName: "falcosecurity.github.io"
       toPorts:
         - ports:
