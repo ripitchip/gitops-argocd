@@ -9,6 +9,9 @@ spec:
     matchLabels:
       app.kubernetes.io/name: argocd-repo-server
   egress:
+    # 0. CRITICAL: Kubernetes API access
+    - toEntities:
+        - kube-apiserver
     # 1. Allow DNS to resolve GitHub/GitLab
     - toEndpoints:
         - matchLabels:
@@ -21,13 +24,9 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 2. Limit HTTPS egress to authorized Git providers only
-    - toFQDNs:
-        - matchName: "github.com"
-        - matchPattern: "*.github.com"
-        - matchName: "objects.githubusercontent.com"
-        - matchName: "gitlab.com"
-        - matchName: "falcosecurity.github.io"
+    # 2. Limit HTTPS egress to world for troubleshooting
+    - toEntities:
+        - world
       toPorts:
         - ports:
             - port: "443"
