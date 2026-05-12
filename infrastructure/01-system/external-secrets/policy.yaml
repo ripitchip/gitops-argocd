@@ -16,6 +16,8 @@ spec:
         - ports:
             - port: "9443"
               protocol: TCP
+            - port: "10250"
+              protocol: TCP
   egress:
     # 1. Internal Namespace
     - toEndpoints:
