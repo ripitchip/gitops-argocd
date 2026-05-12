@@ -24,6 +24,8 @@ spec:
             io.kubernetes.pod.namespace: external-secrets
         - matchLabels:
             io.kubernetes.pod.namespace: traefik
+        - matchLabels:
+            io.kubernetes.pod.namespace: falco
       toPorts:
         - ports:
             - port: "8200"
