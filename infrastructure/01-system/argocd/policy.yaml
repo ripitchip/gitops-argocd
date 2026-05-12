@@ -84,6 +84,9 @@ spec:
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: auth
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: external-secrets
     # 5. Communication between ALL ArgoCD components
     - toEndpoints:
         - matchLabels:
