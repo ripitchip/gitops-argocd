@@ -3,3 +3,4 @@ resources:
   - vault
   - argocd
   - cert-manager
+  - falco
