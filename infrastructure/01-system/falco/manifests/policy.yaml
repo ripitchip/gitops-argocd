@@ -20,8 +20,14 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: falco
   egress:
+    # 1. Internal Namespace Traffic
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: falco
+    # 2. Kubernetes API access
     - toEntities:
         - kube-apiserver
+    # 3. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -33,10 +39,21 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
+    # 4. Vault Access
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": vault
       toPorts:
         - ports:
             - port: "8200"
+              protocol: TCP
+    # 5. GitHub Access (for falcoctl artifacts)
+    - toFQDNs:
+        - matchPattern: "*.github.com"
+        - matchName: "github.com"
+        - matchPattern: "*.githubusercontent.com"
+        - matchName: "falcosecurity.github.io"
+      toPorts:
+        - ports:
+            - port: "443"
               protocol: TCP
