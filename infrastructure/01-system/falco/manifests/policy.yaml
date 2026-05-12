@@ -60,3 +60,11 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
+    # 6. Sigstore Access (for artifact verification)
+    - toFQDNs:
+        - matchPattern: "*.sigstore.dev"
+        - matchName: "sigstore.dev"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
