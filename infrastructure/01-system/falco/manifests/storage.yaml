@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: falco-redis-pv-static
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions:
+    - "nfsvers=4.1"
+    - "hard"
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/falco-redis"
+  claimRef:
+    name: falco-redis-pvc-static
+    namespace: falco
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: falco-redis-pvc-static
+  namespace: falco
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  storageClassName: truenas-nfs
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: falco-redis-pv-static
