@@ -13,6 +13,9 @@ spec:
     targetRevision: 3.2.6
     helm:
       values: |
+        rbac:
+          serviceAccount:
+            automountServiceAccountToken: true
         admissionController:
           replicas: 3
         backgroundController:
@@ -23,7 +26,8 @@ spec:
           replicas: 2
         cleanup:
           image:
-            repository: public.ecr.aws/bitnami/kubectl
+            registry: public.ecr.aws
+            repository: bitnami/kubectl
             tag: 1.30.0
         features:
           metricsConfig:
