@@ -21,6 +21,13 @@ spec:
       containers:
         - name: vaultwarden
           image: vaultwarden/server:1.36.0
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
           env:
             - { name: DOMAIN, value: "https://pass.foobarbaz.fr" }
             - { name: SIGNUPS_ALLOWED, value: "false" }

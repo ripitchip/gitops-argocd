@@ -27,8 +27,22 @@ spec:
           - { effect: NoSchedule, key: node-role.kubernetes.io/control-plane }
         falcosidekick:
           enabled: true
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
           webui:
             enabled: true
+            resources:
+              limits:
+                cpu: 200m
+                memory: 256Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
             # Utilisation du secret généré par ExternalSecret (Vault)
             existingSecret: "falco-ui-secrets"
             user: "admin" # Doit correspondre à la clé admin-user dans Vault
@@ -37,6 +51,13 @@ spec:
               storage:
                 enabled: true
                 existingClaim: "falco-redis-pvc-static"
+              resources:
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
             ingress:
               enabled: true
               ingressClassName: traefik
