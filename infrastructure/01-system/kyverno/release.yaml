@@ -17,8 +17,6 @@ spec:
           replicas: 3
         backgroundController:
           replicas: 2
-        cleanupController:
-          replicas: 2
         reportsController:
           replicas: 2
         features:
@@ -29,7 +27,8 @@ spec:
         cleanupController:
           replicas: 2
           image:
-            repository: public.ecr.aws/bitnami/kubectl
+            registry: public.ecr.aws
+            repository: bitnami/kubectl
             tag: 1.30.0
   destination:
     server: 'https://kubernetes.default.svc'
