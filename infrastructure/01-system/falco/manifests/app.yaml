@@ -51,8 +51,9 @@ spec:
                 - { secretName: falco-ui-tls, hosts: [falco.foobarbaz.fr] }
         customRules:
           production-security.yaml: |-
-            - macro: k8s_api_server_containers
-              append: true
+            - macro: k8s_containers
+              override:
+                condition: append
               condition: or container.image.repository in (quay.io/argoproj/argocd, ghcr.io/external-secrets/external-secrets, quay.io/jetstack/cert-manager-controller, hashicorp/vault)
             - rule: Interactive Shell Spawned in Container
               desc: Detects interactive shells in sensitive namespaces
