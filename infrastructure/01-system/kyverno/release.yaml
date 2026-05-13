@@ -32,6 +32,11 @@ spec:
         reportsController:
           replicas: 2
 
+        cleanup:
+          image:
+            repository: bitnami/kubectl
+            tag: latest
+
         features:
           metricsConfig:
             enabled: true
