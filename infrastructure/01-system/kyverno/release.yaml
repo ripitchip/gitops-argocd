@@ -32,10 +32,7 @@ spec:
         reportsController:
           replicas: 2
 
-        cleanup:
-          image:
-            repository: bitnami/kubectl
-            tag: latest
+        cleanup: {}
 
         features:
           metricsConfig:
@@ -53,6 +50,10 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - Force=true
+
       - CreateNamespace=true
       - ServerSideApply=true
       - Force=true

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: vaultwarden
-          image: vaultwarden/server:latest
+          image: vaultwarden/server:1.36.0
           env:
             - { name: DOMAIN, value: "https://pass.foobarbaz.fr" }
             - { name: SIGNUPS_ALLOWED, value: "false" }

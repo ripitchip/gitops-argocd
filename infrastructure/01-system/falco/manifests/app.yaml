@@ -10,7 +10,7 @@ spec:
   source:
     chart: falco
     repoURL: https://falcosecurity.github.io/charts
-    targetRevision: 8.0.3
+    targetRevision: 8.0.5
     helm:
       values: |
         driver:
