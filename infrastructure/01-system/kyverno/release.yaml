@@ -13,27 +13,33 @@ spec:
     targetRevision: 3.2.6
     helm:
       values: |
-        rbac:
-          serviceAccount:
-            automountServiceAccountToken: true
         admissionController:
           replicas: 3
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: kyverno
+
         backgroundController:
           replicas: 2
-        reportsController:
-          replicas: 2
+
         cleanupController:
           replicas: 2
-        cleanup:
-          image:
-            registry: public.ecr.aws
-            repository: bitnami/kubectl
-            tag: 1.30.0
+
+        reportsController:
+          replicas: 2
+
         features:
           metricsConfig:
             enabled: true
             serviceMonitor:
               enabled: false
+
+        networkPolicies:
+          enabled: true
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kyverno
