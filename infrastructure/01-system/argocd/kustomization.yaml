@@ -1,2 +1,5 @@
 resources:
   - policy.yaml
+
+patchesStrategicMerge:
+  - limits.yaml
