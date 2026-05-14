@@ -17,7 +17,9 @@ spec:
           - resources:
               kinds:
                 - Pod
+      skipBackgroundRequests: true
       validate:
+        allowExistingViolations: true
         message: "Using the 'latest' tag is not allowed. Please use a specific version."
         pattern:
           spec:
