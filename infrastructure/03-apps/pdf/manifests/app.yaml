@@ -32,16 +32,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 5930
         fsGroup: 5930
-      initContainers:
-        - name: init-setup
-          image: stirlingtools/stirling-pdf:2.10.1
-          command: ["sh", "-c", "mkdir -p /tmp/stirling-pdf && chown -R 5930:5930 /tmp/stirling-pdf"]
-          securityContext:
-            runAsUser: 0
-            runAsNonRoot: false
-          volumeMounts:
-            - name: tmp-volume
-              mountPath: /tmp
+      # Removed the entire initContainers block entirely
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.10.1
