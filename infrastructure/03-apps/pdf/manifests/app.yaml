@@ -28,6 +28,10 @@ spec:
       labels:
         app: stirling-pdf
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 3201
+        fsGroup: 3201
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.10.1
