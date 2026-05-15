@@ -32,10 +32,11 @@ spec:
         runAsNonRoot: true
         runAsUser: 5930
         fsGroup: 5930
-      # Removed the entire initContainers block entirely
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.10.1
+          command: ["java"]
+          args: ["-jar", "/app/Stirling-PDF.jar"]
           ports:
             - containerPort: 8080
           env:
