@@ -30,8 +30,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 3201
-        fsGroup: 3201
+        runAsUser: 5930
+        fsGroup: 5930
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.10.1
@@ -46,6 +46,8 @@ spec:
               value: "https://pdf.foobarbaz.fr"
             - name: SECURITY_ENABLELOGIN
               value: "false"
+            - name: HOME
+              value: "/tmp"
           resources:
             requests:
               cpu: "200m"
@@ -53,6 +55,12 @@ spec:
             limits:
               cpu: "1"
               memory: "2Gi"
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
