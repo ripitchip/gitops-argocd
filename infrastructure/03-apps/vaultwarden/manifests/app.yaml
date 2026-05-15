@@ -18,6 +18,10 @@ spec:
   template:
     metadata: { labels: { app: vaultwarden } }
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
       containers:
         - name: vaultwarden
           image: vaultwarden/server:1.36.0
