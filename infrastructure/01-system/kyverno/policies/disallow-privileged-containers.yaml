@@ -6,6 +6,7 @@ metadata:
     policies.kyverno.io/title: Disallow Privileged Containers
     policies.kyverno.io/category: Pod Security Standards (Baseline)
     policies.kyverno.io/severity: medium
+    pod-policies.kyverno.io/autogen-controllers: DaemonSet,Deployment,Job,StatefulSet,CronJob
     policies.kyverno.io/description: >-
       Privileged containers can easily escalate privileges and access the host system.
 spec:
@@ -18,7 +19,16 @@ spec:
           - resources:
               kinds:
                 - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - falco
+                - cilium-system
+      skipBackgroundRequests: true
       validate:
+        allowExistingViolations: true
         message: "Privileged containers are not allowed."
         pattern:
           spec:

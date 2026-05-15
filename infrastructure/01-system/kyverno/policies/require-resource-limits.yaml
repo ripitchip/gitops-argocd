@@ -6,6 +6,7 @@ metadata:
     policies.kyverno.io/title: Require Resource Limits
     policies.kyverno.io/category: Best Practices
     policies.kyverno.io/severity: medium
+    pod-policies.kyverno.io/autogen-controllers: DaemonSet,Deployment,Job,StatefulSet,CronJob
 spec:
   validationFailureAction: Audit
   background: true
@@ -16,7 +17,9 @@ spec:
           - resources:
               kinds:
                 - Pod
+      skipBackgroundRequests: true
       validate:
+        allowExistingViolations: true
         message: "CPU and memory limits are required for all containers."
         pattern:
           spec:
