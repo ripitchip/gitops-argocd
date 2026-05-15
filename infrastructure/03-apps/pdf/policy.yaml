@@ -6,7 +6,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app: stirling-pdf
+      app.kubernetes.io/name: stirling-pdf-chart
   ingress:
     - fromEndpoints:
         - matchLabels:

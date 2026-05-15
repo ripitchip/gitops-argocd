@@ -13,9 +13,6 @@ spec:
     targetRevision: 3.1.0
     helm:
       values: |
-        commonLabels:
-          app: stirling-pdf
-        
         image:
           tag: "2.10.1"
         
@@ -60,7 +57,6 @@ spec:
 
         service:
           externalPort: 80
-          targetPort: http
 
         ingress:
           enabled: true
