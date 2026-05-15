@@ -60,7 +60,7 @@ spec:
 
         service:
           externalPort: 80
-          targetPort: 8080
+          targetPort: http
 
         ingress:
           enabled: true
