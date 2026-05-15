@@ -1,0 +1,86 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stirling-pdf
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: default
+  source:
+    repoURL: 'https://stirling-tools.github.io/Stirling-PDF-chart'
+    chart: stirling-pdf-chart
+    targetRevision: 3.1.0
+    helm:
+      values: |
+        commonLabels:
+          app: stirling-pdf
+        
+        image:
+          tag: "2.10.1"
+        
+        envs:
+          - name: SERVER_PORT
+            value: "8080"
+          - name: SERVER_FORWARD_HEADERS_STRATEGY
+            value: "native"
+          - name: SYSTEM_BACKENDURL
+            value: "https://pdf.foobarbaz.fr"
+          - name: SECURITY_ENABLELOGIN
+            value: "false"
+          - name: HOME
+            value: "/tmp"
+
+        deployment:
+          annotations:
+            argocd.argoproj.io/sync-wave: "5"
+          extraVolumes:
+            - name: tmp-volume
+              emptyDir: {}
+          extraVolumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+
+        securityContext:
+          enabled: true
+          runAsNonRoot: true
+          runAsUser: 5930
+          fsGroup: 5930
+        
+        containerSecurityContext:
+          runAsUser: 5930
+
+        service:
+          externalPort: 80
+          targetPort: 8080
+
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            argocd.argoproj.io/sync-wave: "10"
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: "true"
+            cert-manager.io/cluster-issuer: "letsencrypt-prod"
+          hosts:
+            - name: pdf.foobarbaz.fr
+              path: /
+              tls: true
+              tlsSecret: stirling-pdf-tls
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: pdf
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

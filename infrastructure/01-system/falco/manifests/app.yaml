@@ -78,7 +78,7 @@ spec:
               condition: or container.image.repository in (quay.io/argoproj/argocd, ghcr.io/external-secrets/external-secrets, quay.io/jetstack/cert-manager-controller, hashicorp/vault)
             - rule: Interactive Shell Spawned in Container
               desc: Detects interactive shells in sensitive namespaces
-              condition: spawned_process and container and (k8s.ns.name in (vault, auth, pass, stirling-pdf, falco, argocd, external-secrets, cert-manager)) and proc.name in (shell_procs)
+              condition: spawned_process and container and (k8s.ns.name in (vault, auth, pass, pdf, falco, argocd, external-secrets, cert-manager)) and proc.name in (shell_procs)
               output: "Interactive shell spawned (user=%user.name pod=%k8s.pod.name ns=%k8s.ns.name cmd=%proc.cmdline)"
               priority: NOTICE
             - rule: Package Management Activity in Pod

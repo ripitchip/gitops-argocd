@@ -2,7 +2,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: stirling-pdf-isolation
-  namespace: stirling-pdf
+  namespace: pdf
 spec:
   endpointSelector:
     matchLabels:
