@@ -41,6 +41,12 @@ spec:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: external-secrets
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      jsonPointers:
+        - /metadata/annotations
+        - /metadata/labels
   syncPolicy:
     automated:
       prune: true
