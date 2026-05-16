@@ -56,6 +56,10 @@ spec:
         - mountPath: {{ .Values.persistence.path }}
           name: storage-volume
       {{- end }}
+      {{- if .Values.initContainers }}
+      initContainers:
+{{ toYaml .Values.initContainers | indent 6 }}
+      {{- end }}
 {{- include "stirlingpdf.imagePullSecrets" . | indent 6 }}
       containers:
       - name: {{ .Chart.Name }}
@@ -115,28 +119,23 @@ spec:
 {{ toYaml . | indent 10 }}
       {{- end }}
     {{- with .Values.nodeSelector }}
-    nodeSelector:
-    {{ toYaml . | indent 8 }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
     {{- end }}
     {{- with .Values.affinity }}
-    affinity:
-    {{ toYaml . | indent 8 }}
+      affinity:
+{{ toYaml . | indent 8 }}
     {{- end }}
     {{- with .Values.tolerations }}
-    tolerations:
-    {{ toYaml . | indent 8 }}
+      tolerations:
+{{ toYaml . | indent 8 }}
     {{- end }}
     {{- if .Values.schedulerName }}
-    schedulerName: {{ .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName }}
     {{- end }}
-    {{- if .Values.initContainers }}
-    initContainers:
-    {{ toYaml .Values.initContainers | indent 6 }}
-    {{- end }}
-    serviceAccountName: {{ include "stirlingpdf.serviceAccountName" . }}
-    automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
-    volumes:
-
+      serviceAccountName: {{ include "stirlingpdf.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      volumes:
       {{- if .Values.deployment.extraVolumes }}
       {{- toYaml .Values.deployment.extraVolumes | nindent 6 }}
       {{- end }}
