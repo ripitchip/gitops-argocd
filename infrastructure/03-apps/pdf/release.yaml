@@ -51,16 +51,14 @@ spec:
         initContainers:
           - name: init-permissions
             image: "stirlingtools/stirling-pdf:2.10.1"
-            securityContext:
-              runAsUser: 0
             command:
               - /bin/sh
               - -c
               - |
                 mkdir -p /tmp/stirling-pdf /logs
-                # On copie les outils vers le volume monté pour qu'ils soient accessibles et modifiables (symlink diagnostics)
+                # On copie les outils vers le volume monté pour qu'ils soient accessibles (symlink diagnostics)
+                # Pas besoin de chown car l'initContainer tourne avec l'UID 3042
                 cp -a /usr/local/bin/* /mnt/bin/
-                chown -R 3042:3042 /tmp /logs /mnt/bin
             volumeMounts:
               - name: tmp-volume
                 mountPath: /tmp
@@ -68,6 +66,7 @@ spec:
                 mountPath: /logs
               - name: bin-volume
                 mountPath: /mnt/bin
+
 
         resources:
           requests:
