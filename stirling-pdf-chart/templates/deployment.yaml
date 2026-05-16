@@ -41,6 +41,12 @@ spec:
         {{- if .Values.securityContext.runAsNonRoot }}
         runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
         {{- end }}
+        {{- if .Values.securityContext.runAsUser }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        {{- end }}
+        {{- if .Values.securityContext.runAsGroup }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        {{- end }}
         {{- if .Values.securityContext.supplementalGroups }}
         supplementalGroups: {{ .Values.securityContext.supplementalGroups }}
         {{- end }}
