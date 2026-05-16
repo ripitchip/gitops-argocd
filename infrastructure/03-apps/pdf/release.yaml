@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://docs.stirlingpdf.com/Stirling-PDF-chart'
-    chart: stirling-pdf-chart
-    targetRevision: 3.1.0
+    repoURL: 'https://github.com/ripitchip/gitops-argocd.git'
+    path: stirling-pdf-chart
+    targetRevision: HEAD
     helm:
       values: |
         image:
@@ -27,6 +27,8 @@ spec:
             value: "false"
           - name: HOME
             value: "/tmp"
+          - name: DOCKER_ENABLE_CHOWN
+            value: "false"
 
         deployment:
           annotations:
@@ -34,9 +36,38 @@ spec:
           extraVolumes:
             - name: tmp-volume
               emptyDir: {}
+            - name: logs-volume
+              emptyDir: {}
+            - name: bin-volume
+              emptyDir: {}
           extraVolumeMounts:
             - name: tmp-volume
               mountPath: /tmp
+            - name: logs-volume
+              mountPath: /logs
+            - name: bin-volume
+              mountPath: /usr/local/bin
+
+        initContainers:
+          - name: init-permissions
+            image: "stirlingtools/stirling-pdf:2.10.1"
+            securityContext:
+              runAsUser: 0
+            command:
+              - /bin/sh
+              - -c
+              - |
+                mkdir -p /tmp/stirling-pdf /logs
+                # On copie les outils vers le volume monté pour qu'ils soient accessibles et modifiables (symlink diagnostics)
+                cp -a /usr/local/bin/* /mnt/bin/
+                chown -R 3042:3042 /tmp /logs /mnt/bin
+            volumeMounts:
+              - name: tmp-volume
+                mountPath: /tmp
+              - name: logs-volume
+                mountPath: /logs
+              - name: bin-volume
+                mountPath: /mnt/bin
 
         resources:
           requests:
@@ -49,11 +80,12 @@ spec:
         securityContext:
           enabled: true
           runAsNonRoot: true
-          runAsUser: 5930
-          fsGroup: 5930
+          runAsUser: 3042
+          fsGroup: 3042
         
         containerSecurityContext:
-          runAsUser: 5930
+          runAsUser: 3042
+          runAsGroup: 3042
 
         service:
           externalPort: 80
