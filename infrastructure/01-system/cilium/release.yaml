@@ -36,6 +36,21 @@ spec:
                 cert-manager.io/cluster-issuer: "letsencrypt-prod"
               hosts:
                 - hubble.foobarbaz.fr
+              paths:
+                - path: /oauth2/
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: hubble-ui
+                      port:
+                        number: 80
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: hubble-ui
+                      port:
+                        number: 80
               tls:
                 - secretName: hubble-ui-tls
                   hosts:
