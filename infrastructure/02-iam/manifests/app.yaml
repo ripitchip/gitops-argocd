@@ -91,6 +91,8 @@ spec:
             - { name: LDAP_ADMIN_PASSWORD,
                 valueFrom: { secretKeyRef: { name: ldap-passwords, key: admin-password } } }
             - { name: ORG_GROUPS_ENABLED, value: "true" }
+            - { name: LDAP_PORT_NUMBER, value: "1389" }
+            - { name: LDAPS_PORT_NUMBER, value: "1636" }
           volumeMounts:
             - { name: ldap-data, mountPath: /bitnami/openldap, subPath: ldap-data }
       volumes:
