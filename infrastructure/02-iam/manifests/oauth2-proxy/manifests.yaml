@@ -51,6 +51,13 @@ spec:
               - ALL
           seccompProfile:
             type: RuntimeDefault
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
         ports:
         - containerPort: 4180
           protocol: TCP
