@@ -11,7 +11,7 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": hubble
-            "k8s:k8s-app": oauth2-proxy-hubble
+            "k8s-app": oauth2-proxy-hubble
       toPorts:
         - ports:
             - port: "8081"

@@ -1,46 +1,6 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: hubble-ui-ingress
-  namespace: hubble
-spec:
-  endpointSelector:
-    matchLabels:
-      k8s-app: hubble-ui
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            k8s-app: oauth2-proxy-hubble
-      toPorts:
-        - ports:
-            - port: "8081"
-              protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
-            k8s-app: hubble-ui
-  egress:
-    - toEntities:
-        - kube-apiserver
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: ANY
-    - toEndpoints:
-        - matchLabels:
-            k8s-app: hubble-relay
-      toPorts:
-        - ports:
-            - port: "4245"
-              protocol: TCP
-
----
-apiVersion: "cilium.io/v2"
-kind: CiliumNetworkPolicy
-metadata:
   name: oauth2-proxy-hubble-policy
   namespace: hubble
 spec:
@@ -59,23 +19,17 @@ spec:
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s-app": hubble-ui
       toPorts:
         - ports:
-            - port: "8081"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
-            k8s-app: hubble-ui
-      toPorts:
-        - ports:
-            - port: "8081"
+            - port: "80"
               protocol: TCP
     - toEntities:
         - kube-apiserver
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
+            "k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
