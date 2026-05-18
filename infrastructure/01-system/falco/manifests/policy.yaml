@@ -18,6 +18,8 @@ spec:
               protocol: TCP
             - port: "2802"
               protocol: TCP
+            - port: "8089"
+              protocol: TCP
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: falco
