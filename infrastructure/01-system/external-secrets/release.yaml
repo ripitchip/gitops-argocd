@@ -15,10 +15,13 @@ spec:
       values: |
         installCRDs: true
         podSecurityContext:
+          enabled: true
           runAsUser: 4712
           runAsGroup: 4712
           fsGroup: 4712
         securityContext:
+          enabled: true
+          runAsNonRoot: true
           runAsUser: 4712
           runAsGroup: 4712
         resources:
@@ -30,10 +33,13 @@ spec:
             memory: 128Mi
         webhook:
           podSecurityContext:
+            enabled: true
             runAsUser: 5823
             runAsGroup: 5823
             fsGroup: 5823
           securityContext:
+            enabled: true
+            runAsNonRoot: true
             runAsUser: 5823
             runAsGroup: 5823
           lookaheadInterval: 5m
@@ -46,10 +52,13 @@ spec:
               memory: 128Mi
         certController:
           podSecurityContext:
+            enabled: true
             runAsUser: 6934
             runAsGroup: 6934
             fsGroup: 6934
           securityContext:
+            enabled: true
+            runAsNonRoot: true
             runAsUser: 6934
             runAsGroup: 6934
           resources:
