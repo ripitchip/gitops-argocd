@@ -6,6 +6,11 @@ metadata:
 spec:
   endpointSelector: {}
   ingress:
+    # 1. Allow all internal traffic within the 'auth' namespace
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": auth
+    # 2. Allow Ingress from Traefik and Vault
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: traefik
@@ -18,6 +23,11 @@ spec:
             - port: "8080"
               protocol: TCP
   egress:
+    # 1. Allow all internal traffic within the 'auth' namespace
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": auth
+    # 2. Kubernetes API access
     - toEntities:
         - kube-apiserver
     - toEndpoints:
