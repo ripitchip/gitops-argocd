@@ -14,11 +14,11 @@ spec:
     helm:
       values: |
         installCRDs: true
-        securityContext:
+        podSecurityContext:
           runAsUser: 4712
           runAsGroup: 4712
           fsGroup: 4712
-        containerSecurityContext:
+        securityContext:
           runAsUser: 4712
           runAsGroup: 4712
         resources:
@@ -29,11 +29,11 @@ spec:
             cpu: 50m
             memory: 128Mi
         webhook:
-          securityContext:
+          podSecurityContext:
             runAsUser: 5823
             runAsGroup: 5823
             fsGroup: 5823
-          containerSecurityContext:
+          securityContext:
             runAsUser: 5823
             runAsGroup: 5823
           lookaheadInterval: 5m
@@ -45,11 +45,11 @@ spec:
               cpu: 50m
               memory: 128Mi
         certController:
-          securityContext:
+          podSecurityContext:
             runAsUser: 6934
             runAsGroup: 6934
             fsGroup: 6934
-          containerSecurityContext:
+          securityContext:
             runAsUser: 6934
             runAsGroup: 6934
           resources:
