@@ -13,7 +13,7 @@ spec:
     path: infrastructure/01-system/cilium/hubble-ui-auth/manifests
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: kube-system
+    namespace: hubble
   syncPolicy:
     automated:
       prune: true

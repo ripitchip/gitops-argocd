@@ -2,7 +2,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: hubble-ui-ingress
-  namespace: kube-system
+  namespace: hubble
 spec:
   endpointSelector:
     matchLabels:
@@ -42,7 +42,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: oauth2-proxy-hubble-policy
-  namespace: kube-system
+  namespace: hubble
 spec:
   endpointSelector:
     matchLabels:

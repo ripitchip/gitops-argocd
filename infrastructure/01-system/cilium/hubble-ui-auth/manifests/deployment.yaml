@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: oauth2-proxy-hubble
-  namespace: kube-system
+  namespace: hubble
 spec:
   replicas: 1
   selector:
