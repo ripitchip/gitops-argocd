@@ -11,6 +11,8 @@ spec:
             io.kubernetes.pod.namespace: traefik
         - matchLabels:
             io.kubernetes.pod.namespace: vault
+        - matchLabels:
+            app: oauth2-proxy
       toPorts:
         - ports:
             - port: "8080"
