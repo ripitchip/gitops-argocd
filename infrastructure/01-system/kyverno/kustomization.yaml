@@ -3,3 +3,4 @@ resources:
   - policies/disallow-latest-tag.yaml
   - policies/disallow-privileged-containers.yaml
   - policies/require-resource-limits.yaml
+  - policies/disallow-root-user.yaml
