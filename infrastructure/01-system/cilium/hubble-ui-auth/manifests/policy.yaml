@@ -10,7 +10,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik
+            "k8s:io.kubernetes.pod.namespace": traefik
+            "app.kubernetes.io/name": traefik
       toPorts:
         - ports:
             - port: "4180"
@@ -19,17 +20,15 @@ spec:
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s-app": hubble-ui
+            "k8s:k8s-app": hubble-ui
       toPorts:
         - ports:
-            - port: "80"
+            - port: "8081"
               protocol: TCP
-    - toEntities:
-        - kube-apiserver
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s-app": kube-dns
+            "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
