@@ -93,6 +93,7 @@ spec:
             - { name: ORG_GROUPS_ENABLED, value: "true" }
             - { name: LDAP_PORT_NUMBER, value: "1389" }
             - { name: LDAPS_PORT_NUMBER, value: "1636" }
+            - { name: LDAP_EXTRA_FLAGS, value: "-h ldap://:1389/" }
             - { name: BITNAMI_DEBUG, value: "true" }
           volumeMounts:
             - { name: ldap-data, mountPath: /bitnami/openldap, subPath: ldap-data }
