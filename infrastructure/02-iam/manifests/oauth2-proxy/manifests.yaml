@@ -67,7 +67,13 @@ spec:
         - name: OAUTH2_PROXY_PROVIDER
           value: "oidc"
         - name: OAUTH2_PROXY_OIDC_ISSUER_URL
-          value: "https://auth.foobarbaz.fr/realms/master"
+          value: "http://keycloak.auth.svc.cluster.local:8080/realms/master"
+        - name: OAUTH2_PROXY_REDEEM_URL
+          value: "http://keycloak.auth.svc.cluster.local:8080/realms/master/protocol/openid-connect/token"
+        - name: OAUTH2_PROXY_OIDC_JWKS_URL
+          value: "http://keycloak.auth.svc.cluster.local:8080/realms/master/protocol/openid-connect/certs"
+        - name: OAUTH2_PROXY_LOGIN_URL
+          value: "https://auth.foobarbaz.fr/realms/master/protocol/openid-connect/auth"
         - name: OAUTH2_PROXY_CLIENT_ID
           valueFrom:
             secretKeyRef: { name: oauth2-proxy-secrets, key: client-id }
@@ -84,6 +90,10 @@ spec:
         - name: OAUTH2_PROXY_EMAIL_DOMAINS
           value: "*"
         - name: OAUTH2_PROXY_REVERSE_PROXY
+          value: "true"
+        - name: OAUTH2_PROXY_SET_XAUTHREQUEST
+          value: "true"
+        - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
           value: "true"
         - name: OAUTH2_PROXY_UPSTREAMS
           value: "static://200"
