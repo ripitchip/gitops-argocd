@@ -16,6 +16,18 @@ spec:
         driver:
           kind: modern_ebpf
         falco:
+          privileged: false
+          podSecurityContext:
+            runAsUser: 4821
+            runAsGroup: 4821
+            fsGroup: 4821
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 4821
+            runAsGroup: 4821
+            capabilities:
+              drop: [ALL]
+              add: [CAP_SYS_PTRACE, CAP_SYS_RESOURCE, CAP_BPF, CAP_PERFMON]
           json_output: true
           stdout_output: { enabled: true }
           log_level: info
@@ -27,6 +39,13 @@ spec:
           - { effect: NoSchedule, key: node-role.kubernetes.io/control-plane }
         falcosidekick:
           enabled: true
+          podSecurityContext:
+            runAsUser: 5639
+            runAsGroup: 5639
+            fsGroup: 5639
+          securityContext:
+            runAsUser: 5639
+            runAsGroup: 5639
           resources:
             limits:
               cpu: 200m
@@ -36,6 +55,13 @@ spec:
               memory: 128Mi
           webui:
             enabled: true
+            podSecurityContext:
+              runAsUser: 7104
+              runAsGroup: 7104
+              fsGroup: 7104
+            securityContext:
+              runAsUser: 7104
+              runAsGroup: 7104
             resources:
               limits:
                 cpu: 200m
@@ -48,6 +74,13 @@ spec:
             user: "admin" # Doit correspondre à la clé admin-user dans Vault
             password: "" # Laissé vide car existingSecret est utilisé
             redis:
+              podSecurityContext:
+                runAsUser: 9253
+                runAsGroup: 9253
+                fsGroup: 9253
+              securityContext:
+                runAsUser: 9253
+                runAsGroup: 9253
               storage:
                 enabled: true
                 existingClaim: "falco-redis-pvc-static"
