@@ -14,6 +14,13 @@ spec:
     helm:
       values: |
         installCRDs: true
+        securityContext:
+          runAsUser: 4712
+          runAsGroup: 4712
+          fsGroup: 4712
+        containerSecurityContext:
+          runAsUser: 4712
+          runAsGroup: 4712
         resources:
           limits:
             cpu: 200m
@@ -22,6 +29,13 @@ spec:
             cpu: 50m
             memory: 128Mi
         webhook:
+          securityContext:
+            runAsUser: 5823
+            runAsGroup: 5823
+            fsGroup: 5823
+          containerSecurityContext:
+            runAsUser: 5823
+            runAsGroup: 5823
           lookaheadInterval: 5m
           resources:
             limits:
@@ -31,6 +45,13 @@ spec:
               cpu: 50m
               memory: 128Mi
         certController:
+          securityContext:
+            runAsUser: 6934
+            runAsGroup: 6934
+            fsGroup: 6934
+          containerSecurityContext:
+            runAsUser: 6934
+            runAsGroup: 6934
           resources:
             limits:
               cpu: 200m
