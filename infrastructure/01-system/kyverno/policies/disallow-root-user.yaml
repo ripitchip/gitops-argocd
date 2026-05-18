@@ -23,6 +23,10 @@ spec:
               namespaces:
                 - kube-system
                 - cilium-system
+          - resources:
+              selector:
+                matchLabels:
+                  acme.cert-manager.io/http01-solver: "true"
       skipBackgroundRequests: true
       validate:
         allowExistingViolations: true
