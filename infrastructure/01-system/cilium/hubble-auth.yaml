@@ -51,6 +51,7 @@ spec:
             - --pass-access-token=true
             - --redirect-url=https://hubble.foobarbaz.fr/oauth2/callback
             - --insecure-oidc-skip-issuer-verification=true
+            - --reverse-proxy=true
           env:
             - name: OAUTH2_PROXY_CLIENT_ID
               valueFrom:
