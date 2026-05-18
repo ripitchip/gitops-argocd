@@ -40,10 +40,12 @@ spec:
         falcosidekick:
           enabled: true
           podSecurityContext:
+            runAsNonRoot: true
             runAsUser: 5639
             runAsGroup: 5639
             fsGroup: 5639
           securityContext:
+            runAsNonRoot: true
             runAsUser: 5639
             runAsGroup: 5639
           resources:
@@ -56,10 +58,12 @@ spec:
           webui:
             enabled: true
             podSecurityContext:
+              runAsNonRoot: true
               runAsUser: 7104
               runAsGroup: 7104
               fsGroup: 7104
             securityContext:
+              runAsNonRoot: true
               runAsUser: 7104
               runAsGroup: 7104
             resources:
@@ -75,10 +79,12 @@ spec:
             password: "" # Laissé vide car existingSecret est utilisé
             redis:
               podSecurityContext:
+                runAsNonRoot: true
                 runAsUser: 9253
                 runAsGroup: 9253
                 fsGroup: 9253
               securityContext:
+                runAsNonRoot: true
                 runAsUser: 9253
                 runAsGroup: 9253
               storage:
