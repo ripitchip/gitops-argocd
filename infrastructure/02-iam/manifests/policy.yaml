@@ -11,6 +11,8 @@ spec:
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: traefik
+        - matchLabels:
+            io.kubernetes.pod.namespace: vault
       toPorts:
         - ports:
             - port: "8080"
