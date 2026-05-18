@@ -7,7 +7,7 @@ metadata:
   annotations: { argocd.argoproj.io/sync-wave: "-7" }
 spec:
   refreshInterval: "15s"
-  secretStoreRef: { name: vault-backend, kind: SecretStore }
+  secretStoreRef: { name: vault-backend, kind: ClusterSecretStore }
   target:
     name: oauth2-proxy-secrets
     creationPolicy: Owner
