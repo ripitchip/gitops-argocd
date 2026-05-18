@@ -22,6 +22,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 5649
         fsGroup: 5649
+        runAsGroup: 5649
       containers:
         - name: vaultwarden
           image: vaultwarden/server:1.36.0
