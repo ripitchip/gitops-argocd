@@ -54,8 +54,8 @@ metadata: { name: openldap, namespace: auth }
 spec:
   selector: { app: openldap }
   ports:
-    - { name: ldap, port: 389, targetPort: 1389 }
-    - { name: ldaps, port: 636, targetPort: 1636 }
+    - { name: ldap, port: 389, targetPort: 8389 }
+    - { name: ldaps, port: 636, targetPort: 8636 }
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -75,6 +75,14 @@ spec:
         runAsNonRoot: true
         runAsUser: 3951
         runAsGroup: 3951
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "chown -R 3951:3951 /bitnami/openldap"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - { name: ldap-data, mountPath: /bitnami/openldap, subPath: ldap-data }
       containers:
         - name: openldap
           image: bitnamilegacy/openldap:2.6.10
@@ -91,10 +99,9 @@ spec:
             - { name: LDAP_ADMIN_PASSWORD,
                 valueFrom: { secretKeyRef: { name: ldap-passwords, key: admin-password } } }
             - { name: ORG_GROUPS_ENABLED, value: "true" }
-            - { name: LDAP_PORT_NUMBER, value: "1389" }
-            - { name: LDAPS_PORT_NUMBER, value: "1636" }
-            - { name: LDAP_LISTEN_ADDRESSES, value: "ldap://:1389/" }
-            - { name: BITNAMI_DEBUG, value: "true" }
+            - { name: LDAP_PORT_NUMBER, value: "8389" }
+            - { name: LDAP_LDAPS_PORT_NUMBER, value: "8636" }
+            - { name: LDAP_LISTEN_ADDRESSES, value: "ldap://:8389/" }
           volumeMounts:
             - { name: ldap-data, mountPath: /bitnami/openldap, subPath: ldap-data }
       volumes:
@@ -128,6 +135,21 @@ spec:
         runAsUser: 4648
         runAsGroup: 4648
       initContainers:
+        - name: fix-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "chown -R 4648:4648 /opt/keycloak/providers"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: keycloak-providers-volume
+              mountPath: /opt/keycloak/providers
+              subPath: providers-data
+        - name: prepare-lib
+          image: quay.io/keycloak/keycloak:26.6.1
+          command: ["sh", "-c", "cp -rp /opt/keycloak/lib/quarkus/* /mnt/lib/"]
+          volumeMounts:
+            - name: keycloak-lib
+              mountPath: /mnt/lib
         - name: wait-for-postgres
           image: busybox:1.36
           resources:
@@ -169,9 +191,17 @@ spec:
             - name: keycloak-providers-volume
               mountPath: /opt/keycloak/providers
               subPath: providers-data
+            - name: keycloak-lib
+              mountPath: /opt/keycloak/lib/quarkus
+            - name: keycloak-data
+              mountPath: /opt/keycloak/data
       volumes:
         - name: keycloak-providers-volume
           persistentVolumeClaim: { claimName: keycloak-providers-pvc-static }
+        - name: keycloak-lib
+          emptyDir: {}
+        - name: keycloak-data
+          emptyDir: {}
 ---
 # --- INGRESS ---
 apiVersion: networking.k8s.io/v1
