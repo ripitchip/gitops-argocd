@@ -31,10 +31,12 @@ spec:
   selector:
     matchLabels:
       app: oauth2-proxy
+      app.kubernetes.io/part-of: iam-stack
   template:
     metadata:
       labels:
         app: oauth2-proxy
+        app.kubernetes.io/part-of: iam-stack
     spec:
       securityContext:
         runAsNonRoot: true
@@ -134,6 +136,7 @@ spec:
       - X-Auth-Request-Email
       - X-Auth-Request-Access-Token
       - Authorization
+      - Set-Cookie
     authRequestHeaders:
       - X-Forwarded-Proto
       - X-Forwarded-Host
