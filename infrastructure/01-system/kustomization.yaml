@@ -1,7 +1,7 @@
 resources:
   - cilium/release.yaml
   - cilium/policy.yaml
-  - cilium/hubble-auth.yaml
+  - cilium/hubble-ui-auth/app-definition.yaml
   - external-secrets
   - vault
   - argocd
