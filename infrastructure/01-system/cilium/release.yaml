@@ -37,13 +37,6 @@ spec:
               hosts:
                 - hubble.foobarbaz.fr
               paths:
-                - path: /oauth2/
-                  pathType: Prefix
-                  backend:
-                    service:
-                      name: hubble-ui
-                      port:
-                        number: 80
                 - path: /
                   pathType: Prefix
                   backend:
