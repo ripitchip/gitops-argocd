@@ -26,6 +26,20 @@ spec:
                 memory: 128Mi
           ui:
             enabled: true
+            ingress:
+              enabled: true
+              className: traefik
+              annotations:
+                traefik.ingress.kubernetes.io/router.entrypoints: websecure
+                traefik.ingress.kubernetes.io/router.tls: "true"
+                traefik.ingress.kubernetes.io/router.middlewares: auth-oauth-auth@kubernetescrd
+                cert-manager.io/cluster-issuer: "letsencrypt-prod"
+              hosts:
+                - hubble.foobarbaz.fr
+              tls:
+                - secretName: hubble-ui-tls
+                  hosts:
+                    - hubble.foobarbaz.fr
             podSecurityContext:
               enabled: true
               runAsUser: 4321
