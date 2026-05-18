@@ -106,9 +106,12 @@ spec:
             - { name: LDAP_LISTEN_ADDRESSES, value: "ldap://:8389/" }
           volumeMounts:
             - { name: ldap-data, mountPath: /bitnami/openldap, subPath: ldap-data }
+            - { name: openldap-run, mountPath: /opt/bitnami/openldap/var/run }
       volumes:
         - name: ldap-data
           persistentVolumeClaim: { claimName: openldap-pvc-static }
+        - name: openldap-run
+          emptyDir: {}
 ---
 # --- KEYCLOAK ---
 apiVersion: v1
