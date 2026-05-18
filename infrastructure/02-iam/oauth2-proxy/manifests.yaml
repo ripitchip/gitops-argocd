@@ -1,0 +1,104 @@
+# 1. ExternalSecret for OAuth2 Proxy (Wave -7)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: oauth2-proxy-secrets-sync
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "-7" }
+spec:
+  refreshInterval: "15s"
+  secretStoreRef: { name: vault-backend, kind: SecretStore }
+  target:
+    name: oauth2-proxy-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: client-id
+      remoteRef: { key: oauth2-proxy, property: client_id }
+    - secretKey: client-secret
+      remoteRef: { key: oauth2-proxy, property: client_secret }
+    - secretKey: cookie-secret
+      remoteRef: { key: oauth2-proxy, property: cookie_secret }
+---
+# 2. OAuth2 Proxy Deployment (Wave 5)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2-proxy
+  namespace: auth
+  annotations: { argocd.argoproj.io/sync-wave: "5" }
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        app: oauth2-proxy
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+      containers:
+      - name: oauth2-proxy
+        image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+        env:
+        - name: OAUTH2_PROXY_HTTP_ADDRESS
+          value: "0.0.0.0:4180"
+        - name: OAUTH2_PROXY_PROVIDER
+          value: "oidc"
+        - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+          value: "https://auth.foobarbaz.fr/realms/master"
+        - name: OAUTH2_PROXY_CLIENT_ID
+          valueFrom:
+            secretKeyRef: { name: oauth2-proxy-secrets, key: client-id }
+        - name: OAUTH2_PROXY_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef: { name: oauth2-proxy-secrets, key: client-secret }
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          valueFrom:
+            secretKeyRef: { name: oauth2-proxy-secrets, key: cookie-secret }
+        - name: OAUTH2_PROXY_COOKIE_DOMAINS
+          value: ".foobarbaz.fr"
+        - name: OAUTH2_PROXY_WHITELIST_DOMAINS
+          value: ".foobarbaz.fr"
+        - name: OAUTH2_PROXY_EMAIL_DOMAINS
+          value: "*"
+        - name: OAUTH2_PROXY_REVERSE_PROXY
+          value: "true"
+        - name: OAUTH2_PROXY_UPSTREAMS
+          value: "static://200"
+---
+# 3. OAuth2 Proxy Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth2-proxy
+  namespace: auth
+spec:
+  ports:
+  - name: http
+    port: 4180
+    protocol: TCP
+    targetPort: 4180
+  selector:
+    app: oauth2-proxy
+---
+# 4. Traefik ForwardAuth Middleware
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oauth-auth
+  namespace: auth
+spec:
+  forwardAuth:
+    address: http://oauth2-proxy.auth.svc.cluster.local:4180
+    trustForwardHeader: true
+    authResponseHeaders:
+      - X-Auth-Request-User
+      - X-Auth-Request-Email
+      - X-Auth-Request-Access-Token
+      - Authorization
