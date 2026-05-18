@@ -44,3 +44,10 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: auth
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
