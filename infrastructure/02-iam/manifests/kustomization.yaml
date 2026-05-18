@@ -7,7 +7,7 @@ resources:
   - external-secrets.yaml
   - storage.yaml
   - app.yaml
-  - ../oauth2-proxy/manifests.yaml
+  - oauth2-proxy/manifests.yaml
 
 labels:
   - pairs:
