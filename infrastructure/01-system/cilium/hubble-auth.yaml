@@ -1,0 +1,42 @@
+# 1. Bridge Service to reach OAuth2 Proxy (in auth namespace) from kube-system
+apiVersion: v1
+kind: Service
+metadata:
+  name: hubble-oauth2-bridge
+  namespace: kube-system
+spec:
+  type: ExternalName
+  externalName: oauth2-proxy.auth.svc.cluster.local
+  ports:
+  - port: 4180
+    protocol: TCP
+    targetPort: 4180
+
+---
+# 2. Dedicated Ingress for Hubble OAuth2 Callbacks (No Auth Middleware here)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hubble-ui-oauth2
+  namespace: kube-system
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: hubble.foobarbaz.fr
+    http:
+      paths:
+      - path: /oauth2/
+        pathType: Prefix
+        backend:
+          service:
+            name: hubble-oauth2-bridge
+            port:
+              number: 4180
+  tls:
+  - hosts:
+    - hubble.foobarbaz.fr
+    secretName: hubble-ui-tls
