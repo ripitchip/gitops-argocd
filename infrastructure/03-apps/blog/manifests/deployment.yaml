@@ -22,7 +22,16 @@ spec:
           image: registry.gitlab.com/ripitchip/new-portfolio:1.0.7
           ports:
             - containerPort: 8080
-
+          env:
+            - name: NGINX_ENTRYPOINT_QUIET_LOGS
+              value: "1"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: run
+              mountPath: /run
+            - name: var-cache
+              mountPath: /var/cache/nginx
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -38,3 +47,10 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+        - name: var-cache
+          emptyDir: {}
