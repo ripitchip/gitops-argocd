@@ -69,3 +69,10 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+    - toEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "4244"
+              protocol: TCP
