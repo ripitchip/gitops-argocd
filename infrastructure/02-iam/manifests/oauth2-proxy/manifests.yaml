@@ -42,6 +42,15 @@ spec:
       containers:
       - name: oauth2-proxy
         image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 2000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
         ports:
         - containerPort: 4180
           protocol: TCP
