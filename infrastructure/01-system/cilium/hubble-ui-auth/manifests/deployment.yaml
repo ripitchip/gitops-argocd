@@ -15,14 +15,17 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 2000
+        runAsUser: 5678
+        runAsGroup: 5678
+        fsGroup: 5678
       containers:
         - name: oauth2-proxy
           image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
-            runAsUser: 2000
+            runAsUser: 5678
+            runAsGroup: 5678
             capabilities:
               drop:
                 - ALL
