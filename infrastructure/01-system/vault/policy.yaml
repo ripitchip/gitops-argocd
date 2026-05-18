@@ -26,6 +26,8 @@ spec:
             io.kubernetes.pod.namespace: traefik
         - matchLabels:
             io.kubernetes.pod.namespace: falco
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
       toPorts:
         - ports:
             - port: "8200"
