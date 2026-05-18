@@ -93,6 +93,10 @@ spec:
             secretKeyRef: { name: oauth2-proxy-secrets, key: cookie-secret }
         - name: OAUTH2_PROXY_COOKIE_DOMAINS
           value: ".foobarbaz.fr"
+        - name: OAUTH2_PROXY_COOKIE_SECURE
+          value: "true"
+        - name: OAUTH2_PROXY_COOKIE_SAMESITE
+          value: "lax"
         - name: OAUTH2_PROXY_WHITELIST_DOMAINS
           value: ".foobarbaz.fr"
         - name: OAUTH2_PROXY_EMAIL_DOMAINS
@@ -104,7 +108,7 @@ spec:
         - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
           value: "true"
         - name: OAUTH2_PROXY_UPSTREAMS
-          value: "static://200"
+          value: "static://202"
 ---
 # 3. OAuth2 Proxy Service
 apiVersion: v1
