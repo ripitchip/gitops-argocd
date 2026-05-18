@@ -19,7 +19,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: hugo
-          image: registry.gitlab.com/ripitchip/new-portfolio:1.0.6
+          image: registry.gitlab.com/ripitchip/new-portfolio:1.0.7
           ports:
             - containerPort: 80
           securityContext:
