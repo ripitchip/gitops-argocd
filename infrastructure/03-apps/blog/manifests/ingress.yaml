@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hugo-blog
+  name: blog
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
@@ -16,10 +16,10 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: hugo-blog
+            name: blog
             port:
               number: 80
   tls:
   - hosts:
     - foobarbaz.fr
-    secretName: hugo-blog-main-tls
+    secretName: blog-main-tls

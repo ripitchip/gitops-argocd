@@ -1,11 +1,11 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: hugo-blog-isolation
+  name: blog-isolation
 spec:
   endpointSelector:
     matchLabels:
-      app: hugo-blog
+      app: blog
   ingress:
     - fromEndpoints:
         - matchLabels:

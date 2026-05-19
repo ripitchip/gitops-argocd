@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hugo-blog
+  name: blog
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hugo-blog
+      app: blog
   template:
     metadata:
       labels:
-        app: hugo-blog
+        app: blog
     spec:
       securityContext:
         runAsNonRoot: true
@@ -18,8 +18,9 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
       containers:
-        - name: hugo
+        - name: blog
           image: ghcr.io/ripitchip/blog:0.1.0
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
