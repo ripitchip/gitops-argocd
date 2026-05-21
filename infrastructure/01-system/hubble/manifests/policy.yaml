@@ -6,24 +6,16 @@ metadata:
 spec:
   endpointSelector: {} # Appliqué à tout le namespace hubble
   ingress:
-    # 1. Autoriser Traefik vers le Proxy OAuth2
+    # 1. Autoriser Traefik vers l'UI Hubble
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
             "app.kubernetes.io/name": traefik
       toPorts:
         - ports:
-            - port: "4180"
-              protocol: TCP
-    # 2. Autoriser le Proxy vers l'UI
-    - fromEndpoints:
-        - matchLabels:
-            k8s-app: oauth2-proxy-hubble
-      toPorts:
-        - ports:
             - port: "8080"
               protocol: TCP
-    # 3. Autoriser l'UI vers le Relay
+    # 2. Autoriser l'UI vers le Relay
     - fromEndpoints:
         - matchLabels:
             k8s-app: hubble-ui
@@ -51,13 +43,6 @@ spec:
         - ports:
             - port: "4244"
               protocol: TCP
-    # 3. Autoriser l'authentification vers Keycloak (monde extérieur/auth.foobarbaz.fr)
-    - toEntities:
-        - world
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
-    # 4. Autoriser Hubble UI vers Kubernetes API
+    # 3. Autoriser Hubble UI vers Kubernetes API
     - toEntities:
         - kube-apiserver

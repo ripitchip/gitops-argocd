@@ -4,8 +4,5 @@ kind: Kustomization
 resources:
   - relay.yaml
   - ui.yaml
-  - auth-secrets.yaml
-  - auth-deployment.yaml
-  - auth-service.yaml
   - ingress.yaml
   - policy.yaml
