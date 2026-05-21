@@ -13,8 +13,13 @@ spec:
     targetRevision: 3.7.4
     helm:
       values: |
+        rest:
+          enabled: true
         ui:
           enabled: true
+          plugins:
+            trivy: true
+            kyverno: true
           resources:
             limits:
               cpu: 200m
@@ -38,7 +43,10 @@ spec:
               type: RuntimeDefault
           ingress:
             enabled: false
-          policyReporter:
+        plugin:
+          trivy:
+            enabled: true
+        policyReporter:
           templateDir: /app/templates
           resources:
             limits:

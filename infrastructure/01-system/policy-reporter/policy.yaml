@@ -48,10 +48,18 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-    # 2. Kubernetes API access
+    # 2. Access to the Trivy Plugin
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: policy-reporter-trivy
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    # 3. Kubernetes API access
     - toEntities:
         - kube-apiserver
-    # 3. DNS Resolution
+    # 4. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -60,3 +68,44 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: policy-reporter-trivy-egress
+  namespace: policy-reporter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: policy-reporter-trivy
+  egress:
+    # 1. Kubernetes API access
+    - toEntities:
+        - kube-apiserver
+    # 2. DNS Resolution
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: policy-reporter-trivy-ingress
+  namespace: policy-reporter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: policy-reporter-trivy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: policy-reporter-ui
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
