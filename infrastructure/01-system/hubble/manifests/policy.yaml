@@ -15,14 +15,6 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-    # 2. Autoriser l'UI vers le Relay
-    - fromEndpoints:
-        - matchLabels:
-            k8s-app: hubble-ui
-      toPorts:
-        - ports:
-            - port: "4245"
-              protocol: TCP
 
   egress:
     # 1. Autoriser tout le namespace à contacter le DNS
@@ -34,14 +26,14 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
-    # 2. Autoriser le Relay vers les agents Cilium (kube-system)
+    # 2. Autoriser Hubble UI vers le Relay dans kube-system
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s-app": cilium
+            "k8s-app": hubble-relay
       toPorts:
         - ports:
-            - port: "4244"
+            - port: "80"
               protocol: TCP
     # 3. Autoriser Hubble UI vers Kubernetes API
     - toEntities:
