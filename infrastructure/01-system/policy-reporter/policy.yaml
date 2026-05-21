@@ -31,10 +31,10 @@ spec:
     matchLabels:
       app.kubernetes.io/name: policy-reporter-ui
   ingress:
-    # Allow Traefik to access UI
+    # Allow OAuth2 Proxy to access UI
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik
+            k8s-app: oauth2-proxy-policy-reporter
       toPorts:
         - ports:
             - port: "8080"
