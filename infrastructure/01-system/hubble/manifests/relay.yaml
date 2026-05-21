@@ -15,9 +15,23 @@ spec:
       labels:
         k8s-app: hubble-relay
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: hubble-relay
           image: quay.io/cilium/hubble-relay:v1.16.1
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           command:
             - hubble-relay
           args:
