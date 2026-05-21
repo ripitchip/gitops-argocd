@@ -9,4 +9,5 @@ resources:
   - cert-manager
   - kyverno
   - trivy
+  - trivy-adapter
   - policy-reporter/policy-reporter-app-definition.yaml
