@@ -10,9 +10,11 @@ spec:
   source:
     repoURL: 'https://fjogeleit.github.io/trivy-operator-polr-adapter'
     chart: trivy-operator-polr-adapter
-    targetRevision: 0.12.0
+    targetRevision: 0.11.2
     helm:
       values: |
+        crds:
+          install: true
         adapters:
           vulnerabilityReports:
             enabled: true
