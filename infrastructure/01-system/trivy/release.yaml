@@ -15,10 +15,48 @@ spec:
       values: |
         trivy:
           ignoreUnfixed: true
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
         operator:
           scanJobTimeout: 5m
+          resources:
+            limits:
+              cpu: 200m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
         serviceMonitor:
           enabled: false
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          fsGroup: 65534
+        securityContext:
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+        trivyOperator:
+          scanJobPodTemplatePodSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 10000
+            fsGroup: 10000
+          scanJobPodTemplateContainerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10000
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: trivy-system
