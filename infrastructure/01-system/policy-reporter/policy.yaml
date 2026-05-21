@@ -1,0 +1,50 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: policy-reporter-egress
+  namespace: policy-reporter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: policy-reporter
+  egress:
+    # 1. Kubernetes API access to read reports
+    - toEntities:
+        - kube-apiserver
+    # 2. DNS Resolution
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: policy-reporter-ui-ingress
+  namespace: policy-reporter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: policy-reporter-ui
+  ingress:
+    # Allow Traefik to access UI
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: traefik
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    # Access to the backend
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: policy-reporter
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
