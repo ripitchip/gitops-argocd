@@ -36,7 +36,7 @@ spec:
             - hubble-relay
           args:
             - serve
-            - --peer-target=hubble-peer.kube-system.svc.cluster.local:443
+            - --peer-service=hubble-peer.kube-system.svc.cluster.local:443
           ports:
             - containerPort: 4245
               name: grpc
