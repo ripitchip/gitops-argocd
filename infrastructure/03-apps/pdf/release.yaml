@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/ripitchip/gitops-argocd.git'
-    path: stirling-pdf-chart
+    path: infrastructure/03-apps/pdf
     targetRevision: HEAD
     helm:
       values: |
