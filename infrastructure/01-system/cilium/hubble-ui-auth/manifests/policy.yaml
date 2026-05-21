@@ -19,7 +19,7 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": hubble
+            "k8s:io.kubernetes.pod.namespace": kube-system
             "k8s:k8s-app": hubble-ui
       toPorts:
         - ports:
