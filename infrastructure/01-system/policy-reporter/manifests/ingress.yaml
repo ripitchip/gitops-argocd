@@ -134,14 +134,26 @@ spec:
       remoteRef:
         key: oauth2-proxy
         property: policy-reporter_client_id
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore
     - secretKey: client-secret
       remoteRef:
         key: oauth2-proxy
         property: policy-reporter_client_secret
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore
     - secretKey: cookie-secret
       remoteRef:
         key: oauth2-proxy
         property: cookie_secret
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
