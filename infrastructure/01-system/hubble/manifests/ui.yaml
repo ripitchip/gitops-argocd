@@ -1,4 +1,32 @@
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hubble-ui
+  namespace: hubble
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hubble-ui
+rules:
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: hubble-ui
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: hubble-ui
+subjects:
+- kind: ServiceAccount
+  name: hubble-ui
+  namespace: hubble
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: hubble-ui-nginx
@@ -43,6 +71,7 @@ spec:
       labels:
         k8s-app: hubble-ui
     spec:
+      serviceAccountName: hubble-ui
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
