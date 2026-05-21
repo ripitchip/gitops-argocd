@@ -113,32 +113,35 @@ spec:
     - policy-reporter.foobarbaz.fr
     secretName: policy-reporter-tls
 ---
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: oauth2-proxy-policy-reporter
+  name: oauth2-proxy-policy-reporter-secrets
   namespace: policy-reporter
+  annotations:
+    argocd.argoproj.io/sync-wave: "-7"
 spec:
-  refreshInterval: 1h
+  refreshInterval: "15s"
   secretStoreRef:
     name: vault-backend
     kind: ClusterSecretStore
   target:
     name: oauth2-proxy-policy-reporter
     creationPolicy: Owner
+    deletionPolicy: Retain
   data:
   - secretKey: client-id
     remoteRef:
       key: oauth2-proxy
-      property: client-id
+      property: client_id
   - secretKey: client-secret
     remoteRef:
       key: oauth2-proxy
-      property: client-secret
+      property: client_secret
   - secretKey: cookie-secret
     remoteRef:
       key: oauth2-proxy
-      property: cookie-secret
+      property: cookie_secret
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -150,33 +153,23 @@ spec:
     matchLabels:
       k8s-app: oauth2-proxy-policy-reporter
   ingress:
-    # Allow Traefik to access OAuth2-Proxy
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik
+            "k8s:io.kubernetes.pod.namespace": traefik
+            "k8s:app.kubernetes.io/name": traefik
       toPorts:
         - ports:
             - port: "4180"
               protocol: TCP
   egress:
-    # 1. Access to the UI
     - toEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: policy-reporter-ui
+            "k8s:io.kubernetes.pod.namespace": policy-reporter
+            "app.kubernetes.io/name": policy-reporter-ui
       toPorts:
         - ports:
             - port: "8080"
               protocol: TCP
-    # 2. Access to Keycloak (Identity Provider)
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: auth
-            app.kubernetes.io/name: keycloak
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
-    # 3. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -185,3 +178,9 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
