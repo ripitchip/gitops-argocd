@@ -22,6 +22,9 @@ spec:
             requests:
               cpu: 100m
               memory: 512Mi
+        trivyOperator:
+          scanJobTolerations:
+            - operator: Exists
         operator:
           scanJobTimeout: 5m
           nodeCollectorEnabled: true
@@ -34,9 +37,7 @@ spec:
               memory: 256Mi
         nodeCollector:
           tolerations:
-            - effect: NoSchedule
-              key: node-role.kubernetes.io/control-plane
-              operator: Exists
+            - operator: Exists
         serviceMonitor:
           enabled: false
         podSecurityContext:
