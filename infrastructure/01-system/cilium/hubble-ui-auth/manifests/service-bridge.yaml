@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hubble-ui
+  namespace: hubble
+spec:
+  type: ExternalName
+  externalName: hubble-ui.kube-system.svc.cluster.local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hubble-relay
+  namespace: hubble
+spec:
+  type: ExternalName
+  externalName: hubble-relay.kube-system.svc.cluster.local
