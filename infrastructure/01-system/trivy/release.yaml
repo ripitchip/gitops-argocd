@@ -27,7 +27,7 @@ spec:
             - operator: Exists
         operator:
           scanJobTimeout: 5m
-          nodeCollectorEnabled: true
+          clusterComplianceEnabled: true
           resources:
             limits:
               cpu: 200m
