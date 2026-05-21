@@ -37,17 +37,8 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           ingress:
-            enabled: true
-            annotations:
-              traefik.ingress.kubernetes.io/router.entrypoints: websecure
-              traefik.ingress.kubernetes.io/router.tls: "true"
-            hosts:
-              - host: policy-reporter.foobarbaz.fr
-                paths:
-                  - path: /
-                    pathType: ImplementationSpecific
-
-        policyReporter:
+            enabled: false
+          policyReporter:
           templateDir: /app/templates
           resources:
             limits:
