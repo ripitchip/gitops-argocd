@@ -24,7 +24,7 @@ spec:
               memory: 512Mi
         operator:
           scanJobTimeout: 5m
-          nodeCollectorEnabled: false
+          nodeCollectorEnabled: true
           resources:
             limits:
               cpu: 200m
@@ -32,6 +32,14 @@ spec:
             requests:
               cpu: 100m
               memory: 256Mi
+        nodeCollector:
+          tolerations:
+            - key: "node-role.kubernetes.io/control-plane"
+              operator: "Exists"
+              effect: "NoSchedule"
+            - key: "node-role.kubernetes.io/master"
+              operator: "Exists"
+              effect: "NoSchedule"
         serviceMonitor:
           enabled: false
         podSecurityContext:
