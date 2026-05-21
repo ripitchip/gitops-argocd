@@ -36,16 +36,20 @@ spec:
             - hubble-relay
           args:
             - serve
+            - --peer-service=hubble-peer.kube-system.svc.cluster.local:443
+            - --peer-ca-file=/var/lib/hubble-relay/tls/ca.crt
+            - --peer-client-cert-file=/var/lib/hubble-relay/tls/client.crt
+            - --peer-client-key-file=/var/lib/hubble-relay/tls/client.key
           env:
-            - name: HUBBLE_PEER_SERVICE
-              value: "hubble-peer.kube-system.svc.cluster.local:443"
             - name: HUBBLE_INSECURE_SERVER
               value: "true"
-            - name: HUBBLE_TLS_TO_RELAY_ENABLED
-              value: "false"
           ports:
             - containerPort: 4245
               name: grpc
+          volumeMounts:
+            - name: hubble-relay-tls
+              mountPath: /var/lib/hubble-relay/tls
+              readOnly: true
           resources:
             limits:
               cpu: 200m
@@ -53,6 +57,11 @@ spec:
             requests:
               cpu: 50m
               memory: 128Mi
+      volumes:
+        - name: hubble-relay-tls
+          secret:
+            secretName: hubble-relay-client-certs
+            optional: true
 ---
 apiVersion: v1
 kind: Service
