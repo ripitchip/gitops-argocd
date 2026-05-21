@@ -1,8 +1,8 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: hubble-ui-ingress-system
-  namespace: kube-system
+  name: hubble-ui-ingress
+  namespace: hubble
 spec:
   endpointSelector:
     matchLabels:
@@ -21,7 +21,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: hubble-relay-ingress
-  namespace: kube-system
+  namespace: hubble
 spec:
   endpointSelector:
     matchLabels:

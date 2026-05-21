@@ -13,10 +13,13 @@ spec:
     targetRevision: 1.19.4
     helm:
       values: |
+        commonAnnotations:
+          trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037"
         hubble:
           enabled: true
           relay:
             enabled: true
+            namespace: hubble
             resources:
               limits:
                 cpu: 200m
@@ -26,6 +29,7 @@ spec:
                 memory: 128Mi
           ui:
             enabled: true
+            namespace: hubble
             ingress:
               enabled: false
             podSecurityContext:
