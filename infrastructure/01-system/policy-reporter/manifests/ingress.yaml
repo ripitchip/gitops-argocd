@@ -168,7 +168,7 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
-            "k8s:app.kubernetes.io/name": traefik
+            "app.kubernetes.io/name": traefik
       toPorts:
         - ports:
             - port: "4180"
@@ -190,6 +190,9 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
     - toEntities:
         - world
       toPorts:
