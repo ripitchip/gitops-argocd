@@ -54,7 +54,7 @@ spec:
               type: RuntimeDefault
           env:
             - name: FLOWS_API_ADDR
-              value: "hubble-relay.kube-system.svc.cluster.local:80"
+              value: "hubble-relay.kube-system.svc.cluster.local:4245"
           ports:
             - containerPort: 8090
           resources:
