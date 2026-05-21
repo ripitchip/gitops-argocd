@@ -22,17 +22,20 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
-          securityContext:
+          podSecurityContext:
             runAsNonRoot: true
             runAsUser: 1000
-          containerSecurityContext:
+            runAsGroup: 1000
+          securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
           ingress:
             enabled: true
             annotations:
@@ -61,7 +64,7 @@ spec:
             capabilities:
               drop:
                 - ALL
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
 
