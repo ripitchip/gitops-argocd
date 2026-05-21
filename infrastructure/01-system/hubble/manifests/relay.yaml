@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hubble-relay
+  namespace: hubble
+  labels:
+    k8s-app: hubble-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: hubble-relay
+  template:
+    metadata:
+      labels:
+        k8s-app: hubble-relay
+    spec:
+      containers:
+        - name: hubble-relay
+          image: quay.io/cilium/hubble-relay:v1.16.1
+          command:
+            - hubble-relay
+          args:
+            - serve
+            - --peer-target=hubble-peer.kube-system.svc.cluster.local:443
+          ports:
+            - containerPort: 4245
+              name: grpc
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hubble-relay
+  namespace: hubble
+spec:
+  ports:
+    - port: 80
+      targetPort: 4245
+      name: grpc
+  selector:
+    k8s-app: hubble-relay

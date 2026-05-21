@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hubble-ui
+  namespace: hubble
+  labels:
+    k8s-app: hubble-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: hubble-ui
+  template:
+    metadata:
+      labels:
+        k8s-app: hubble-ui
+    spec:
+      containers:
+        - name: frontend
+          image: quay.io/cilium/hubble-ui:v0.13.1
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+        - name: backend
+          image: quay.io/cilium/hubble-ui-backend:v0.13.1
+          env:
+            - name: FLOWS_API_ADDR
+              value: "hubble-relay:80"
+          ports:
+            - containerPort: 8081
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hubble-ui
+  namespace: hubble
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: http
+  selector:
+    k8s-app: hubble-ui

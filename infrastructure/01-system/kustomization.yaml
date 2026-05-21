@@ -1,8 +1,6 @@
 resources:
-  - cilium/hubble-namespace.yaml
   - cilium/release.yaml
   - cilium/policy.yaml
-  - cilium/hubble-ui-auth/app-definition.yaml
   - external-secrets
   - vault
   - argocd
@@ -10,4 +8,5 @@ resources:
   - kyverno
   - trivy
   - trivy-adapter
+  - hubble/app-definition.yaml
   - policy-reporter/policy-reporter-app-definition.yaml

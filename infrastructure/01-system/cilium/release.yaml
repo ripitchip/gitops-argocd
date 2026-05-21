@@ -18,37 +18,9 @@ spec:
         hubble:
           enabled: true
           relay:
-            enabled: true
-            namespace: hubble
-            resources:
-              limits:
-                cpu: 200m
-                memory: 256Mi
-              requests:
-                cpu: 50m
-                memory: 128Mi
+            enabled: false
           ui:
-            enabled: true
-            namespace: hubble
-            ingress:
-              enabled: false
-            podSecurityContext:
-              enabled: true
-              runAsUser: 4321
-              runAsGroup: 4321
-              fsGroup: 4321
-            securityContext:
-              enabled: true
-              runAsUser: 4321
-              runAsGroup: 4321
-              runAsNonRoot: true
-            resources:
-              limits:
-                cpu: 200m
-                memory: 256Mi
-              requests:
-                cpu: 50m
-                memory: 128Mi
+            enabled: false
         operator:
           clusterPoolIPv4PodCIDRList:
           - 10.244.0.0/16
