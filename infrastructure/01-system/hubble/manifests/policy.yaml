@@ -9,19 +9,19 @@ spec:
     # 1. Autoriser Traefik vers l'UI Hubble
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik
-            "app.kubernetes.io/name": traefik
+            io.kubernetes.pod.namespace: traefik
+            app.kubernetes.io/name: traefik
       toPorts:
         - ports:
-            - port: "8080"
+            - port: "8081"
               protocol: TCP
 
   egress:
     # 1. Autoriser tout le namespace à contacter le DNS
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -29,8 +29,8 @@ spec:
     # 2. Autoriser Hubble UI vers le Relay dans kube-system
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s-app": hubble-relay
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: hubble-relay
       toPorts:
         - ports:
             - port: "4245"
