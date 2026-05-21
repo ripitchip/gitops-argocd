@@ -13,8 +13,6 @@ spec:
     targetRevision: 0.11.2
     helm:
       values: |
-        crds:
-          install: true
         adapters:
           vulnerabilityReports:
             enabled: true
