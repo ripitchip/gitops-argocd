@@ -33,7 +33,7 @@ spec:
             k8s-app: hubble-relay
       toPorts:
         - ports:
-            - port: "4245"
+            - port: "80"
               protocol: TCP
     # 3. Autoriser Hubble UI vers Kubernetes API
     - toEntities:
