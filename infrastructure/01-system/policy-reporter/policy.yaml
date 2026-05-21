@@ -40,7 +40,7 @@ spec:
             - port: "8080"
               protocol: TCP
   egress:
-    # Access to the backend
+    # 1. Access to the backend
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: policy-reporter
@@ -48,3 +48,15 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    # 2. Kubernetes API access
+    - toEntities:
+        - kube-apiserver
+    # 3. DNS Resolution
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
