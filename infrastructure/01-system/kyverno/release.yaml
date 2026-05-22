@@ -22,43 +22,47 @@ spec:
               labelSelector:
                 matchLabels:
                   app.kubernetes.io/instance: kyverno
-          resources:
-            limits:
-              cpu: 1000m
-              memory: 1024Mi
-            requests:
-              cpu: 100m
-              memory: 256Mi
+          container:
+            resources:
+              limits:
+                cpu: 1000m
+                memory: 1024Mi
+              requests:
+                cpu: 100m
+                memory: 256Mi
 
         backgroundController:
           replicas: 2
-          resources:
-            limits:
-              cpu: 1000m
-              memory: 1024Mi
-            requests:
-              cpu: 100m
-              memory: 256Mi
+          container:
+            resources:
+              limits:
+                cpu: 1000m
+                memory: 1024Mi
+              requests:
+                cpu: 100m
+                memory: 256Mi
 
         cleanupController:
           replicas: 2
-          resources:
-            limits:
-              cpu: 500m
-              memory: 512Mi
-            requests:
-              cpu: 50m
-              memory: 128Mi
+          container:
+            resources:
+              limits:
+                cpu: 500m
+                memory: 512Mi
+              requests:
+                cpu: 50m
+                memory: 128Mi
 
         reportsController:
           replicas: 2
-          resources:
-            limits:
-              cpu: 1000m
-              memory: 1024Mi
-            requests:
-              cpu: 100m
-              memory: 256Mi
+          container:
+            resources:
+              limits:
+                cpu: 1000m
+                memory: 1024Mi
+              requests:
+                cpu: 100m
+                memory: 256Mi
 
         features:
           metricsConfig:
