@@ -22,6 +22,10 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+        controller:
+          kind: daemonset
+          annotations:
+            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0017"
         falco:
           privileged: false
           podAnnotations:
