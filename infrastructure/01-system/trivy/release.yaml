@@ -22,6 +22,22 @@ spec:
             memory: 256Mi
         trivy:
           ignoreUnfixed: true
+          ignoreFile: |
+            # Falco exceptions
+            DaemonSet/falco/falco-helm:AVD-KSV-0017
+            DaemonSet/falco/falco-helm:AVD-KSV-0021
+            # Cilium exceptions
+            DaemonSet/kube-system/cilium:AVD-KSV-0017
+            DaemonSet/kube-system/cilium:AVD-KSV-0009
+            DaemonSet/kube-system/cilium:AVD-KSV-0037
+            DaemonSet/kube-system/cilium-envoy:AVD-KSV-0017
+            DaemonSet/kube-system/cilium-envoy:AVD-KSV-0009
+            DaemonSet/kube-system/cilium-envoy:AVD-KSV-0037
+            Deployment/kube-system/cilium-operator:AVD-KSV-0017
+            Deployment/kube-system/cilium-operator:AVD-KSV-0009
+            # Kube-Proxy exceptions
+            DaemonSet/kube-system/kube-proxy:AVD-KSV-0017
+            DaemonSet/kube-system/kube-proxy:AVD-KSV-0009
           resources:
             limits:
               cpu: 500m
