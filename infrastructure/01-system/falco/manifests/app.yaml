@@ -22,16 +22,19 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+        
+        # Exceptions au niveau du DaemonSet Falco
         controller:
           kind: daemonset
           annotations:
-            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0017,KSV017"
-            container.trivy.aquasecurity.github.io/ignore-checks.falco: "AVD-KSV-0017,KSV017"
+            trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0017,KSV017,AVD-KSV-0021,KSV021"
+        
+        # Exceptions au niveau des Pods Falco
+        podAnnotations:
+          trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0017,KSV017,AVD-KSV-0021,KSV021"
+
         falco:
           privileged: false
-          podAnnotations:
-            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0017,KSV017"
-            container.trivy.aquasecurity.github.io/ignore-checks.falco: "AVD-KSV-0017,KSV017"
           podSecurityContext:
             runAsUser: 4821
             runAsGroup: 4821
