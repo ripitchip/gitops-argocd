@@ -23,6 +23,7 @@ spec:
               namespaces:
                 - kube-system
                 - cilium-system
+                - falco
           - resources:
               selector:
                 matchLabels:
