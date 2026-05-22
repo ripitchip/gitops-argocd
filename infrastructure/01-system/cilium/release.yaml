@@ -14,23 +14,17 @@ spec:
     helm:
       values: |
         annotations:
-          trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-          container.trivy.aquasecurity.github.io/ignore-checks.cilium-agent: "AVD-KSV-0017,KSV017"
-          container.trivy.aquasecurity.github.io/ignore-checks.mount-bpf-fs: "AVD-KSV-0017,KSV017"
+          trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
         commonAnnotations:
-          trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-          container.trivy.aquasecurity.github.io/ignore-checks.cilium-agent: "AVD-KSV-0017,KSV017"
-          container.trivy.aquasecurity.github.io/ignore-checks.mount-bpf-fs: "AVD-KSV-0017,KSV017"
+          trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
         hubble:
           enabled: true
           relay:
             enabled: true
             annotations:
-              trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-              container.trivy.aquasecurity.github.io/ignore-checks.hubble-relay: "AVD-KSV-0017,KSV017"
+              trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
             podAnnotations:
-              trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-              container.trivy.aquasecurity.github.io/ignore-checks.hubble-relay: "AVD-KSV-0017,KSV017"
+              trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
             resources:
               limits:
                 cpu: 200m
@@ -40,11 +34,9 @@ spec:
                 memory: 128Mi
         envoy:
           annotations:
-            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-            container.trivy.aquasecurity.github.io/ignore-checks.cilium-envoy: "AVD-KSV-0017,KSV017"
+            trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
           podAnnotations:
-            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-            container.trivy.aquasecurity.github.io/ignore-checks.cilium-envoy: "AVD-KSV-0017,KSV017"
+            trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
           resources:
             limits:
               cpu: 500m
@@ -56,11 +48,9 @@ spec:
           enabled: false
         operator:
           annotations:
-            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-            container.trivy.aquasecurity.github.io/ignore-checks.cilium-operator: "AVD-KSV-0017,KSV017"
+            trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
           podAnnotations:
-            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-            container.trivy.aquasecurity.github.io/ignore-checks.cilium-operator: "AVD-KSV-0017,KSV017"
+            trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
           clusterPoolIPv4PodCIDRList:
           - 10.244.0.0/16
           resources:
@@ -71,9 +61,7 @@ spec:
               cpu: 100m
               memory: 256Mi
         podAnnotations:
-          trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,KSV017"
-          container.trivy.aquasecurity.github.io/ignore-checks.cilium-agent: "AVD-KSV-0017,KSV017"
-          container.trivy.aquasecurity.github.io/ignore-checks.mount-bpf-fs: "AVD-KSV-0017,KSV017"
+          trivy.security.aquasecurity.github.io/ignore-checks: "AVD-KSV-0037,AVD-KSV-0009,AVD-KSV-0017,AVD-KSV-0021"
         resources:
           limits:
             cpu: 500m
