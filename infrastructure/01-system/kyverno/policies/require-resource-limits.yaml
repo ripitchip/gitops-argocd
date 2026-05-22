@@ -6,7 +6,6 @@ metadata:
     policies.kyverno.io/title: Require Resource Limits
     policies.kyverno.io/category: Best Practices
     policies.kyverno.io/severity: medium
-    pod-policies.kyverno.io/autogen-controllers: DaemonSet,Deployment,Job,StatefulSet,CronJob
 spec:
   validationFailureAction: Audit
   background: true
