@@ -46,6 +46,13 @@ spec:
         plugin:
           trivy:
             enabled: true
+            resources:
+              limits:
+                cpu: 200m
+                memory: 256Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
         policyReporter:
           templateDir: /app/templates
           resources:

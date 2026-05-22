@@ -25,9 +25,6 @@ spec:
         trivyOperator:
           scanJobTolerations:
             - operator: Exists
-        operator:
-          scanJobTimeout: 5m
-          clusterComplianceEnabled: true
           resources:
             limits:
               cpu: 200m
@@ -35,9 +32,19 @@ spec:
             requests:
               cpu: 100m
               memory: 256Mi
+        operator:
+          scanJobTimeout: 5m
+          clusterComplianceEnabled: true
         nodeCollector:
           tolerations:
             - operator: Exists
+          resources:
+            limits:
+              cpu: 200m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
         serviceMonitor:
           enabled: false
         podSecurityContext:
