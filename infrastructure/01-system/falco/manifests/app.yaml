@@ -38,6 +38,14 @@ spec:
           json_output: true
           stdout_output: { enabled: true }
           log_level: info
+        falcoctl:
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
         resources:
           requests: { cpu: 150m, memory: 512Mi }
           limits: { cpu: 1000m, memory: 1024Mi }
