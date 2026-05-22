@@ -14,13 +14,13 @@ spec:
     helm:
       values: |
         commonAnnotations:
-          trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037"
+          trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009"
         hubble:
           enabled: true
           relay:
             enabled: true
             podAnnotations:
-              trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037"
+              trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009"
             resources:
               limits:
                 cpu: 200m
@@ -30,7 +30,7 @@ spec:
                 memory: 128Mi
         envoy:
           podAnnotations:
-            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037"
+            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009"
           resources:
             limits:
               cpu: 500m
@@ -42,7 +42,7 @@ spec:
           enabled: false
         operator:
           podAnnotations:
-            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037"
+            trivy-operator.aquasecurity.github.io/trivy-ignore-checks: "AVD-KSV-0037,AVD-KSV-0009"
           clusterPoolIPv4PodCIDRList:
           - 10.244.0.0/16
           resources:
