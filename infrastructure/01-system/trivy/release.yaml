@@ -54,6 +54,13 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 10000
+          scanJobPodTemplateResources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 2Gi
 
         serviceMonitor:
           enabled: false
