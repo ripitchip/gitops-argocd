@@ -13,24 +13,10 @@ spec:
     targetRevision: 1.19.4
     helm:
       values: |
-        # Exceptions au niveau du DaemonSet Agent
-        annotations:
-          trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0037,KSV037,AVD-KSV-0009,KSV009,AVD-KSV-0017,KSV017,AVD-KSV-0021,KSV021"
-        
-        # Exceptions au niveau des Pods Agent
-        podAnnotations:
-          trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0037,KSV037,AVD-KSV-0009,KSV009,AVD-KSV-0017,KSV017,AVD-KSV-0021,KSV021"
-
         hubble:
           enabled: true
           relay:
             enabled: true
-            # Exceptions au niveau du Deployment Hubble Relay
-            annotations:
-              trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0037,KSV037,AVD-KSV-0009,KSV009,AVD-KSV-0017,KSV017"
-            # Exceptions au niveau des Pods Hubble Relay
-            podAnnotations:
-              trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0037,KSV037,AVD-KSV-0009,KSV009,AVD-KSV-0017,KSV017"
             resources:
               limits:
                 cpu: 200m
@@ -41,12 +27,6 @@ spec:
 
         envoy:
           enabled: true
-          # Exceptions au niveau du DaemonSet Envoy
-          annotations:
-            trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0037,KSV037,AVD-KSV-0009,KSV009,AVD-KSV-0017,KSV017"
-          # Exceptions au niveau des Pods Envoy
-          podAnnotations:
-            trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0037,KSV037,AVD-KSV-0009,KSV009,AVD-KSV-0017,KSV017"
           resources:
             limits:
               cpu: 500m
@@ -57,12 +37,6 @@ spec:
 
         operator:
           enabled: true
-          # Exceptions au niveau du Deployment Operator
-          annotations:
-            trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0037,KSV037,AVD-KSV-0009,KSV009,AVD-KSV-0017,KSV017"
-          # Exceptions au niveau des Pods Operator
-          podAnnotations:
-            trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0037,KSV037,AVD-KSV-0009,KSV009,AVD-KSV-0017,KSV017"
           clusterPoolIPv4PodCIDRList:
           - 10.244.0.0/16
           resources:

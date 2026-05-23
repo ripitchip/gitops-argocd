@@ -15,24 +15,6 @@ spec:
       values: |
         driver:
           kind: modern_ebpf
-          resources:
-            limits:
-              cpu: 200m
-              memory: 256Mi
-            requests:
-              cpu: 100m
-              memory: 128Mi
-        
-        # Exceptions au niveau du DaemonSet Falco
-        controller:
-          kind: daemonset
-          annotations:
-            trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0017,KSV017,AVD-KSV-0021,KSV021"
-        
-        # Exceptions au niveau des Pods Falco
-        podAnnotations:
-          trivy-operator.aquasecurity.github.io/skip-checks: "AVD-KSV-0017,KSV017,AVD-KSV-0021,KSV021"
-
         falco:
           privileged: false
           podSecurityContext:
@@ -49,16 +31,6 @@ spec:
           json_output: true
           stdout_output: { enabled: true }
           log_level: info
-        falcoctl:
-          artifact:
-            follow:
-              resources:
-                limits:
-                  cpu: 100m
-                  memory: 128Mi
-                requests:
-                  cpu: 50m
-                  memory: 64Mi
         resources:
           requests: { cpu: 150m, memory: 512Mi }
           limits: { cpu: 1000m, memory: 1024Mi }
