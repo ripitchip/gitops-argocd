@@ -32,12 +32,12 @@ spec:
           scanJobTimeout: 5m
           clusterComplianceEnabled: false
           resources:
-            limits:
-              cpu: 200m
-              memory: 512Mi
             requests:
               cpu: 100m
               memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
 
         trivyOperator:
           scanJobTolerations:
