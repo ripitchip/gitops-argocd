@@ -77,6 +77,18 @@ spec:
 
         serviceMonitor:
           enabled: false
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          fsGroup: 65534
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 65534
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: trivy-system
