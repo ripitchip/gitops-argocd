@@ -21,6 +21,10 @@ spec:
           - resources:
               namespaces:
                 - kube-system
+          - resources:
+              selector:
+                matchLabels:
+                  trivy-operator.scan-job: "true"
       skipBackgroundRequests: true
       validate:
         allowExistingViolations: true
