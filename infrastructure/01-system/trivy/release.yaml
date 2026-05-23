@@ -13,26 +13,19 @@ spec:
     targetRevision: 0.32.1
     helm:
       values: |
+        # Root level parameters for version 0.32.1
         targetNamespaces: ""
         excludeNamespaces: "kube-*,argo*,trivy-system"
         
-        trivy:
-          ignoreUnfixed: true
-          # Skip problematic checks globally
-          skipCheckIDs: "AVD-KSV-0117,KSV117,AVD-KSV-0012,KSV012"
-          resources:
-            limits:
-              cpu: 500m
-              memory: 1Gi
-            requests:
-              cpu: 100m
-              memory: 512Mi
+        image:
+          tag: "0.32.1"
 
         operator:
           # Limit concurrency to avoid "database lock" errors
           scanJobsConcurrentLimit: 3
           scanJobTimeout: 15m
           clusterComplianceEnabled: false
+          # Explicit limits for the operator pod itself (Kyverno compliance)
           resources:
             requests:
               cpu: 100m
@@ -40,6 +33,19 @@ spec:
             limits:
               cpu: 200m
               memory: 512Mi
+
+        trivy:
+          ignoreUnfixed: true
+          # Skip problematic checks globally
+          skipCheckIDs: "AVD-KSV-0117,KSV117,AVD-KSV-0012,KSV012"
+          # Resources for the SCAN JOBS (Crucial for OOMKilled)
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 4Gi
 
         trivyOperator:
           scanJobTolerations:
@@ -56,28 +62,11 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 10000
-          # Large memory limit for heavy images (Keycloak, etc)
-          scanJobResources:
-            requests:
-              cpu: 100m
-              memory: 256Mi
-            limits:
-              cpu: 1000m
-              memory: 4Gi
-
-        nodeCollector:
-          tolerations:
-            - operator: Exists
-          resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
 
         serviceMonitor:
           enabled: false
+
+        # Global operator security context
         podSecurityContext:
           runAsNonRoot: true
           runAsUser: 65534
