@@ -21,11 +21,11 @@ spec:
           exposedSecretReports:
             enabled: true
           rbacAssessmentReports:
-            enabled: true
+            enabled: false
           infraAssessmentReports:
             enabled: true
           clusterComplianceReports:
-            enabled: true
+            enabled: false
           clusterVulnerabilityReports:
             enabled: true
         serviceMonitor:
