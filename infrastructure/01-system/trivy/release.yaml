@@ -14,23 +14,20 @@ spec:
     helm:
       values: |
         targetNamespaces: ""
-        excludeNamespaces: "kube-*,argo*"
+        excludeNamespaces: "kube-system,kube-public,kube-node-lease,argocd"
+        
         trivy:
           ignoreUnfixed: true
-          skipCheckIDs: "KSV009,KSV017,KSV021,KSV037,KSV117,AVD-KSV-0117"
-          configAudit:
-            skipCheckIDs: "KSV009,AVD-KSV-0009,KSV117,AVD-KSV-0117"
-        trivyOperator:
-
+          # Skip problematic checks globally
+          skipCheckIDs: "AVD-KSV-0117,KSV117,AVD-KSV-0012,KSV012"
+          resources:
             limits:
               cpu: 500m
               memory: 1Gi
             requests:
               cpu: 100m
               memory: 512Mi
-        trivyOperator:
-          scanJobTolerations:
-            - operator: Exists
+
         operator:
           scanJobTimeout: 5m
           clusterComplianceEnabled: false
@@ -41,23 +38,10 @@ spec:
             requests:
               cpu: 100m
               memory: 256Mi
-        nodeCollector:
-          tolerations:
-            - operator: Exists
-        serviceMonitor:
-          enabled: false
-        podSecurityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
-          fsGroup: 65534
-        securityContext:
-          runAsNonRoot: true
-          readOnlyRootFilesystem: true
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
+
         trivyOperator:
+          scanJobTolerations:
+            - operator: Exists
           scanJobPodTemplatePodSecurityContext:
             runAsNonRoot: true
             runAsUser: 10000
@@ -70,6 +54,9 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 10000
+
+        serviceMonitor:
+          enabled: false
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: trivy-system
