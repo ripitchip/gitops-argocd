@@ -14,7 +14,7 @@ spec:
     helm:
       values: |
         targetNamespaces: ""
-        excludeNamespaces: "kube-system,kube-public,kube-node-lease,argocd"
+        excludeNamespaces: "kube-*,argo*,trivy-system"
         
         trivy:
           ignoreUnfixed: true
@@ -31,7 +31,7 @@ spec:
         operator:
           # Limit concurrency to avoid "database lock" errors
           scanJobsConcurrentLimit: 3
-          scanJobTimeout: 10m
+          scanJobTimeout: 15m
           clusterComplianceEnabled: false
           resources:
             requests:
@@ -60,7 +60,7 @@ spec:
           scanJobResources:
             requests:
               cpu: 100m
-              memory: 512Mi
+              memory: 256Mi
             limits:
               cpu: 1000m
               memory: 4Gi
@@ -70,7 +70,7 @@ spec:
             - operator: Exists
           resources:
             requests:
-              cpu: 100m
+              cpu: 50m
               memory: 128Mi
             limits:
               cpu: 200m
