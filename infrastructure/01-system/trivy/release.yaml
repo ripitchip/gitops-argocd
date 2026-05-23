@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://aquasecurity.github.io/helm-charts/'
+    repoURL: "https://aquasecurity.github.io/helm-charts/"
     chart: trivy-operator
     targetRevision: 0.32.1
     helm:
@@ -16,9 +16,9 @@ spec:
         # Root level parameters for version 0.32.1
         targetNamespaces: ""
         excludeNamespaces: "kube-*,argo*,trivy-system"
-        
+
         image:
-          tag: "0.32.1"
+          tag: "0.30.1"
 
         operator:
           # Limit concurrency to avoid "database lock" errors
@@ -80,7 +80,7 @@ spec:
           runAsNonRoot: true
           runAsUser: 65534
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: "https://kubernetes.default.svc"
     namespace: trivy-system
   syncPolicy:
     automated:
