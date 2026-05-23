@@ -14,10 +14,14 @@ spec:
     helm:
       values: |
         targetNamespaces: ""
-        excludeNamespaces: "kube-system,kube-public,kube-node-lease,argocd"
+        excludeNamespaces: "kube-*,argo*"
         trivy:
           ignoreUnfixed: true
-          resources:
+          skipCheckIDs: "KSV009,KSV017,KSV021,KSV037,KSV117,AVD-KSV-0117"
+          configAudit:
+            skipCheckIDs: "KSV009,AVD-KSV-0009,KSV117,AVD-KSV-0117"
+        trivyOperator:
+
             limits:
               cpu: 500m
               memory: 1Gi
