@@ -36,8 +36,8 @@ spec:
 
         trivy:
           ignoreUnfixed: true
-          ignoreFile: "misconfigurations:\n  - id: AVD-KSV-0017\n    statement: \"Falco requires privileged access or specific capabilities to monitor system calls via kernel module or eBPF.\""
-          ignoreFileName: ".trivyignore.yaml"
+          ignoreFile: "AVD-KSV-0017"
+          ignoreFileName: ".trivyignore"
           # Resources for the SCAN JOBS (Crucial for OOMKilled)
           resources:
             requests:
