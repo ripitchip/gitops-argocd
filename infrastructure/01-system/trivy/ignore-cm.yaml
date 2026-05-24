@@ -9,4 +9,4 @@ data:
       - id: AVD-KSV-0017
         paths:
           - daemonset/falco/falco-helm
-        statement: "Falco requires privileged access to monitor system calls via kernel module or eBPF."
+        statement: "Falco requires privileged access or specific capabilities to monitor system calls via kernel module or eBPF."

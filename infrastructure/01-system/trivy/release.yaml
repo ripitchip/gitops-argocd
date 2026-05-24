@@ -38,7 +38,8 @@ spec:
           ignoreUnfixed: true
           # Skip problematic checks globally
           skipCheckIDs: "AVD-KSV-0117,KSV117,AVD-KSV-0012,KSV012"
-          configMapName: "trivy-operator-ignore-config"
+          ignoreFileConfigMapName: "trivy-operator-ignore-config"
+          ignoreFileName: ".trivyignore.yaml"
           # Resources for the SCAN JOBS (Crucial for OOMKilled)
           resources:
             requests:
