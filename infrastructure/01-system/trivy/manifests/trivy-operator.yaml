@@ -2976,6 +2976,7 @@ data:
   compliance.failEntriesLimit: "10"
   report.recordFailedChecksOnly: "true"
   node.collector.imageRef: "ghcr.io/aquasecurity/node-collector:0.3.1"
+  node.collector.tolerations: '[{"key":"node-role.kubernetes.io/master","operator":"Exists","effect":"NoSchedule"},{"key":"node-role.kubernetes.io/control-plane","operator":"Exists","effect":"NoSchedule"}]'
   policies.bundle.oci.ref: "mirror.gcr.io/aquasec/trivy-checks:1"
   policies.bundle.insecure: "false"
 
