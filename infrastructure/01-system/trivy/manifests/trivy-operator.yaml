@@ -2971,6 +2971,7 @@ data:
   scanJob.podTemplateContainerSecurityContext: "{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"readOnlyRootFilesystem\":true,\"runAsNonRoot\":true,\"runAsUser\":16543,\"runAsGroup\":16543}"
   scanJob.podTemplatePodSecurityContext: "{\"runAsNonRoot\":true,\"runAsUser\":16543,\"runAsGroup\":16543,\"fsGroup\":16543}"
   scanJob.compressLogs: "true"
+  scanJob.skipUpdate: "true"
   vulnerabilityReports.scanner: "Trivy"
   vulnerabilityReports.scanJobsInSameNamespace: "false"
   configAuditReports.scanner: "Trivy"
