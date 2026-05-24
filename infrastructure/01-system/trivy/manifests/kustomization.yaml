@@ -1,0 +1,3 @@
+resources:
+  - trivy-operator.yaml
+  - policy.yaml
