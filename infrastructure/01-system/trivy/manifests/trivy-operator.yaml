@@ -2994,8 +2994,8 @@ metadata:
 data:
   OPERATOR_LOG_DEV_MODE: "false"
   OPERATOR_SCAN_JOB_TTL: ""
-  OPERATOR_SCAN_JOB_TIMEOUT: "5m"
-  OPERATOR_CONCURRENT_SCAN_JOBS_LIMIT: "10"
+  OPERATOR_SCAN_JOB_TIMEOUT: "15m"
+  OPERATOR_CONCURRENT_SCAN_JOBS_LIMIT: "3"
   OPERATOR_CONCURRENT_NODE_COLLECTOR_LIMIT: "1"
   OPERATOR_SCAN_JOB_RETRY_AFTER: "30s"
   OPERATOR_BATCH_DELETE_LIMIT: "10"
@@ -3032,7 +3032,7 @@ data:
   OPERATOR_BUILT_IN_TRIVY_SERVER: "false"
   TRIVY_SERVER_HEALTH_CHECK_CACHE_EXPIRATION: "10h"
   OPERATOR_MERGE_RBAC_FINDING_WITH_CONFIG_AUDIT: "false"
-  OPERATOR_CLUSTER_COMPLIANCE_ENABLED: "true"
+  OPERATOR_CLUSTER_COMPLIANCE_ENABLED: "false"
 ---
 # Source: trivy-operator/templates/configmaps/trivy.yaml
 apiVersion: v1
@@ -3049,6 +3049,7 @@ data:
   trivy.ignoreFile: |
     AVD-KSV-0017
   trivy.ignoreFileName: ".trivyignore"
+  trivy.ignoreUnfixed: "true"
   trivy.repository: "mirror.gcr.io/aquasec/trivy"
   trivy.tag: "0.69.3"
   trivy.imagePullPolicy: "IfNotPresent"
@@ -3139,7 +3140,7 @@ spec:
             - name: OPERATOR_TARGET_NAMESPACES
               value: ""
             - name: OPERATOR_EXCLUDE_NAMESPACES
-              value: ""
+              value: "kube-*,argo*,trivy-system"
             - name: OPERATOR_TARGET_WORKLOADS
               value: "pod,replicaset,replicationcontroller,statefulset,daemonset,cronjob,job"
             - name: OPERATOR_SERVICE_ACCOUNT
