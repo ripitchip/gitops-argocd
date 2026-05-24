@@ -34,9 +34,19 @@ spec:
               cpu: 200m
               memory: 512Mi
 
+        nodeCollector:
+          tolerations:
+            - key: "node-role.kubernetes.io/master"
+              operator: "Exists"
+              effect: "NoSchedule"
+            - key: "node-role.kubernetes.io/control-plane"
+              operator: "Exists"
+              effect: "NoSchedule"
+
         trivy:
           ignoreUnfixed: true
-          ignoreFile: "AVD-KSV-0017"
+          ignoreFile: |
+            AVD-KSV-0017
           ignoreFileName: ".trivyignore"
           # Resources for the SCAN JOBS (Crucial for OOMKilled)
           resources:
