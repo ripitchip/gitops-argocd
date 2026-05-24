@@ -1,3 +1,4 @@
 resources:
+  - ignore-cm.yaml
   - release.yaml
   - policy.yaml

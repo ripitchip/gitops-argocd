@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trivy-operator-ignore-config
+  namespace: trivy-system
+data:
+  .trivyignore.yaml: |
+    misconfigurations:
+      - id: AVD-KSV-0017
+        paths:
+          - daemonset/falco/falco-helm
+        statement: "Falco requires privileged access to monitor system calls via kernel module or eBPF."
