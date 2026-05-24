@@ -3163,6 +3163,8 @@ spec:
               value: "trivy-operator"
             - name: OPERATOR_SCAN_JOB_TOLERATIONS
               value: '[{"operator":"Exists"}]'
+            - name: OPERATOR_NODE_COLLECTOR_TOLERATIONS
+              value: '[{"key":"node-role.kubernetes.io/master","operator":"Exists","effect":"NoSchedule"},{"key":"node-role.kubernetes.io/control-plane","operator":"Exists","effect":"NoSchedule"}]'
           envFrom:
             - configMapRef:
                 name: trivy-operator-config
