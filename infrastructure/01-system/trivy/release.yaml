@@ -36,9 +36,12 @@ spec:
 
         trivy:
           ignoreUnfixed: true
-          # Skip problematic checks globally
-          skipCheckIDs: "AVD-KSV-0117,KSV117,AVD-KSV-0012,KSV012"
-          ignoreFileConfigMapName: "trivy-operator-ignore-config"
+          ignoreFile: |
+            misconfigurations:
+              - id: AVD-KSV-0017
+                paths:
+                  - daemonset/falco/falco-helm
+                statement: "Falco requires privileged access or specific capabilities to monitor system calls via kernel module or eBPF."
           ignoreFileName: ".trivyignore.yaml"
           # Resources for the SCAN JOBS (Crucial for OOMKilled)
           resources:
