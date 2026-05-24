@@ -3161,6 +3161,8 @@ spec:
               value: "pod,replicaset,replicationcontroller,statefulset,daemonset,cronjob,job"
             - name: OPERATOR_SERVICE_ACCOUNT
               value: "trivy-operator"
+            - name: OPERATOR_SCAN_JOB_TOLERATIONS
+              value: '[{"operator":"Exists"}]'
           envFrom:
             - configMapRef:
                 name: trivy-operator-config
