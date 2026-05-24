@@ -3049,8 +3049,10 @@ metadata:
     app.kubernetes.io/managed-by: kubectl
 data:
   trivy.ignoreFile: |
-    AVD-KSV-0017
-  trivy.ignoreFileName: ".trivyignore"
+    misconfigurations:
+      - id: AVD-KSV-0017
+        resource: DaemonSet/falco-helm
+  trivy.ignoreFileName: ".trivyignore.yaml"
   trivy.ignoreUnfixed: "true"
   trivy.repository: "mirror.gcr.io/aquasec/trivy"
   trivy.tag: "0.69.3"
