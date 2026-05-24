@@ -26,6 +26,10 @@ spec:
       containers:
         - name: postgres
           image: mirror.gcr.io/postgres:17
+          securityContext:
+            runAsUser: 3215
+            runAsGroup: 3215
+            runAsNonRoot: true
           resources:
             limits:
               cpu: 500m
