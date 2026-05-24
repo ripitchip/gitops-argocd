@@ -26,6 +26,10 @@ spec:
       containers:
         - name: vaultwarden
           image: vaultwarden/server:1.36.0
+          securityContext:
+            runAsUser: 5649
+            runAsGroup: 5649
+            runAsNonRoot: true
           resources:
             limits:
               cpu: 500m
