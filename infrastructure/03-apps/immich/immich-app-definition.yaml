@@ -16,44 +16,50 @@ spec:
         image:
           tag: v1.105.1
 
-        # Désactivation du subchart postgres (supprimé dans v0.10+)
-        postgresql:
-          enabled: false
-
-        # Configuration de la DB externe
+        # Configuration d'Immich (Persistence)
         immich:
-          database:
-            host: immich-postgres
-            user: immich
-            database: immich
-            password: immichpass
           persistence:
             library:
-              enabled: true
               existingClaim: immich-library-pvc
 
-        redis:
+        # Ingress (Nouveau format 0.12.0)
+        server:
+          ingress:
+            main:
+              enabled: true
+              ingressClassName: traefik
+              annotations:
+                traefik.ingress.kubernetes.io/router.entrypoints: websecure
+                cert-manager.io/cluster-issuer: "letsencrypt-prod"
+              hosts:
+                - host: photo.foobarbaz.fr
+                  paths:
+                    - path: /
+              tls:
+                - hosts:
+                    - photo.foobarbaz.fr
+                  secretName: photo-tls
+
+        # Base de données et Redis via Variables d'Environnement
+        controllers:
+          main:
+            containers:
+              main:
+                env:
+                  DB_HOSTNAME: immich-postgres
+                  DB_USERNAME: immich
+                  DB_DATABASE_NAME: immich
+                  DB_PASSWORD: immichpass
+                  REDIS_HOSTNAME: immich-valkey
+
+        # Activation du nouveau subchart Valkey (remplace Redis)
+        valkey:
           enabled: true
           persistence:
-            enabled: true
-            size: 1Gi
-
-        ingress:
-          main:
-            enabled: true
-            ingressClassName: traefik
-            annotations:
-              traefik.ingress.kubernetes.io/router.entrypoints: websecure
-              cert-manager.io/cluster-issuer: "letsencrypt-prod"
-            hosts:
-              - host: photo.foobarbaz.fr
-                paths:
-                  - path: /
-                    pathType: Prefix
-            tls:
-              - hosts:
-                  - photo.foobarbaz.fr
-                secretName: photo-tls
+            data:
+              enabled: true
+              size: 1Gi
+              type: emptyDir # On passera en PVC après validation
   destination:
     server: https://kubernetes.default.svc
     namespace: immich
