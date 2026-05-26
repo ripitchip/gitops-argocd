@@ -40,11 +40,21 @@ spec:
                     - photo.foobarbaz.fr
                   secretName: photo-tls
 
-        # Base de données et Redis via Variables d'Environnement
+        # Configuration globale de sécurité pour le contrôleur principal
         controllers:
           main:
+            pod:
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: 15433
+                runAsGroup: 15433
+                fsGroup: 15433
             containers:
               main:
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop: ["ALL"]
                 env:
                   DB_HOSTNAME: immich-postgres
                   DB_USERNAME: immich
@@ -52,14 +62,22 @@ spec:
                   DB_PASSWORD: immichpass
                   REDIS_HOSTNAME: immich-valkey
 
-        # Activation du nouveau subchart Valkey (remplace Redis)
+        # Activation et sécurisation de Valkey
         valkey:
           enabled: true
+          controllers:
+            main:
+              pod:
+                securityContext:
+                  runAsNonRoot: true
+                  runAsUser: 15434
+                  runAsGroup: 15434
+                  fsGroup: 15434
           persistence:
             data:
               enabled: true
               size: 1Gi
-              type: emptyDir # On passera en PVC après validation
+              type: emptyDir
   destination:
     server: https://kubernetes.default.svc
     namespace: immich

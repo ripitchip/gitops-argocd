@@ -25,9 +25,21 @@ spec:
       labels:
         app: immich-postgres
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 15432
+        runAsGroup: 15432
+        fsGroup: 15432
       containers:
         - name: postgres
           image: tensorchord/pgvecto-rs:pg16-v0.2.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 15432
+            runAsGroup: 15432
           env:
             - name: POSTGRES_USER
               value: immich
