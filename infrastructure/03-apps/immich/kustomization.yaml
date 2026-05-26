@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - storage.yaml
-  - database.yaml
   - immich-app-definition.yaml

@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich-machine-learning
+  template:
+    metadata:
+      labels:
+        app: immich-machine-learning
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 15435
+        runAsGroup: 15435
+        fsGroup: 15435
+      containers:
+        - name: ml
+          image: ghcr.io/immich-app/immich-machine-learning:v1.105.1
+          envFrom:
+            - configMapRef: { name: immich-config }
+          env:
+            - name: DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: immich-secrets, key: DB_PASSWORD } }
+          volumeMounts:
+            - name: model-cache
+              mountPath: /cache
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            runAsNonRoot: true
+            runAsUser: 15435
+      volumes:
+        - name: model-cache
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  selector:
+    app: immich-machine-learning
+  ports:
+    - port: 3003
+      targetPort: 3003
