@@ -10,6 +10,7 @@ data:
   REDIS_HOSTNAME: immich-redis
   IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
   UPLOAD_LOCATION: /data
+  IMMICH_APP_NAME: immich
   IMMICH_VERSION: v1.105.1
 ---
 apiVersion: v1
