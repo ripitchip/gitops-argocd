@@ -9,7 +9,7 @@ data:
   DB_DATABASE_NAME: immich
   REDIS_HOSTNAME: immich-redis
   IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
-  UPLOAD_LOCATION: /data
+  UPLOAD_LOCATION: /usr/src/app/upload
   IMMICH_APP_NAME: immich
   IMMICH_APP: immich
   LOG_LEVEL: debug

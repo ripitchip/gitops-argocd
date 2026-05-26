@@ -23,7 +23,7 @@ spec:
       initContainers:
         - name: fix-permissions
           image: busybox:1.36
-          command: ["sh", "-c", "chown -R 15433:15433 /data"]
+          command: ["sh", "-c", "chown -R 15433:15433 /usr/src/app/upload"]
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
@@ -33,7 +33,7 @@ spec:
               drop: ["ALL"]
           volumeMounts:
             - name: library
-              mountPath: /data
+              mountPath: /usr/src/app/upload
           resources:
             limits:
               cpu: 100m
@@ -55,7 +55,7 @@ spec:
             - containerPort: 2283
           volumeMounts:
             - name: library
-              mountPath: /data
+              mountPath: /usr/src/app/upload
           resources:
             limits:
               cpu: "2"
