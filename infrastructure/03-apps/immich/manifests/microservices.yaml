@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-microservices
+  namespace: immich
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich-microservices
+  template:
+    metadata:
+      labels:
+        app: immich-microservices
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 15433
+        runAsGroup: 15433
+        fsGroup: 15433
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "chown -R 15433:15433 /usr/src/app/upload"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
+            capabilities:
+              add: ["CHOWN", "FOWNER"]
+              drop: ["ALL"]
+          volumeMounts:
+            - name: library
+              mountPath: /usr/src/app/upload
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+      containers:
+        - name: microservices
+          image: ghcr.io/immich-app/immich-server:v1.105.1
+          command: ["/usr/src/app/start.sh", "microservices"]
+          workingDir: /usr/src/app
+          envFrom:
+            - configMapRef: { name: immich-config }
+          env:
+            - name: DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: immich-secrets, key: DB_PASSWORD } }
+          volumeMounts:
+            - name: library
+              mountPath: /usr/src/app/upload
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            runAsNonRoot: true
+            runAsUser: 15433
+      volumes:
+        - name: library
+          persistentVolumeClaim: { claimName: immich-library-pvc }

@@ -7,5 +7,6 @@ resources:
   - database.yaml
   - redis.yaml
   - server.yaml
+  - microservices.yaml
   - ml.yaml
   - ingress.yaml
