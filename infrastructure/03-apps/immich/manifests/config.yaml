@@ -8,6 +8,7 @@ data:
   DB_USERNAME: immich
   DB_DATABASE_NAME: immich
   REDIS_HOSTNAME: immich-redis
+  IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
   IMMICH_VERSION: v1.105.1
 ---
 apiVersion: v1
