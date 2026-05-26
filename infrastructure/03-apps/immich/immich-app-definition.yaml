@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: immich
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: default
+  source:
+    chart: immich
+    repoURL: ghcr.io/immich-app/immich-charts
+    targetRevision: 0.12.0
+    helm:
+      values: |
+        image:
+          tag: v1.105.1
+
+        immich:
+          persistence:
+            library:
+              enabled: true
+              size: 20Gi
+
+        postgresql:
+          enabled: true
+          persistence:
+            enabled: true
+            size: 8Gi
+
+        redis:
+          enabled: true
+          persistence:
+            enabled: true
+            size: 1Gi
+
+        ingress:
+          main:
+            enabled: true
+            ingressClassName: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              cert-manager.io/cluster-issuer: "letsencrypt-prod"
+            hosts:
+              - host: photo.foobarbaz.fr
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls:
+              - hosts:
+                  - photo.foobarbaz.fr
+                secretName: photo-tls
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: immich
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
