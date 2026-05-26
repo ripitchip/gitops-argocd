@@ -46,7 +46,16 @@ spec:
             - name: POSTGRES_DB
               value: immich
             - name: POSTGRES_PASSWORD
-              value: immichpass # À migrer vers un secret plus tard
+              value: immichpass
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1024Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
           ports:
             - containerPort: 5432
           volumeMounts:

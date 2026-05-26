@@ -51,6 +51,13 @@ spec:
                 fsGroup: 15433
             containers:
               main:
+                resources:
+                  limits:
+                    cpu: "2"
+                    memory: 2Gi
+                  requests:
+                    cpu: 500m
+                    memory: 512Mi
                 securityContext:
                   allowPrivilegeEscalation: false
                   capabilities:
@@ -73,6 +80,15 @@ spec:
                   runAsUser: 15434
                   runAsGroup: 15434
                   fsGroup: 15434
+              containers:
+                main:
+                  resources:
+                    limits:
+                      cpu: 500m
+                      memory: 512Mi
+                    requests:
+                      cpu: 100m
+                      memory: 128Mi
           persistence:
             data:
               enabled: true
