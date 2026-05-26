@@ -20,7 +20,7 @@ spec:
           persistence:
             library:
               enabled: true
-              size: 20Gi
+              existingClaim: immich-library-pvc
 
         postgresql:
           enabled: true
