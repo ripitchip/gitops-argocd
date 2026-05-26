@@ -16,17 +16,21 @@ spec:
         image:
           tag: v1.105.1
 
+        # Désactivation du subchart postgres (supprimé dans v0.10+)
+        postgresql:
+          enabled: false
+
+        # Configuration de la DB externe
         immich:
+          database:
+            host: immich-postgres
+            user: immich
+            database: immich
+            password: immichpass
           persistence:
             library:
               enabled: true
               existingClaim: immich-library-pvc
-
-        postgresql:
-          enabled: true
-          persistence:
-            enabled: true
-            size: 8Gi
 
         redis:
           enabled: true
