@@ -22,7 +22,7 @@ spec:
             library:
               existingClaim: immich-library-pvc
 
-        # Ingress (Nouveau format 0.12.0)
+        # Ingress
         server:
           ingress:
             main:
@@ -40,9 +40,9 @@ spec:
                     - photo.foobarbaz.fr
                   secretName: photo-tls
 
-        # Configuration globale de sécurité pour le contrôleur principal
+        # Sécurisation des contrôleurs Immich
         controllers:
-          main:
+          server:
             pod:
               securityContext:
                 runAsNonRoot: true
@@ -59,6 +59,8 @@ spec:
                     cpu: 500m
                     memory: 512Mi
                 securityContext:
+                  runAsNonRoot: true
+                  runAsUser: 15433
                   allowPrivilegeEscalation: false
                   capabilities:
                     drop: ["ALL"]
@@ -69,7 +71,36 @@ spec:
                   DB_PASSWORD: immichpass
                   REDIS_HOSTNAME: immich-valkey
 
-        # Activation et sécurisation de Valkey
+          machine-learning:
+            pod:
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: 15435
+                runAsGroup: 15435
+                fsGroup: 15435
+            containers:
+              main:
+                resources:
+                  limits:
+                    cpu: "1"
+                    memory: 1Gi
+                  requests:
+                    cpu: 200m
+                    memory: 256Mi
+                securityContext:
+                  runAsNonRoot: true
+                  runAsUser: 15435
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop: ["ALL"]
+                env:
+                  DB_HOSTNAME: immich-postgres
+                  DB_USERNAME: immich
+                  DB_DATABASE_NAME: immich
+                  DB_PASSWORD: immichpass
+                  REDIS_HOSTNAME: immich-valkey
+
+        # Sécurisation de Valkey
         valkey:
           enabled: true
           controllers:
@@ -89,6 +120,12 @@ spec:
                     requests:
                       cpu: 100m
                       memory: 128Mi
+                  securityContext:
+                    runAsNonRoot: true
+                    runAsUser: 15434
+                    allowPrivilegeEscalation: false
+                    capabilities:
+                      drop: ["ALL"]
           persistence:
             data:
               enabled: true
