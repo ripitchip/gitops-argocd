@@ -18,6 +18,8 @@ spec:
         runAsUser: 15435
         runAsGroup: 15435
         fsGroup: 15435
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: ml
           image: ghcr.io/immich-app/immich-machine-learning:v1.105.1
