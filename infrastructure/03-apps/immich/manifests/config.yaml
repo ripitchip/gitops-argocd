@@ -4,28 +4,26 @@ metadata:
   name: immich-config
   namespace: immich
 data:
+  # Core
+  IMMICH_VERSION: v2.7.5
+  NODE_ENV: production
+  TZ: Europe/Paris
+  
+  # Database
   DB_HOSTNAME: immich-postgres
   DB_USERNAME: immich
   DB_DATABASE_NAME: immich
+  
+  # Redis
   REDIS_HOSTNAME: immich-redis
+  
+  # Services
   IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
   UPLOAD_LOCATION: /usr/src/app/upload
-  IMMICH_APP_NAME: immich
-  IMMICH_APP: immich
+  
+  # Network
   IMMICH_HOST: 0.0.0.0
   IMMICH_PORT: "2283"
-  IMMICH_SERVER_PORT: "2283"
-  IMMICH_LISTEN_ADDR: 0.0.0.0
-  IMMICH_BIND_ADDRESS: 0.0.0.0
-  LOG_LEVEL: debug
-  IMMICH_VERSION: v1.105.1
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: immich-secrets
-  namespace: immich
-type: Opaque
-data:
-  # immichpass en base64
-  DB_PASSWORD: aW1taWNocGFzcw==
+  
+  # Logging
+  LOG_LEVEL: info
