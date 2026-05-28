@@ -60,8 +60,6 @@ spec:
       containers:
         - name: server
           image: ghcr.io/immich-app/immich-server:v2.7.5
-          command: ["/usr/src/app/start.sh", "immich"]
-          workingDir: /usr/src/app
           envFrom:
             - configMapRef: { name: immich-config }
           env:
