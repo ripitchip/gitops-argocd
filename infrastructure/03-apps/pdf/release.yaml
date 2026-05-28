@@ -8,76 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://stirling-tools.github.io/Stirling-PDF-chart/'
-    chart: stirling-pdf-chart
-    targetRevision: 3.1.0
-    helm:
-      releaseName: stirling-pdf
-      values: |
-        replicaCount: 1
-        image:
-          repository: stirlingtools/stirling-pdf
-          tag: "latest"
-        envs:
-          - name: SERVER_PORT
-            value: "8080"
-          - name: SECURITY_ENABLELOGIN
-            value: "false"
-          - name: LANGS
-            value: "en_GB"
-          - name: HOME
-            value: "/tmp"
-        service:
-          port: 8080
-        securityContext:
-          enabled: true
-          runAsNonRoot: true
-          runAsUser: 13042
-          runAsGroup: 13042
-          fsGroup: 13042
-        containerSecurityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
-        resources:
-          limits:
-            cpu: "1"
-            memory: 2Gi
-          requests:
-            cpu: 200m
-            memory: 512Mi
-        ingress:
-          enabled: true
-          ingressClassName: traefik
-          annotations:
-            traefik.ingress.kubernetes.io/router.entrypoints: websecure
-            traefik.ingress.kubernetes.io/router.tls: "true"
-            cert-manager.io/cluster-issuer: "letsencrypt-prod"
-          hosts:
-            - name: pdf.foobarbaz.fr
-              path: /
-              tls: true
-              tlsSecret: stirling-pdf-tls
-        deployment:
-          extraVolumes:
-            - name: tessdata-volume
-              emptyDir: {}
-            - name: configs-volume
-              emptyDir: {}
-            - name: logs-volume
-              emptyDir: {}
-            - name: pipeline-volume
-              emptyDir: {}
-          extraVolumeMounts:
-            - name: tessdata-volume
-              mountPath: /usr/share/tessdata
-            - name: configs-volume
-              mountPath: /configs
-            - name: logs-volume
-              mountPath: /logs
-            - name: pipeline-volume
-              mountPath: /pipeline
+    repoURL: "https://github.com/ripitchip/gitops-argocd.git"
+    targetRevision: HEAD
+    path: infrastructure/03-apps/pdf/manifests
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: pdf
@@ -86,5 +19,6 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
+      - CreateNamespace=true
       - Replace=true
       - SkipDryRunOnMissingResource=true
