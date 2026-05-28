@@ -50,7 +50,7 @@ spec:
           runAsGroup: 14852
           fsGroup: 14852
         containerSecurityContext:
-          runAsNonRoot: true
+          runAsNonRoot: false
           allowPrivilegeEscalation: false
           capabilities:
             drop:
