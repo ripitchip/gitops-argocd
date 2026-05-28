@@ -9,8 +9,8 @@ spec:
   project: default
   source:
     repoURL: "https://stirling-tools.github.io/Stirling-PDF-chart"
-    chart: stirling-pdf
-    targetRevision: 0.1.1
+    chart: stirling-pdf-chart
+    targetRevision: 3.1.0
     helm:
       values: |
         image:
