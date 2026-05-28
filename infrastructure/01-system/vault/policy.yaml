@@ -28,6 +28,8 @@ spec:
             io.kubernetes.pod.namespace: falco
         - matchLabels:
             io.kubernetes.pod.namespace: hubble
+        - matchLabels:
+            io.kubernetes.pod.namespace: immich
       toPorts:
         - ports:
             - port: "8200"
