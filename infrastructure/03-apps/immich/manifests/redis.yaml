@@ -38,7 +38,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: redis
-          image: docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+          image: docker.io/valkey/valkey:8-bookworm@sha256:fea8b3e67b15729d4bb70589eb03367bab9ad1ee89c876f54327fc7c6e618571
           resources:
             limits:
               cpu: 500m
