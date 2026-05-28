@@ -27,7 +27,6 @@ spec:
                         - immich-machine-learning
                         - immich-postgres
                         - immich-redis
-                        - immich-microservices
                 topologyKey: kubernetes.io/hostname
       securityContext:
         runAsNonRoot: true
@@ -65,6 +64,15 @@ spec:
           env:
             - name: DB_PASSWORD
               valueFrom: { secretKeyRef: { name: immich-secrets, key: DB_PASSWORD } }
+            - name: REDIS_PASSWORD
+              valueFrom: { secretKeyRef: { name: immich-secrets, key: REDIS_PASSWORD } }
+            - name: OIDC_CLIENT_SECRET
+              valueFrom: { secretKeyRef: { name: immich-secrets, key: OIDC_CLIENT_SECRET } }
+            # Constructing URLs as preferred by v2
+            - name: DB_URL
+              value: postgres://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOSTNAME):5432/$(DB_DATABASE_NAME)
+            - name: REDIS_URL
+              value: redis://:$(REDIS_PASSWORD)@$(REDIS_HOSTNAME):6379
           ports:
             - containerPort: 2283
           volumeMounts:

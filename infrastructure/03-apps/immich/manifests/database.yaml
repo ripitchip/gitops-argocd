@@ -29,7 +29,6 @@ spec:
                         - immich-machine-learning
                         - immich-postgres
                         - immich-redis
-                        - immich-microservices
                 topologyKey: kubernetes.io/hostname
       securityContext:
         runAsNonRoot: true
