@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://stirling-tools.github.io/Stirling-PDF-chart'
+    repoURL: 'https://stirling-tools.github.io/Stirling-PDF-chart/'
     chart: stirling-pdf-chart
     targetRevision: 3.1.0
     helm:
@@ -96,7 +96,5 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
       - Replace=true
       - SkipDryRunOnMissingResource=true
-      - ServerSideApply=true
