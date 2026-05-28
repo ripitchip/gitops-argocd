@@ -8,4 +8,5 @@ resources:
   - 03-apps/vaultwarden/vaultwarden-app-definition.yaml
   - 03-apps/blog/blog-app-definition.yaml
   - 03-apps/immich
+  - 03-apps/pdf
 
