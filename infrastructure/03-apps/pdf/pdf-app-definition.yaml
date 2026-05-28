@@ -7,10 +7,86 @@ metadata:
     argocd.argoproj.io/sync-wave: "10"
 spec:
   project: default
-  source:
-    repoURL: 'https://github.com/ripitchip/gitops-argocd.git'
-    path: infrastructure/03-apps/pdf/manifests
-    targetRevision: HEAD
+  sources:
+    - repoURL: 'https://stirling-tools.github.io/Stirling-PDF-chart'
+      chart: stirling-pdf-chart
+      targetRevision: 3.1.0
+      helm:
+        releaseName: stirling-pdf
+        values: |
+          replicaCount: 2
+          image:
+            repository: stirlingtools/stirling-pdf
+            tag: "2.10.1"
+          envs:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SYSTEM_BACKENDURL
+              value: "https://pdf.foobarbaz.fr"
+            - name: SECURITY_ENABLELOGIN
+              value: "false"
+            - name: HOME
+              value: "/tmp"
+            - name: DOCKER_ENABLE_CHOWN
+              value: "false"
+            - name: PUID
+              value: "13042"
+            - name: PGID
+              value: "13042"
+          securityContext:
+            enabled: true
+            runAsNonRoot: true
+            runAsUser: 13042
+            runAsGroup: 13042
+            fsGroup: 13042
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 13042
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+              cert-manager.io/cluster-issuer: "letsencrypt-prod"
+            hosts:
+              - name: pdf.foobarbaz.fr
+                path: /
+                tls: true
+                tlsSecret: stirling-pdf-tls
+          deployment:
+            extraVolumes:
+              - name: logs-volume
+                emptyDir: {}
+              - name: configs-volume
+                emptyDir: {}
+              - name: pipeline-volume
+                emptyDir: {}
+              - name: custom-files-volume
+                emptyDir: {}
+            extraVolumeMounts:
+              - name: logs-volume
+                mountPath: /logs
+              - name: configs-volume
+                mountPath: /configs
+              - name: pipeline-volume
+                mountPath: /pipeline
+              - name: custom-files-volume
+                mountPath: /customFiles
+    - repoURL: 'https://github.com/ripitchip/gitops-argocd.git'
+      path: infrastructure/03-apps/pdf/manifests
+      targetRevision: HEAD
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: pdf
