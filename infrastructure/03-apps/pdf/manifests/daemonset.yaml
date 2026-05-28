@@ -21,9 +21,26 @@ spec:
         fsGroup: 14852
       tolerations:
         - operator: Exists
+      initContainers:
+        - name: init-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "mkdir -p /tmp/stirling-pdf /runtime/stirling-pdf && chmod -R 777 /tmp /runtime"]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 14852
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: runtime-volume
+              mountPath: /runtime
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.11.0
+          command: ["java", "-Djava.io.tmpdir=/tmp/stirling-pdf", "-jar", "/app/Stirling-PDF.jar"]
           ports:
             - containerPort: 8080
               name: http
