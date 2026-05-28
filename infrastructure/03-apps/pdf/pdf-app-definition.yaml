@@ -42,8 +42,11 @@ spec:
             value: "false"
           - name: LANGS
             value: "en_GB"
-        securityContext:
+        persistence:
           enabled: true
+          path: /configs
+        securityContext:
+          enabled: false
         volumePermissions:
           enabled: true
         containerSecurityContext:
