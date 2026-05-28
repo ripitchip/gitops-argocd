@@ -24,7 +24,7 @@ spec:
       initContainers:
         - name: init-permissions
           image: busybox:1.36
-          command: ["sh", "-c", "mkdir -p /tmp/stirling-pdf /runtime/stirling-pdf && chmod -R 777 /tmp /runtime"]
+          command: ["sh", "-c", "mkdir -p /tmp/stirling-pdf /runtime/stirling-pdf"]
           securityContext:
             runAsNonRoot: true
             runAsUser: 14852
@@ -40,7 +40,7 @@ spec:
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.11.0
-          command: ["java", "-Djava.io.tmpdir=/tmp/stirling-pdf", "-jar", "/app/Stirling-PDF.jar"]
+          command: ["sh", "-c", "java -Djava.io.tmpdir=/tmp/stirling-pdf -Duser.home=/home/stirling -jar /app/Stirling-PDF.jar || java -Djava.io.tmpdir=/tmp/stirling-pdf -Duser.home=/home/stirling -jar /Stirling-PDF.jar"]
           ports:
             - containerPort: 8080
               name: http
@@ -57,6 +57,8 @@ spec:
               value: "14852"
             - name: PGID
               value: "14852"
+            - name: TESSDATA_PREFIX
+              value: "/usr/share/tesseract-ocr/5/tessdata"
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
