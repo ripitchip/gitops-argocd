@@ -8,9 +8,55 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "https://github.com/ripitchip/gitops-argocd.git"
-    targetRevision: HEAD
-    path: infrastructure/03-apps/pdf/manifests
+    repoURL: "https://stirling-tools.github.io/Stirling-PDF-chart"
+    chart: stirling-pdf
+    targetRevision: 0.1.1
+    helm:
+      values: |
+        image:
+          repository: stirlingtools/stirling-pdf
+          tag: 2.11.0
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: "true"
+            cert-manager.io/cluster-issuer: "letsencrypt-prod"
+          hosts:
+            - name: pdf.foobarbaz.fr
+              path: /
+              tls: true
+              tlsSecret: stirling-pdf-tls
+        resources:
+          limits:
+            cpu: "1"
+            memory: 3Gi
+          requests:
+            cpu: 250m
+            memory: 1Gi
+        envs:
+          - name: SERVER_PORT
+            value: "8080"
+          - name: SECURITY_ENABLELOGIN
+            value: "false"
+          - name: LANGS
+            value: "en_GB"
+          - name: HOME
+            value: "/home/stirling"
+        securityContext:
+          enabled: true
+          runAsUser: 14852
+          runAsGroup: 14852
+          fsGroup: 14852
+        containerSecurityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: pdf
