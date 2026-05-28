@@ -24,6 +24,7 @@ spec:
                 - kube-system
                 - cilium-system
                 - falco
+                - pdf
           - resources:
               selector:
                 matchLabels:
