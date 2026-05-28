@@ -66,7 +66,7 @@ spec:
               valueFrom: { secretKeyRef: { name: immich-secrets, key: DB_PASSWORD } }
             - name: REDIS_PASSWORD
               valueFrom: { secretKeyRef: { name: immich-secrets, key: REDIS_PASSWORD } }
-            - name: OIDC_CLIENT_SECRET
+            - name: IMMICH_OAUTH_CLIENT_SECRET
               valueFrom: { secretKeyRef: { name: immich-secrets, key: OIDC_CLIENT_SECRET } }
           ports:
             - containerPort: 2283

@@ -27,3 +27,11 @@ data:
   
   # Logging
   LOG_LEVEL: info
+
+  # OIDC
+  IMMICH_OAUTH_ENABLED: "true"
+  IMMICH_OAUTH_ISSUER_URL: "https://auth.foobarbaz.fr/realms/master"
+  IMMICH_OAUTH_CLIENT_ID: "immich"
+  IMMICH_OAUTH_AUTO_REGISTER: "true"
+  IMMICH_OAUTH_BUTTON_TEXT: "Login with Keycloak"
+  IMMICH_OAUTH_SCOPE: "openid email profile"
