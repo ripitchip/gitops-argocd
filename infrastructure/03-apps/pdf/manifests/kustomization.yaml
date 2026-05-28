@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: pdf
 
 resources:
-  - deployment.yaml
+  - daemonset.yaml
   - service.yaml
   - ingress.yaml
   - namespace.yaml

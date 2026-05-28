@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: stirling-pdf
   namespace: pdf
   labels:
     app.kubernetes.io/name: stirling-pdf
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: stirling-pdf
@@ -17,12 +16,12 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 13042
-        runAsGroup: 13042
-        fsGroup: 13042
+        runAsUser: 17234
+        runAsGroup: 17234
+        fsGroup: 17234
       containers:
         - name: stirling-pdf
-          image: stirlingtools/stirling-pdf:latest
+          image: stirlingtools/stirling-pdf:v2.11.0
           ports:
             - containerPort: 8080
               name: http
@@ -41,13 +40,15 @@ spec:
             capabilities:
               drop:
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
             limits:
               cpu: "1"
-              memory: 2Gi
+              memory: 3Gi
             requests:
-              cpu: 200m
-              memory: 512Mi
+              cpu: 250m
+              memory: 1Gi
           volumeMounts:
             - name: tessdata-volume
               mountPath: /usr/share/tessdata
