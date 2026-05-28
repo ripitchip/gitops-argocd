@@ -21,44 +21,19 @@ spec:
         fsGroup: 14852
       tolerations:
         - operator: Exists
-      initContainers:
-        - name: init-permissions
-          image: busybox:1.36
-          command: ["sh", "-c", "mkdir -p /tmp/stirling-pdf /runtime/stirling-pdf"]
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 14852
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          volumeMounts:
-            - name: tmp-volume
-              mountPath: /tmp
-            - name: runtime-volume
-              mountPath: /runtime
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.11.0
-          command: ["sh", "-c", "java -Djava.io.tmpdir=/tmp/stirling-pdf -Duser.home=/home/stirling -jar /app/Stirling-PDF.jar || java -Djava.io.tmpdir=/tmp/stirling-pdf -Duser.home=/home/stirling -jar /Stirling-PDF.jar"]
+          command: ["task", "engine:run"]
+          workingDir: /app
           ports:
-            - containerPort: 8080
+            - containerPort: 5001
               name: http
           env:
-            - name: SERVER_PORT
-              value: "8080"
-            - name: SECURITY_ENABLELOGIN
-              value: "false"
-            - name: LANGS
-              value: "en_GB"
+            - name: PYTHONUNBUFFERED
+              value: "1"
             - name: HOME
-              value: "/home/stirling"
-            - name: PUID
-              value: "14852"
-            - name: PGID
-              value: "14852"
-            - name: TESSDATA_PREFIX
-              value: "/usr/share/tesseract-ocr/5/tessdata"
+              value: "/tmp"
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -77,26 +52,10 @@ spec:
           volumeMounts:
             - name: tmp-volume
               mountPath: /tmp
-            - name: runtime-volume
-              mountPath: /runtime
-            - name: tessdata-volume
-              mountPath: /usr/share/tessdata
-            - name: configs-volume
-              mountPath: /configs
-            - name: logs-volume
-              mountPath: /logs
-            - name: pipeline-volume
-              mountPath: /pipeline
+            - name: app-volume
+              mountPath: /app/data
       volumes:
         - name: tmp-volume
           emptyDir: {}
-        - name: runtime-volume
-          emptyDir: {}
-        - name: tessdata-volume
-          emptyDir: {}
-        - name: configs-volume
-          emptyDir: {}
-        - name: logs-volume
-          emptyDir: {}
-        - name: pipeline-volume
+        - name: app-volume
           emptyDir: {}
