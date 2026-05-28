@@ -20,6 +20,45 @@ spec:
         fsGroup: 13042
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: init-permissions
+          image: "stirlingtools/stirling-pdf:2.10.1"
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
+            capabilities:
+              add: ["CHOWN", "FOWNER"]
+              drop: ["ALL"]
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mkdir -p /tmp/stirling-pdf /logs /configs /pipeline /customFiles
+              chown -R 13042:13042 /tmp/stirling-pdf /logs /configs /pipeline /customFiles /usr/local/bin
+              # On copie les outils et on crée un wrapper pour 'id' si besoin
+              cp -a /usr/local/bin/* /mnt/bin/
+              chown -R 13042:13042 /mnt/bin
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: logs-volume
+              mountPath: /logs
+            - name: bin-volume
+              mountPath: /mnt/bin
+            - name: configs-volume
+              mountPath: /configs
+            - name: pipeline-volume
+              mountPath: /pipeline
+            - name: custom-files-volume
+              mountPath: /customFiles
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.10.1
@@ -43,6 +82,8 @@ spec:
               mountPath: /tmp
             - name: logs-volume
               mountPath: /logs
+            - name: bin-volume
+              mountPath: /usr/local/bin
             - name: configs-volume
               mountPath: /configs
             - name: pipeline-volume
@@ -67,6 +108,8 @@ spec:
         - name: tmp-volume
           emptyDir: {}
         - name: logs-volume
+          emptyDir: {}
+        - name: bin-volume
           emptyDir: {}
         - name: configs-volume
           emptyDir: {}
