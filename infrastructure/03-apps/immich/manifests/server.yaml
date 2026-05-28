@@ -68,11 +68,6 @@ spec:
               valueFrom: { secretKeyRef: { name: immich-secrets, key: REDIS_PASSWORD } }
             - name: OIDC_CLIENT_SECRET
               valueFrom: { secretKeyRef: { name: immich-secrets, key: OIDC_CLIENT_SECRET } }
-            # Constructing URLs as preferred by v2
-            - name: DB_URL
-              value: postgres://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOSTNAME):5432/$(DB_DATABASE_NAME)
-            - name: REDIS_URL
-              value: redis://:$(REDIS_PASSWORD)@$(REDIS_HOSTNAME):6379
           ports:
             - containerPort: 2283
           volumeMounts:
