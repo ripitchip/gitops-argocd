@@ -7,6 +7,6 @@ resources:
   - 02-iam/keycloak-app-definition.yaml
   - 03-apps/vaultwarden/vaultwarden-app-definition.yaml
   - 03-apps/blog/blog-app-definition.yaml
-  - 03-apps/pdf
+  - 03-apps/pdf/pdf-app-definition.yaml
   - 03-apps/immich
 
