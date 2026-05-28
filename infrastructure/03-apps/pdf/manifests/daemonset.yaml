@@ -35,7 +35,11 @@ spec:
             - name: LANGS
               value: "en_GB"
             - name: HOME
-              value: "/tmp"
+              value: "/home/stirling"
+            - name: PUID
+              value: "14852"
+            - name: PGID
+              value: "14852"
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -52,6 +56,10 @@ spec:
               cpu: 250m
               memory: 1Gi
           volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: runtime-volume
+              mountPath: /runtime
             - name: tessdata-volume
               mountPath: /usr/share/tessdata
             - name: configs-volume
@@ -61,6 +69,10 @@ spec:
             - name: pipeline-volume
               mountPath: /pipeline
       volumes:
+        - name: tmp-volume
+          emptyDir: {}
+        - name: runtime-volume
+          emptyDir: {}
         - name: tessdata-volume
           emptyDir: {}
         - name: configs-volume
