@@ -13,6 +13,22 @@ spec:
       labels:
         app: immich-machine-learning
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - immich-server
+                        - immich-machine-learning
+                        - immich-postgres
+                        - immich-redis
+                        - immich-microservices
+                topologyKey: kubernetes.io/hostname
       securityContext:
         runAsNonRoot: true
         runAsUser: 15435
