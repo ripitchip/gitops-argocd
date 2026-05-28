@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - storage.yaml
+  - external-secrets.yaml
   - config.yaml
   - database.yaml
   - redis.yaml
