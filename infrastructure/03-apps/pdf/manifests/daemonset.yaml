@@ -16,12 +16,14 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 17234
-        runAsGroup: 17234
-        fsGroup: 17234
+        runAsUser: 14852
+        runAsGroup: 14852
+        fsGroup: 14852
+      tolerations:
+        - operator: Exists
       containers:
         - name: stirling-pdf
-          image: stirlingtools/stirling-pdf:v2.11.0
+          image: stirlingtools/stirling-pdf:2.11.0
           ports:
             - containerPort: 8080
               name: http
