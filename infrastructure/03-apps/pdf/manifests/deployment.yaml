@@ -30,12 +30,6 @@ spec:
         - key: "node.kubernetes.io/disk-pressure"
           operator: "Exists"
           effect: "NoExecute"
-        - key: "node.kubernetes.io/memory-pressure"
-          operator: "Exists"
-          effect: "NoSchedule"
-        - key: "node.kubernetes.io/memory-pressure"
-          operator: "Exists"
-          effect: "NoExecute"
       securityContext:
         runAsNonRoot: true
         runAsUser: 13042
@@ -43,6 +37,20 @@ spec:
         fsGroup: 13042
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: init-bin
+          image: stirlingtools/stirling-pdf:2.10.1
+          command: ["sh", "-c", "cp -a /usr/local/bin/* /mnt/bin/"]
+          volumeMounts:
+            - name: bin-volume
+              mountPath: /mnt/bin
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 13042
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
       containers:
         - name: stirling-pdf
           image: stirlingtools/stirling-pdf:2.10.1
@@ -65,13 +73,13 @@ spec:
               value: "13042"
             - name: PGID
               value: "13042"
-            - name: UMASK
-              value: "0022"
           volumeMounts:
             - name: tmp-volume
               mountPath: /tmp
             - name: logs-volume
               mountPath: /logs
+            - name: bin-volume
+              mountPath: /usr/local/bin
             - name: configs-volume
               mountPath: /configs
             - name: pipeline-volume
@@ -96,6 +104,8 @@ spec:
         - name: tmp-volume
           emptyDir: {}
         - name: logs-volume
+          emptyDir: {}
+        - name: bin-volume
           emptyDir: {}
         - name: configs-volume
           emptyDir: {}
