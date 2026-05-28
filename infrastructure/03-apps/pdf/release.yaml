@@ -29,8 +29,6 @@ spec:
             value: "/tmp"
           - name: DOCKER_ENABLE_CHOWN
             value: "false"
-          - name: PATH
-            value: "/usr/local/bin:/opt/java/openjdk/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
         deployment:
           annotations:
@@ -39,8 +37,6 @@ spec:
             - name: tmp-volume
               emptyDir: {}
             - name: logs-volume
-              emptyDir: {}
-            - name: bin-volume
               emptyDir: {}
             - name: configs-volume
               emptyDir: {}
@@ -53,58 +49,12 @@ spec:
               mountPath: /tmp
             - name: logs-volume
               mountPath: /logs
-            - name: bin-volume
-              mountPath: /usr/local/bin
             - name: configs-volume
               mountPath: /configs
             - name: pipeline-volume
               mountPath: /pipeline
             - name: custom-files-volume
               mountPath: /customFiles
-
-        initContainers:
-          - name: init-permissions
-            image: "stirlingtools/stirling-pdf:2.10.1"
-            securityContext:
-              runAsUser: 3042
-              runAsGroup: 3042
-            resources:
-              limits:
-                cpu: 100m
-                memory: 128Mi
-              requests:
-                cpu: 50m
-                memory: 64Mi
-            command:
-              - /bin/sh
-              - -c
-              - |
-                mkdir -p /tmp/stirling-pdf /logs /configs /pipeline /customFiles
-                # On copie les outils et on crée un wrapper pour 'id'
-                cp -a /usr/local/bin/* /mnt/bin/
-                cat <<'EOF' > /mnt/bin/id
-                #!/bin/sh
-                if [ "$1" = "-un" ]; then
-                    /usr/bin/id -un 2>/dev/null || echo "stirlingpdfuser"
-                    exit 0
-                fi
-                exec /usr/bin/id "$@"
-                EOF
-                chmod +x /mnt/bin/id
-            volumeMounts:
-              - name: tmp-volume
-                mountPath: /tmp
-              - name: logs-volume
-                mountPath: /logs
-              - name: bin-volume
-                mountPath: /mnt/bin
-              - name: configs-volume
-                mountPath: /configs
-              - name: pipeline-volume
-                mountPath: /pipeline
-              - name: custom-files-volume
-                mountPath: /customFiles
-
 
         resources:
           requests:
@@ -117,12 +67,17 @@ spec:
         securityContext:
           enabled: true
           runAsNonRoot: true
-          runAsUser: 3042
-          fsGroup: 3042
+          runAsUser: 13042
+          runAsGroup: 13042
+          fsGroup: 13042
         
         containerSecurityContext:
-          runAsUser: 3042
-          runAsGroup: 3042
+          runAsUser: 13042
+          runAsGroup: 13042
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
 
         service:
           externalPort: 80
