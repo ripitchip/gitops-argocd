@@ -13,6 +13,25 @@ spec:
       labels:
         app: stirling-pdf
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - stirling-pdf
+                topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: "node.kubernetes.io/disk-pressure"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node.kubernetes.io/disk-pressure"
+          operator: "Exists"
+          effect: "NoExecute"
       securityContext:
         runAsNonRoot: true
         runAsUser: 13042
@@ -38,6 +57,10 @@ spec:
               value: "/tmp"
             - name: DOCKER_ENABLE_CHOWN
               value: "false"
+            - name: PUID
+              value: "13042"
+            - name: PGID
+              value: "13042"
           volumeMounts:
             - name: tmp-volume
               mountPath: /tmp
