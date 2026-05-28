@@ -60,6 +60,7 @@ spec:
       containers:
         - name: microservices
           image: ghcr.io/immich-app/immich-server:v2.7.5
+          command: ["immich"]
           args: ["microservices"]
           envFrom:
             - configMapRef: { name: immich-config }
