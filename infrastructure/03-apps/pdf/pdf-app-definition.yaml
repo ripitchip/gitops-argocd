@@ -42,13 +42,10 @@ spec:
             value: "false"
           - name: LANGS
             value: "en_GB"
-          - name: HOME
-            value: "/home/stirling"
         securityContext:
           enabled: true
-          runAsUser: 14852
-          runAsGroup: 14852
-          fsGroup: 14852
+        volumePermissions:
+          enabled: true
         containerSecurityContext:
           runAsNonRoot: false
           allowPrivilegeEscalation: false
