@@ -43,6 +43,12 @@ spec:
           env:
             - name: DB_PASSWORD
               valueFrom: { secretKeyRef: { name: immich-secrets, key: DB_PASSWORD } }
+            - name: IMMICH_PORT
+              value: "3003"
+            - name: MPLCONFIGDIR
+              value: "/cache/matplotlib"
+            - name: HF_HOME
+              value: "/cache/huggingface"
           volumeMounts:
             - name: model-cache
               mountPath: /cache
