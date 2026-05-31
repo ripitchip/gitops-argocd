@@ -49,6 +49,8 @@ spec:
               value: "/cache/matplotlib"
             - name: HF_HOME
               value: "/cache/huggingface"
+            - name: HOME
+              value: "/cache"
           volumeMounts:
             - name: model-cache
               mountPath: /cache
