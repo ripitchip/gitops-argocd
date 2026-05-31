@@ -52,6 +52,10 @@ spec:
           volumeMounts:
             - name: model-cache
               mountPath: /cache
+            - name: config-dir
+              mountPath: /.config
+            - name: cache-dir
+              mountPath: /.cache
           resources:
             limits:
               cpu: "1"
@@ -66,6 +70,10 @@ spec:
             runAsUser: 15435
       volumes:
         - name: model-cache
+          emptyDir: {}
+        - name: config-dir
+          emptyDir: {}
+        - name: cache-dir
           emptyDir: {}
 ---
 apiVersion: v1
