@@ -13,7 +13,7 @@ spec:
     targetRevision: 3.1.0
     helm:
       values: |
-        replicaCount: 0
+        replicaCount: 1
         image:
           repository: stirlingtools/stirling-pdf
           tag: 2.11.0
@@ -47,17 +47,27 @@ spec:
           enabled: true
           path: /configs
         securityContext:
-          enabled: false
-        volumePermissions:
           enabled: true
+          runAsNonRoot: true
+          runAsUser: 12345
+          runAsGroup: 12345
+          fsGroup: 12345
+        volumePermissions:
+          enabled: false
         containerSecurityContext:
-          runAsNonRoot: false
+          runAsNonRoot: true
+          runAsUser: 12345
+          runAsGroup: 12345
           allowPrivilegeEscalation: false
           capabilities:
             drop:
               - ALL
           seccompProfile:
             type: RuntimeDefault
+        deployment:
+          extraVolumeMounts:
+            - name: storage-volume
+              mountPath: /configs
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: pdf
