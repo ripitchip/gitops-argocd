@@ -64,15 +64,19 @@ spec:
               - ALL
           seccompProfile:
             type: RuntimeDefault
-        deployment:
-          extraVolumes:
-            - name: tmp-volume
-              emptyDir: {}
-          extraVolumeMounts:
-            - name: storage-volume
-              mountPath: /configs
-            - name: tmp-volume
-              mountPath: /tmp
+        deployment: {}
+        extraVolumes:
+          - name: tmp-volume
+            emptyDir: {}
+          - name: bin-volume
+            emptyDir: {}
+        extraVolumeMounts:
+          - name: storage-volume
+            mountPath: /configs
+          - name: tmp-volume
+            mountPath: /tmp
+          - name: bin-volume
+            mountPath: /usr/local/bin
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: pdf
