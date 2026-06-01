@@ -53,7 +53,13 @@ spec:
           runAsGroup: 12345
           fsGroup: 12345
         volumePermissions:
-          enabled: false
+          enabled: true
+          image:
+            registry: docker.io
+            repository: bitnami/minideb
+            tag: buster
+          securityContext:
+            runAsUser: 0
         containerSecurityContext:
           runAsNonRoot: true
           runAsUser: 12345
@@ -64,27 +70,19 @@ spec:
               - ALL
           seccompProfile:
             type: RuntimeDefault
-        deployment: {}
-        volumePermissions:
-          enabled: true
-          image:
-            registry: docker.io
-            repository: bitnami/minideb
-            tag: buster
-          securityContext:
-            runAsUser: 0
-        extraVolumes:
-          - name: tmp-volume
-            emptyDir: {}
-          - name: bin-volume
-            emptyDir: {}
-        extraVolumeMounts:
-          - name: storage-volume
-            mountPath: /configs
-          - name: tmp-volume
-            mountPath: /tmp
-          - name: bin-volume
-            mountPath: /usr/local/bin
+        deployment:
+          extraVolumes:
+            - name: tmp-volume
+              emptyDir: {}
+            - name: bin-volume
+              emptyDir: {}
+          extraVolumeMounts:
+            - name: storage-volume
+              mountPath: /configs
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: bin-volume
+              mountPath: /usr/local/bin
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: pdf
