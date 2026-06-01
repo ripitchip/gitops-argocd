@@ -52,14 +52,6 @@ spec:
           runAsUser: 12345
           runAsGroup: 12345
           fsGroup: 12345
-        volumePermissions:
-          enabled: true
-          image:
-            registry: docker.io
-            repository: bitnami/minideb
-            tag: buster
-          securityContext:
-            runAsUser: 0
         containerSecurityContext:
           runAsNonRoot: true
           runAsUser: 12345
@@ -80,7 +72,7 @@ spec:
             - name: storage-volume
               mountPath: /configs
             - name: tmp-volume
-              mountPath: /tmp
+              mountPath: /tmp/stirling-pdf
             - name: bin-volume
               mountPath: /usr/local/bin
   destination:
