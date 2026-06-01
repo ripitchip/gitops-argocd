@@ -43,6 +43,8 @@ spec:
             value: "false"
           - name: LANGS
             value: "en_GB"
+          - name: HOME
+            value: "/home/stirlingpdfuser"
         persistence:
           enabled: true
           path: /configs
@@ -68,6 +70,8 @@ spec:
               emptyDir: {}
             - name: bin-volume
               emptyDir: {}
+            - name: home-volume
+              emptyDir: {}
           extraVolumeMounts:
             - name: storage-volume
               mountPath: /configs
@@ -75,6 +79,8 @@ spec:
               mountPath: /tmp/stirling-pdf
             - name: bin-volume
               mountPath: /usr/local/bin
+            - name: home-volume
+              mountPath: /home/stirlingpdfuser
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: pdf
