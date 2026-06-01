@@ -65,18 +65,29 @@ spec:
           seccompProfile:
             type: RuntimeDefault
         deployment: {}
+        extraInitContainers:
+          - name: fix-permissions
+            image: alpine:3.18
+            command: ["sh", "-c", "chown -R 12345:12345 /configs /tmp"]
+            securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
+              capabilities:
+                add:
+                  - CHOWN
+            volumeMounts:
+              - name: storage-volume
+                mountPath: /configs
+              - name: tmp-volume
+                mountPath: /tmp
         extraVolumes:
           - name: tmp-volume
-            emptyDir: {}
-          - name: bin-volume
             emptyDir: {}
         extraVolumeMounts:
           - name: storage-volume
             mountPath: /configs
           - name: tmp-volume
             mountPath: /tmp
-          - name: bin-volume
-            mountPath: /usr/local/bin
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: pdf
