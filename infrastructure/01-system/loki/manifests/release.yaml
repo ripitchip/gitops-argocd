@@ -36,6 +36,7 @@ spec:
           replicas: 1
           persistence:
             enabled: true
+            existingClaim: loki-pvc
             size: 10Gi
             storageClass: truenas-nfs
 
