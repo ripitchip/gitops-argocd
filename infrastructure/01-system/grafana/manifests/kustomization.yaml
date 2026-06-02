@@ -3,3 +3,4 @@ resources:
   - external-secrets.yaml
   - policy.yaml
   - release.yaml
+  - ingress.yaml
