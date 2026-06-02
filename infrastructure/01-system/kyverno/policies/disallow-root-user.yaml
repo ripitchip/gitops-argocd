@@ -27,6 +27,7 @@ spec:
                 - pdf
                 - cert-manager
                 - loki
+                - alloy
           - resources:
               selector:
                 matchLabels:
