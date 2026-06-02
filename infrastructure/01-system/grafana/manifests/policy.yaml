@@ -5,9 +5,8 @@ metadata:
   namespace: grafana
 spec:
   endpointSelector:
-    matchLabels: {} # S'applique à tous les pods du namespace grafana (Grafana + ACME Solvers)
+    matchLabels: {}
   ingress:
-    # 1. Autoriser Traefik vers Grafana UI (3000) et ACME Solver (8089)
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
@@ -18,13 +17,11 @@ spec:
               protocol: TCP
             - port: "8089"
               protocol: TCP
-    # 2. Autoriser le trafic interne au namespace
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": grafana
 
   egress:
-    # 1. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -36,10 +33,8 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 2. Kubernetes API access
     - toEntities:
         - kube-apiserver
-    # 3. Vault for Secrets
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": vault
@@ -47,7 +42,13 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
-    # 4. Access to World (for updates and plugins)
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": loki
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
     - toEntities:
         - world
       toPorts:
