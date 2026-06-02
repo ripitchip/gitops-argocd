@@ -25,6 +25,7 @@ spec:
                 - cilium-system
                 - falco
                 - pdf
+                - cert-manager
           - resources:
               selector:
                 matchLabels:
