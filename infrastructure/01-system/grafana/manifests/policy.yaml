@@ -10,7 +10,6 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "io.kubernetes.pod.namespace": traefik
-            "app.kubernetes.io/name": traefik
       toPorts:
         - ports:
             - port: "3000"
@@ -18,8 +17,7 @@ spec:
             - port: "8089"
               protocol: TCP
     - fromEndpoints:
-        - matchLabels:
-            "io.kubernetes.pod.namespace": grafana
+        - matchLabels: {} # Allow all traffic within namespace
 
   egress:
     - toEndpoints:
@@ -48,6 +46,8 @@ spec:
       toPorts:
         - ports:
             - port: "80"
+              protocol: TCP
+            - port: "8080"
               protocol: TCP
             - port: "3100"
               protocol: TCP
