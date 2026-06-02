@@ -1,14 +1,13 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: grafana-hardened
+  name: grafana-security
   namespace: grafana
 spec:
   endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: grafana
+    matchLabels: {} # S'applique à tous les pods du namespace grafana
   ingress:
-    # 1. Allow Traefik to access UI
+    # 1. Autoriser Traefik vers Grafana
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
@@ -17,15 +16,13 @@ spec:
         - ports:
             - port: "3000"
               protocol: TCP
-    # 2. Internal namespace traffic (if any)
+    # 2. Autoriser le trafic interne au namespace
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": grafana
+
   egress:
-    # 1. Kubernetes API access
-    - toEntities:
-        - kube-apiserver
-    # 2. DNS Resolution
+    # 1. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -37,6 +34,9 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
+    # 2. Kubernetes API access
+    - toEntities:
+        - kube-apiserver
     # 3. Vault for Secrets
     - toEndpoints:
         - matchLabels:
