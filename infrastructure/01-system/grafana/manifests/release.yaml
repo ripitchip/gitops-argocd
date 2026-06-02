@@ -30,7 +30,7 @@ spec:
             auth_url: https://auth.foobarbaz.fr/realms/master/protocol/openid-connect/auth
             token_url: https://auth.foobarbaz.fr/realms/master/protocol/openid-connect/token
             api_url: https://auth.foobarbaz.fr/realms/master/protocol/openid-connect/userinfo
-            role_attribute_path: contains(groups[*], 'administrators') && 'Admin' || 'Viewer'
+            role_attribute_path: contains(groups[*], 'grafana-admin') && 'Admin' || 'Viewer'
         extraSecretMounts:
           - name: grafana-oidc-secret
             mountPath: /etc/grafana/secrets/oidc-client-secret
