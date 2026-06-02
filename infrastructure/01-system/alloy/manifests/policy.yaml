@@ -1,0 +1,37 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: alloy-security
+  namespace: alloy
+spec:
+  endpointSelector:
+    matchLabels: {}
+  ingress:
+    # 1. Allow internal traffic
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    # 1. DNS Resolution
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    # 2. Kubernetes API access (for discovery)
+    - toEntities:
+        - kube-apiserver
+    # 3. Push logs to Loki
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": loki
+      toPorts:
+        - ports:
+            - port: "3100"
+              protocol: TCP

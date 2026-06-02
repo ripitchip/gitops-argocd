@@ -11,3 +11,4 @@ resources:
   - policy-reporter/policy-reporter-app-definition.yaml
   - grafana/grafana-app-definition.yaml
   - loki/loki-app-definition.yaml
+  - alloy/alloy-app-definition.yaml
