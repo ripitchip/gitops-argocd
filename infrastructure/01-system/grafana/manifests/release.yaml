@@ -31,7 +31,8 @@ spec:
           runAsNonRoot: true
           runAsUser: 472
           fsGroup: 472
-        securityContext:
+        containerSecurityContext:
+          runAsNonRoot: true
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           capabilities:
