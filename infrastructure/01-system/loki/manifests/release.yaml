@@ -29,7 +29,7 @@ spec:
                   prefix: index_
                   period: 24h
         
-        # Single binary mode for simplicity (no S3/MinIO required yet)
+        # Single binary mode for simplicity
         deploymentMode: SingleBinary
         
         singleBinary:
@@ -38,6 +38,14 @@ spec:
             enabled: true
             size: 10Gi
             storageClass: truenas-nfs
+
+        # Explicitly disable simple scalable components to avoid validation errors
+        backend:
+          replicas: 0
+        read:
+          replicas: 0
+        write:
+          replicas: 0
 
         # Monitoring
         monitoring:
