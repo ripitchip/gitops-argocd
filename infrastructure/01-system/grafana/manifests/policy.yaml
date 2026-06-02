@@ -5,9 +5,9 @@ metadata:
   namespace: grafana
 spec:
   endpointSelector:
-    matchLabels: {} # S'applique à tous les pods du namespace grafana
+    matchLabels: {} # S'applique à tous les pods du namespace grafana (Grafana + ACME Solvers)
   ingress:
-    # 1. Autoriser Traefik vers Grafana
+    # 1. Autoriser Traefik vers Grafana UI (3000) et ACME Solver (8089)
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
@@ -15,6 +15,8 @@ spec:
       toPorts:
         - ports:
             - port: "3000"
+              protocol: TCP
+            - port: "8089"
               protocol: TCP
     # 2. Autoriser le trafic interne au namespace
     - fromEndpoints:

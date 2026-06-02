@@ -6,7 +6,7 @@ metadata:
 spec:
   endpointSelector: {} # Appliqué à tout le namespace hubble
   ingress:
-    # 1. Autoriser Traefik vers l'UI Hubble
+    # 1. Autoriser Traefik vers l'UI Hubble (8080) et ACME Solver (8089)
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: traefik
@@ -14,6 +14,8 @@ spec:
       toPorts:
         - ports:
             - port: "8080"
+              protocol: TCP
+            - port: "8089"
               protocol: TCP
 
   egress:
@@ -26,6 +28,9 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
     # 2. Autoriser Hubble UI vers le Relay dans kube-system
     - toEndpoints:
         - matchLabels:
