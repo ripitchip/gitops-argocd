@@ -48,9 +48,9 @@ spec:
           serviceMonitor:
             enabled: false # We'll enable this when Mimir/Prometheus is ready
 
-        # Security Context matching your standards
+        # Loki Canary is required by the chart's validation logic
         lokiCanary:
-          enabled: false
+          enabled: true
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: loki
