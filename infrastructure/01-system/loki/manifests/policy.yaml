@@ -30,9 +30,13 @@ spec:
             - port: "8080"
               protocol: TCP
     - fromEndpoints:
-        - matchLabels: {} # Allow all traffic within namespace
+        - matchLabels:
+            "io.kubernetes.pod.namespace": loki
 
   egress:
+    - toEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": loki
     - toEndpoints:
         - matchLabels:
             "io.kubernetes.pod.namespace": kube-system
