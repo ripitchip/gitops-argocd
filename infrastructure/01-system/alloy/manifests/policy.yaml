@@ -7,12 +7,10 @@ spec:
   endpointSelector:
     matchLabels: {}
   ingress:
-    # 1. Allow internal traffic
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
   egress:
-    # 1. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -24,10 +22,8 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 2. Kubernetes API access (for discovery)
     - toEntities:
         - kube-apiserver
-    # 3. Push logs to Loki
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": loki

@@ -72,7 +72,6 @@ spec:
         controller:
           type: daemonset
 
-        # Security Context and Volumes for log collection
         alloy:
           securityContext:
             runAsUser: 0

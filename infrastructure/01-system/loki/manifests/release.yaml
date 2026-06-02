@@ -29,7 +29,6 @@ spec:
                   prefix: index_
                   period: 24h
         
-        # Single binary mode for simplicity
         deploymentMode: SingleBinary
         
         singleBinary:
@@ -44,7 +43,6 @@ spec:
             - name: storage
               mountPath: /var/loki
 
-        # Explicitly disable simple scalable components to avoid validation errors
         backend:
           replicas: 0
         read:
@@ -52,16 +50,14 @@ spec:
         write:
           replicas: 0
 
-        # Monitoring
         monitoring:
           dashboards:
             enabled: true
           rules:
             enabled: true
           serviceMonitor:
-            enabled: false # We'll enable this when Mimir/Prometheus is ready
+            enabled: false
 
-        # Loki Canary is required by the chart's validation logic
         lokiCanary:
           enabled: true
   destination:
