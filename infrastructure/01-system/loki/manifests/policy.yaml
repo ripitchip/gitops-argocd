@@ -7,37 +7,33 @@ spec:
   endpointSelector:
     matchLabels: {}
   ingress:
-    # 1. Allow Prometheus/Grafana to scrape metrics and query (via gateway port 80 or direct 3100)
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": grafana
+            "io.kubernetes.pod.namespace": grafana
       toPorts:
         - ports:
             - port: "3100"
               protocol: TCP
             - port: "80"
               protocol: TCP
-    # 2. Allow Alloy/Promtail to push logs
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": alloy
+            "io.kubernetes.pod.namespace": alloy
       toPorts:
         - ports:
             - port: "3100"
               protocol: TCP
             - port: "80"
               protocol: TCP
-    # 3. Internal namespace traffic
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": loki
+            "io.kubernetes.pod.namespace": loki
 
   egress:
-    # 1. DNS Resolution
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
+            "io.kubernetes.pod.namespace": kube-system
+            "k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -45,6 +41,5 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 2. Kubernetes API access
     - toEntities:
         - kube-apiserver

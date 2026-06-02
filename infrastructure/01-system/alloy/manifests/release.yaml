@@ -72,8 +72,8 @@ spec:
           securityContext:
             runAsUser: 0
             runAsGroup: 0
+            runAsNonRoot: false
         
-          # Correct nesting for volumes in Alloy chart
           extraVolumeMounts:
             - name: varlog
               mountPath: /var/log
