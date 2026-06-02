@@ -20,6 +20,23 @@ spec:
         grafana.ini:
           server:
             root_url: https://grafana.foobarbaz.fr
+          auth.generic_oauth:
+            enabled: true
+            name: Keycloak
+            allow_sign_up: true
+            client_id: grafana
+            client_secret: $__file{/etc/grafana/secrets/oidc-client-secret}
+            scopes: openid profile email groups
+            auth_url: https://auth.foobarbaz.fr/realms/master/protocol/openid-connect/auth
+            token_url: https://auth.foobarbaz.fr/realms/master/protocol/openid-connect/token
+            api_url: https://auth.foobarbaz.fr/realms/master/protocol/openid-connect/userinfo
+            role_attribute_path: contains(groups[*], 'administrators') && 'Admin' || 'Viewer'
+        extraSecretMounts:
+          - name: grafana-oidc-secret
+            mountPath: /etc/grafana/secrets/oidc-client-secret
+            subPath: oidc-client-secret
+            secretName: grafana-admin-credentials
+            readOnly: true
         resources:
           requests:
             cpu: 100m
