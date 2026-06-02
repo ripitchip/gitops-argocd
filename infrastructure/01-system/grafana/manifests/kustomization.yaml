@@ -4,3 +4,4 @@ resources:
   - policy.yaml
   - release.yaml
   - ingress.yaml
+  - certificate.yaml
