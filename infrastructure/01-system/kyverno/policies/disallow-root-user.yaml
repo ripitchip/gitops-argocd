@@ -26,6 +26,7 @@ spec:
                 - falco
                 - pdf
                 - cert-manager
+                - loki
           - resources:
               selector:
                 matchLabels:
