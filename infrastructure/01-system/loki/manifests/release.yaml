@@ -37,8 +37,8 @@ spec:
           persistence:
             enabled: true
             existingClaim: loki-pvc
-            size: 10Gi
-            storageClass: truenas-nfs
+          extraVolumes: []
+          extraVolumeMounts: []
 
         # Explicitly disable simple scalable components to avoid validation errors
         backend:
