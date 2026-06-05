@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tempo-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/ripitchip/gitops-argocd.git"
+    targetRevision: HEAD
+    path: infrastructure/01-system/tempo/manifests
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: tempo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -37,6 +37,31 @@ spec:
             subPath: oidc-client-secret
             secretName: grafana-admin-credentials
             readOnly: true
+        datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+              - name: Mimir
+                type: prometheus
+                url: http://mimir-gateway.mimir.svc.cluster.local/prometheus
+                access: proxy
+                isDefault: true
+              - name: Loki
+                type: loki
+                url: http://loki-gateway.loki.svc.cluster.local
+                access: proxy
+                jsonData:
+                  derivedFields:
+                    - datasourceUid: tempo
+                      matcherRegex: "(?:trace_id|traceID|tid)=(\\w+)"
+                      name: TraceID
+                      url: "$${__value.raw}"
+              - name: Tempo
+                type: tempo
+                url: http://tempo-gateway.tempo.svc.cluster.local:3100
+                access: proxy
+                uid: tempo
+
         resources:
           requests:
             cpu: 100m
