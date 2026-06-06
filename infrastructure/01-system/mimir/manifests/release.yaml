@@ -80,9 +80,6 @@ spec:
         # Sub-charts configuration
         minio:
           enabled: true
-          # Disable failing bucket creation job (Mimir components create their own if needed)
-          makeBucketsJob:
-            enabled: false
           buckets:
             - name: mimir-tsdb
             - name: mimir-ruler
