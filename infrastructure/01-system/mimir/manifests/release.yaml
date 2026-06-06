@@ -74,6 +74,10 @@ spec:
             enabled: true
             runAsNonRoot: true
             runAsUser: 11985
+          securityContext:
+            enabled: true
+            runAsNonRoot: true
+            runAsUser: 11985
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -94,6 +98,55 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 11985
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 11985
+
+        nginx:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+
+        gateway:
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
 
         ruler:
           podSecurityContext:
@@ -191,16 +244,6 @@ spec:
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-
-        gateway:
           containerSecurityContext:
             runAsNonRoot: true
             runAsUser: 11985
