@@ -80,14 +80,26 @@ spec:
         # Sub-charts configuration
         minio:
           enabled: true
-          # Top-level securityContext for the MinIO pod
+          # For the buckets creation job
+          makeBucketsJob:
+            securityContext:
+              enabled: true
+              runAsUser: 11985
+              runAsGroup: 11985
+              fsGroup: 11985
+              runAsNonRoot: true
+            containerSecurityContext:
+              enabled: true
+              runAsNonRoot: true
+              runAsUser: 11985
+          # Official MinIO chart uses 'securityContext' for Pod level
           securityContext:
             enabled: true
             runAsUser: 11985
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
-          # Container-level securityContext for MinIO
+          # Official MinIO chart uses 'containerSecurityContext' for Container level
           containerSecurityContext:
             enabled: true
             runAsNonRoot: true

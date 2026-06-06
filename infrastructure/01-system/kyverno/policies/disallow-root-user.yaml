@@ -28,6 +28,8 @@ spec:
                 - cert-manager
                 - loki
                 - alloy
+                - mimir
+                - tempo
           - resources:
               selector:
                 matchLabels:
