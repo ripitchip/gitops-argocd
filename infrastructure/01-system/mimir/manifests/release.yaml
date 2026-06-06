@@ -89,18 +89,6 @@ spec:
             - name: enterprise-metrics-tsdb
             - name: enterprise-metrics-admin
             - name: enterprise-metrics-ruler
-          # For the buckets creation job
-          makeBucketsJob:
-            securityContext:
-              enabled: true
-              runAsUser: 11985
-              runAsGroup: 11985
-              fsGroup: 11985
-              runAsNonRoot: true
-            containerSecurityContext:
-              enabled: true
-              runAsNonRoot: true
-              runAsUser: 11985
           # Official MinIO chart uses 'securityContext' for Pod level
           securityContext:
             enabled: true
