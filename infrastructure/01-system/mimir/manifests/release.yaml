@@ -64,6 +64,7 @@ spec:
 
         # Security Context to comply with Kyverno policies
         minio:
+          enabled: true
           podSecurityContext:
             enabled: true
             runAsUser: 11985
@@ -78,7 +79,8 @@ spec:
               drop:
                 - ALL
 
-        rollout-operator:
+        rollout_operator:
+          enabled: true
           podSecurityContext:
             runAsUser: 11985
             runAsGroup: 11985
@@ -92,6 +94,121 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 11985
+
+        ruler:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+        
+        compactor:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+
+        store_gateway:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+
+        alertmanager:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+
+        query_frontend:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+
+        query_scheduler:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+
+        overrides_exporter:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+
+        gateway:
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
 
         rbac:
           podSecurityContext:
