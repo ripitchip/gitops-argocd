@@ -80,6 +80,12 @@ spec:
         # Sub-charts configuration
         minio:
           enabled: true
+          buckets:
+            - name: mimir-tsdb
+            - name: mimir-ruler
+            - name: enterprise-metrics-tsdb
+            - name: enterprise-metrics-admin
+            - name: enterprise-metrics-ruler
           # For the buckets creation job
           makeBucketsJob:
             securityContext:
