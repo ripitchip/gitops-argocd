@@ -32,6 +32,7 @@ spec:
         # Security Context to comply with Kyverno policies
         podSecurityContext:
           fsGroup: 12906
+        
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:

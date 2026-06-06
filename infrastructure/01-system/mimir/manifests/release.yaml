@@ -39,6 +39,11 @@ spec:
             fsGroup: 11985
             runAsNonRoot: true
           containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 11985
         querier:
@@ -49,6 +54,11 @@ spec:
             fsGroup: 11985
             runAsNonRoot: true
           containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 11985
         distributor:
@@ -59,10 +69,14 @@ spec:
             fsGroup: 11985
             runAsNonRoot: true
           containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 11985
 
-        # Security Context to comply with Kyverno policies
         minio:
           enabled: true
           podSecurityContext:
@@ -71,10 +85,6 @@ spec:
             runAsGroup: 11985
             fsGroup: 11985
           containerSecurityContext:
-            enabled: true
-            runAsNonRoot: true
-            runAsUser: 11985
-          securityContext:
             enabled: true
             runAsNonRoot: true
             runAsUser: 11985
@@ -98,14 +108,6 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 11985
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 11985
 
         nginx:
           podSecurityContext:
@@ -121,25 +123,9 @@ spec:
               drop:
                 - ALL
             readOnlyRootFilesystem: true
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
 
         gateway:
           containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-          securityContext:
             runAsNonRoot: true
             runAsUser: 11985
             allowPrivilegeEscalation: false
@@ -259,11 +245,15 @@ spec:
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
+        
+        # Default Pod Security Context for remaining components
         podSecurityContext:
           runAsUser: 11985
           runAsGroup: 11985
           fsGroup: 11985
           runAsNonRoot: true
+        
+        # Default Container Security Context for remaining components
         containerSecurityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -273,7 +263,6 @@ spec:
           runAsNonRoot: true
           runAsUser: 11985
         
-        # Disable enterprise features if any
         mimir-continuous-test:
           enabled: false
   destination:
