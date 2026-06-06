@@ -63,6 +63,36 @@ spec:
             runAsUser: 11985
 
         # Security Context to comply with Kyverno policies
+        minio:
+          podSecurityContext:
+            enabled: true
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+          containerSecurityContext:
+            enabled: true
+            runAsNonRoot: true
+            runAsUser: 11985
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+        rollout-operator:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 11985
+
         rbac:
           podSecurityContext:
             runAsUser: 11985

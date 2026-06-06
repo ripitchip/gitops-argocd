@@ -31,10 +31,7 @@ spec:
 
         # Security Context to comply with Kyverno policies
         podSecurityContext:
-          runAsUser: 12906
-          runAsGroup: 12906
           fsGroup: 12906
-          runAsNonRoot: true
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -43,6 +40,7 @@ spec:
           readOnlyRootFilesystem: true
           runAsNonRoot: true
           runAsUser: 12906
+          runAsGroup: 12906
         
         persistence:
           enabled: false
