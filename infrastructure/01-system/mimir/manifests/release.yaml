@@ -31,63 +31,32 @@ spec:
               filesystem:
                 dir: /mimir-storage/rules
         
-        ingester:
-          replicas: 1
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 11985
-        querier:
-          replicas: 1
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 11985
-        distributor:
-          replicas: 1
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 11985
+        # Security Context for Kyverno compliance (Restricted Profile)
+        podSecurityContext:
+          runAsUser: 11985
+          runAsGroup: 11985
+          fsGroup: 11985
+          runAsNonRoot: true
+        
+        containerSecurityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 11985
 
-        # Sub-charts configuration
+        # Sub-charts
         minio:
           enabled: true
-          # Official MinIO chart uses 'securityContext' for Pod level
+          # DO NOT define 'buckets' here; it triggers a buggy Job in this chart version
           securityContext:
             enabled: true
             runAsUser: 11985
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
-          # Official MinIO chart uses 'containerSecurityContext' for Container level
           containerSecurityContext:
             enabled: true
             runAsNonRoot: true
@@ -97,7 +66,6 @@ spec:
               drop:
                 - ALL
 
-        # Key for this dependency is rollout_operator (underscore)
         rollout_operator:
           enabled: true
           podSecurityContext:
@@ -116,149 +84,16 @@ spec:
 
         nginx:
           enabled: true
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-
-        ruler:
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
         
-        compactor:
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
+        # Resource limits for all components (Kyverno requirement)
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
 
-        store_gateway:
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-
-        alertmanager:
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-
-        query_frontend:
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-
-        query_scheduler:
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-
-        overrides_exporter:
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-
-        rbac:
-          podSecurityContext:
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-        
-        # Default Pod Security Context for remaining components
-        podSecurityContext:
-          runAsUser: 11985
-          runAsGroup: 11985
-          fsGroup: 11985
-          runAsNonRoot: true
-        
-        # Default Container Security Context for remaining components
-        containerSecurityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 11985
-        
         mimir-continuous-test:
           enabled: false
   destination:
@@ -271,9 +106,3 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
-  ignoreDifferences:
-    - group: batch
-      kind: Job
-      name: mimir-make-minio-buckets-5.0.14
-      jsonPointers:
-        - /spec
