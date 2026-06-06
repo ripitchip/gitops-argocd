@@ -33,26 +33,55 @@ spec:
         
         ingester:
           replicas: 1
-        querier:
-          replicas: 1
-        distributor:
-          replicas: 1
-
-        # Security Context to comply with Kyverno policies
-        mimir:
           podSecurityContext:
             runAsUser: 11985
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
           containerSecurityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 11985
+        querier:
+          replicas: 1
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+        distributor:
+          replicas: 1
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+          containerSecurityContext:
+            runAsNonRoot: true
+            runAsUser: 11985
+
+        # Security Context to comply with Kyverno policies
+        rbac:
+          podSecurityContext:
+            runAsUser: 11985
+            runAsGroup: 11985
+            fsGroup: 11985
+            runAsNonRoot: true
+        podSecurityContext:
+          runAsUser: 11985
+          runAsGroup: 11985
+          fsGroup: 11985
+          runAsNonRoot: true
+        containerSecurityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 11985
         
         # Disable enterprise features if any
         mimir-continuous-test:
