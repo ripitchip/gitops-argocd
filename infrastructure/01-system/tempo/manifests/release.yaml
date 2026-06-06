@@ -14,17 +14,24 @@ spec:
         tempo:
           repository: grafana/tempo
           tag: 2.4.1
-          multitenancy_enabled: false
-          reporting_enabled: false
-          metrics_generator_enabled: true
-        
-        storage:
-          trace:
-            backend: local
-            local:
-              path: /tmp/tempo/traces
-            wal:
-              path: /tmp/tempo/wal
+          multitenancyEnabled: false
+          reportingEnabled: false
+          metricsGenerator:
+            enabled: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          storage:
+            trace:
+              backend: local
+              local:
+                path: /tmp/tempo/traces
+              wal:
+                path: /tmp/tempo/wal
 
         builder:
           replicas: 1
