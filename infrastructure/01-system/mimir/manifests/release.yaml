@@ -80,14 +80,6 @@ spec:
         # Sub-charts configuration
         minio:
           enabled: true
-          makeBucketsJob:
-            enabled: false
-          buckets:
-            - name: mimir-tsdb
-            - name: mimir-ruler
-            - name: enterprise-metrics-tsdb
-            - name: enterprise-metrics-admin
-            - name: enterprise-metrics-ruler
           # Official MinIO chart uses 'securityContext' for Pod level
           securityContext:
             enabled: true
