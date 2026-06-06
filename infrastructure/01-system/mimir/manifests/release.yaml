@@ -77,17 +77,17 @@ spec:
             runAsNonRoot: true
             runAsUser: 11985
 
-        # Sub-charts use different key naming conventions
+        # Sub-charts configuration
         minio:
           enabled: true
-          # Official MinIO chart uses 'securityContext' for Pod level
+          # Top-level securityContext for the MinIO pod
           securityContext:
             enabled: true
             runAsUser: 11985
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
-          # Official MinIO chart uses 'containerSecurityContext' for Container level
+          # Container-level securityContext for MinIO
           containerSecurityContext:
             enabled: true
             runAsNonRoot: true
@@ -97,15 +97,14 @@ spec:
               drop:
                 - ALL
 
+        # Key for this dependency is rollout_operator (underscore)
         rollout_operator:
           enabled: true
-          # Grafana Rollout Operator uses 'podSecurityContext' for Pod level
           podSecurityContext:
             runAsUser: 11985
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
-          # Grafana Rollout Operator uses 'securityContext' for Container level
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -116,21 +115,12 @@ spec:
             runAsUser: 11985
 
         nginx:
+          enabled: true
           podSecurityContext:
             runAsUser: 11985
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-
-        gateway:
           containerSecurityContext:
             runAsNonRoot: true
             runAsUser: 11985
