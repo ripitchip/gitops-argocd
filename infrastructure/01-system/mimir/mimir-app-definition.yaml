@@ -18,9 +18,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-  ignoreDifferences:
-    - group: batch
-      kind: Job
-      name: mimir-make-minio-buckets-5.0.14
-      jsonPointers:
-        - /spec
