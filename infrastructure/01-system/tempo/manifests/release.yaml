@@ -22,9 +22,9 @@ spec:
           trace:
             backend: local
             local:
-              path: /var/tempo/traces
+              path: /tmp/tempo/traces
             wal:
-              path: /var/tempo/wal
+              path: /tmp/tempo/wal
 
         builder:
           replicas: 1
