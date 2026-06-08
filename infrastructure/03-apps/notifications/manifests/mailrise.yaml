@@ -5,7 +5,7 @@ metadata:
 data:
   mailrise.conf: |
     configs:
-      .*:
+      cluster-alerts:
         urls:
           - ntfy://ntfy:80/alertes-cluster
 ---
