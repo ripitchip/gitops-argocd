@@ -6,6 +6,7 @@ data:
   server.yml: |
     base-url: "https://ntfy.foobarbaz.fr"
     behind-proxy: true
+    listen-http: ":8080"
     cache-file: "/var/lib/ntfy/cache.db"
     attachment-cache-dir: "/var/lib/ntfy/attachments"
     # To secure the server, you would typically configure auth here.
@@ -53,15 +54,17 @@ spec:
         app: ntfy
     spec:
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 11454
+        runAsGroup: 11454
+        fsGroup: 11454
         runAsNonRoot: true
       containers:
         - name: ntfy
           image: binwiederhier/ntfy:v2.11.0
           args: ["serve"]
           securityContext:
+            runAsUser: 11454
+            runAsGroup: 11454
             runAsNonRoot: true
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false

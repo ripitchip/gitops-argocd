@@ -49,16 +49,10 @@ spec:
           enabled: true
           path: /configs
         securityContext:
-          enabled: true
-          runAsNonRoot: true
-          runAsUser: 12345
-          runAsGroup: 12345
-          fsGroup: 12345
+          enabled: false
         containerSecurityContext:
-          runAsNonRoot: true
-          runAsUser: 12345
-          runAsGroup: 12345
-          allowPrivilegeEscalation: false
+          runAsNonRoot: false
+          allowPrivilegeEscalation: true
           capabilities:
             drop:
               - ALL

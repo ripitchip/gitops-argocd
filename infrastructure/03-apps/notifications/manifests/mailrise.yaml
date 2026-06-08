@@ -36,16 +36,17 @@ spec:
         app: mailrise
     spec:
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
+        runAsUser: 11454
+        runAsGroup: 11454
         runAsNonRoot: true
       containers:
         - name: mailrise
           image: yoryan/mailrise:1.4.0
           securityContext:
+            runAsUser: 11454
+            runAsGroup: 11454
             runAsNonRoot: true
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
             capabilities:
               drop:
                 - ALL
