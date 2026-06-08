@@ -43,6 +43,7 @@ spec:
         - name: mailrise
           image: yoryan/mailrise:1.4.0
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:

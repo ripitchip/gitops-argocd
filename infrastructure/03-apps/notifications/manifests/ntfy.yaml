@@ -62,6 +62,7 @@ spec:
           image: binwiederhier/ntfy:v2.11.0
           args: ["serve"]
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
