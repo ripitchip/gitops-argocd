@@ -21,15 +21,21 @@ spec:
             blocks_storage:
               backend: filesystem
               filesystem:
-                dir: /data/mimir/blocks
+                dir: /data/storage/blocks
             alertmanager_storage:
               backend: filesystem
               filesystem:
-                dir: /data/mimir/alerts
+                dir: /data/storage/alerts
             ruler_storage:
               backend: filesystem
               filesystem:
-                dir: /data/mimir/rules
+                dir: /data/storage/rules
+            alertmanager:
+              data_dir: /data/local/alertmanager
+            compactor:
+              data_dir: /data/local/compactor
+            ruler:
+              rule_path: /data/local/ruler
         
         # Disable MinIO as we use filesystem storage
         minio:
