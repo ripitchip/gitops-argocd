@@ -9,12 +9,12 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": alloy
+            "io.kubernetes.pod.namespace": alloy
   egress:
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
+            "io.kubernetes.pod.namespace": kube-system
+            "k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -26,15 +26,21 @@ spec:
         - kube-apiserver
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": loki
+            "io.kubernetes.pod.namespace": loki
       toPorts:
         - ports:
             - port: "3100"
               protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": mimir
+            "io.kubernetes.pod.namespace": mimir
       toPorts:
         - ports:
             - port: "80"
+              protocol: TCP
+            - port: "8080"
               protocol: TCP
