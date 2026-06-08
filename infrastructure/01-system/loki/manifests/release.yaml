@@ -60,6 +60,9 @@ spec:
 
         lokiCanary:
           enabled: true
+
+        test:
+          enabled: false
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: loki
