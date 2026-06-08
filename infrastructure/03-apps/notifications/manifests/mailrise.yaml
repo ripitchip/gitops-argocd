@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mailrise-config
+data:
+  mailrise.conf: |
+    configs:
+      .*:
+        urls:
+          - ntfy://ntfy:80/alertes-cluster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailrise
+spec:
+  selector:
+    app: mailrise
+  ports:
+    - name: smtp
+      port: 25
+      targetPort: 8025
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailrise
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailrise
+  template:
+    metadata:
+      labels:
+        app: mailrise
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+      containers:
+        - name: mailrise
+          image: yoryan/mailrise:1.4.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/mailrise.conf
+              subPath: mailrise.conf
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: mailrise-config
+        - name: tmp
+          emptyDir: {}
