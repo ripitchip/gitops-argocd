@@ -1,0 +1,27 @@
+# Mimir Shared Storage (Blocks, Rules, Alerts)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-storage-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 100Gi }
+  accessModes: [ReadWriteMany]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mimir-storage-pvc
+  namespace: mimir
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteMany]
+  resources: { requests: { storage: 100Gi } }
+  volumeName: mimir-storage-pv

@@ -21,32 +21,70 @@ spec:
             blocks_storage:
               backend: filesystem
               filesystem:
-                dir: /data/storage/blocks
+                dir: /mimir-storage/blocks
             alertmanager_storage:
               backend: filesystem
               filesystem:
-                dir: /data/storage/alerts
+                dir: /mimir-storage/alerts
             ruler_storage:
               backend: filesystem
               filesystem:
-                dir: /data/storage/rules
+                dir: /mimir-storage/rules
             alertmanager:
               data_dir: /data/local/alertmanager
             compactor:
               data_dir: /data/local/compactor
             ruler:
               rule_path: /data/local/ruler
-        
-        # Disable MinIO as we use filesystem storage
-        minio:
-          enabled: false
+
+        # Shared Storage Mount (NFS)
+        # We mount the shared PVC on all components that need access to the common filesystem backend
+        commonSharedVolume: &commonSharedVolume
+          extraVolumes:
+            - name: mimir-storage
+              persistentVolumeClaim:
+                claimName: mimir-storage-pvc
+          extraVolumeMounts:
+            - name: mimir-storage
+              mountPath: /mimir-storage
 
         ingester:
           replicas: 1
+          persistentVolume:
+            size: 10Gi
+            storageClass: truenas-nfs
+          <<: *commonSharedVolume
+
         querier:
           replicas: 1
+          <<: *commonSharedVolume
+
         distributor:
           replicas: 1
+
+        compactor:
+          persistentVolume:
+            size: 20Gi
+            storageClass: truenas-nfs
+          <<: *commonSharedVolume
+
+        store_gateway:
+          persistentVolume:
+            size: 10Gi
+            storageClass: truenas-nfs
+          <<: *commonSharedVolume
+
+        alertmanager:
+          persistentVolume:
+            size: 5Gi
+            storageClass: truenas-nfs
+          <<: *commonSharedVolume
+
+        ruler:
+          persistentVolume:
+            size: 5Gi
+            storageClass: truenas-nfs
+          <<: *commonSharedVolume
 
         # Security Context for Kyverno compliance (Restricted Profile)
         global:
@@ -73,6 +111,10 @@ spec:
             cpu: 500m
             memory: 1Gi
         
+        # Disable MinIO as we use NFS filesystem storage
+        minio:
+          enabled: false
+
         mimir-continuous-test:
           enabled: false
   destination:
