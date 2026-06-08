@@ -1,0 +1,56 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: tempo-security
+  namespace: tempo
+spec:
+  endpointSelector:
+    matchLabels: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": grafana
+      toPorts:
+        - ports:
+            - port: "3100"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": alloy
+      toPorts:
+        - ports:
+            - port: "4317"
+              protocol: TCP
+            - port: "4318"
+              protocol: TCP
+            - port: "3100"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": tempo
+
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": tempo
+    - toEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": kube-system
+            "k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEntities:
+        - kube-apiserver

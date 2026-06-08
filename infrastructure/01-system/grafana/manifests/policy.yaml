@@ -60,6 +60,17 @@ spec:
               protocol: TCP
             - port: "8080"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": tempo
+      toPorts:
+        - ports:
+            - port: "3100"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP
     - toEntities:
         - world
       toPorts:
