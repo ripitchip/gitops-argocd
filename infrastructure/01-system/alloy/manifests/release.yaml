@@ -47,7 +47,7 @@ spec:
 
             otelcol.exporter.otlp "tempo" {
               client {
-                endpoint = "tempo-gateway.tempo.svc.cluster.local:4317"
+                endpoint = "tempo.tempo.svc.cluster.local:4317"
                 tls { insecure = true }
               }
             }

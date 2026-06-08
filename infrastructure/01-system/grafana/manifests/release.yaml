@@ -58,7 +58,7 @@ spec:
                       url: "$${__value.raw}"
               - name: Tempo
                 type: tempo
-                url: http://tempo-gateway.tempo.svc.cluster.local:3100
+                url: http://tempo.tempo.svc.cluster.local:3100
                 access: proxy
                 uid: tempo
 
