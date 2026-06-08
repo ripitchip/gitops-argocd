@@ -51,6 +51,13 @@ spec:
               protocol: TCP
             - port: "3100"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": mimir
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
     - toEntities:
         - world
       toPorts:
