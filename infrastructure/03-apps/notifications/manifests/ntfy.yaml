@@ -58,6 +58,16 @@ spec:
         runAsGroup: 11454
         fsGroup: 11454
         runAsNonRoot: true
+      initContainers:
+        - name: init-data
+          image: busybox
+          command: ["sh", "-c", "mkdir -p /var/lib/ntfy/attachments && chown -R 11454:11454 /var/lib/ntfy && chmod -R 775 /var/lib/ntfy"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/ntfy
       containers:
         - name: ntfy
           image: binwiederhier/ntfy:v2.11.0

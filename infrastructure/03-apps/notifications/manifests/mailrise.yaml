@@ -39,9 +39,24 @@ spec:
         runAsUser: 11454
         runAsGroup: 11454
         runAsNonRoot: true
+      initContainers:
+        - name: init-tmp
+          image: busybox
+          command: ["sh", "-c", "chown -R 11454:11454 /tmp && chmod -R 777 /tmp"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
       containers:
         - name: mailrise
           image: yoryan/mailrise:1.4.0
+          env:
+            - name: HOME
+              value: /home/mailrise
+            - name: PYTHONPATH
+              value: /home/mailrise/.local/lib/python3.12/site-packages
           securityContext:
             runAsUser: 11454
             runAsGroup: 11454
