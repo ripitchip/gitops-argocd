@@ -11,7 +11,7 @@ spec:
     # Allow Grafana to query Mimir
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: grafana
+            "k8s:io.kubernetes.pod.namespace": grafana
       toPorts:
         - ports:
             - port: "80"
@@ -19,20 +19,20 @@ spec:
     # Allow Alloy to push metrics to Mimir
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: alloy
+            "k8s:io.kubernetes.pod.namespace": alloy
       toPorts:
         - ports:
             - port: "80"
               protocol: TCP
-    # Allow Mimir components to talk to each other
+    # Allow all traffic within the mimir namespace
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: mimir
+            "k8s:io.kubernetes.pod.namespace": mimir
   egress:
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kube-system
-            k8s:k8s-app: kube-dns
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -40,13 +40,14 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
+    # Allow all traffic within the mimir namespace
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: mimir
-    # Allow Mimir to talk to Vault for secrets if needed
+            "k8s:io.kubernetes.pod.namespace": mimir
+    # Allow Mimir to talk to Vault for secrets
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: vault
+            "k8s:io.kubernetes.pod.namespace": vault
       toPorts:
         - ports:
             - port: "8200"
