@@ -21,59 +21,35 @@ spec:
             blocks_storage:
               backend: filesystem
               filesystem:
-                dir: /mimir-storage/blocks
+                dir: /data/mimir/blocks
             alertmanager_storage:
               backend: filesystem
               filesystem:
-                dir: /mimir-storage/alerts
+                dir: /data/mimir/alerts
             ruler_storage:
               backend: filesystem
               filesystem:
-                dir: /mimir-storage/rules
+                dir: /data/mimir/rules
         
-        # Security Context for Kyverno compliance (Restricted Profile)
-        podSecurityContext:
-          runAsUser: 11985
-          runAsGroup: 11985
-          fsGroup: 11985
-          runAsNonRoot: true
-        
-        containerSecurityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 11985
-
-        # Sub-charts
+        # Disable MinIO as we use filesystem storage
         minio:
-          enabled: true
-          # DO NOT define 'buckets' here; it triggers a buggy Job in this chart version
-          securityContext:
-            enabled: true
-            runAsUser: 11985
-            runAsGroup: 11985
-            fsGroup: 11985
-            runAsNonRoot: true
-          containerSecurityContext:
-            enabled: true
-            runAsNonRoot: true
-            runAsUser: 11985
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
+          enabled: false
 
-        rollout_operator:
-          enabled: true
+        ingester:
+          replicas: 1
+        querier:
+          replicas: 1
+        distributor:
+          replicas: 1
+
+        # Security Context for Kyverno compliance (Restricted Profile)
+        global:
           podSecurityContext:
             runAsUser: 11985
             runAsGroup: 11985
             fsGroup: 11985
             runAsNonRoot: true
-          securityContext:
+          containerSecurityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -82,10 +58,7 @@ spec:
             runAsNonRoot: true
             runAsUser: 11985
 
-        nginx:
-          enabled: true
-        
-        # Resource limits for all components (Kyverno requirement)
+        # Resource limits for Kyverno compliance
         resources:
           requests:
             cpu: 100m
@@ -93,7 +66,7 @@ spec:
           limits:
             cpu: 500m
             memory: 1Gi
-
+        
         mimir-continuous-test:
           enabled: false
   destination:
