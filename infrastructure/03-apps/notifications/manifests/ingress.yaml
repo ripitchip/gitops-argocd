@@ -7,7 +7,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     # Middleware OAuth2 Proxy
-    traefik.ingress.kubernetes.io/router.middlewares: default-oauth2-proxy@kubernetescrd
+    # traefik.ingress.kubernetes.io/router.middlewares: default-oauth2-proxy@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
