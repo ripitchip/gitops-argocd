@@ -1,42 +1,46 @@
-apiVersion: cilium.io/v2
+apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: mimir-security
   namespace: mimir
 spec:
   endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: mimir
+    matchLabels: {}
   ingress:
-    # Allow Grafana to query Mimir
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": grafana
+            "io.kubernetes.pod.namespace": grafana
       toPorts:
         - ports:
+            - port: "80"
+              protocol: TCP
             - port: "8080"
               protocol: TCP
             - port: "9095"
               protocol: TCP
-    # Allow Alloy to push metrics to Mimir
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": alloy
+            "io.kubernetes.pod.namespace": alloy
       toPorts:
         - ports:
+            - port: "80"
+              protocol: TCP
             - port: "8080"
               protocol: TCP
             - port: "9095"
               protocol: TCP
-    # Allow all traffic within the mimir namespace
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": mimir
+            "io.kubernetes.pod.namespace": mimir
+
   egress:
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
+            "io.kubernetes.pod.namespace": mimir
+    - toEndpoints:
+        - matchLabels:
+            "io.kubernetes.pod.namespace": kube-system
+            "k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -44,14 +48,11 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # Allow all traffic within the mimir namespace
+    - toEntities:
+        - kube-apiserver
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": mimir
-    # Allow Mimir to talk to Vault for secrets
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": vault
+            "io.kubernetes.pod.namespace": vault
       toPorts:
         - ports:
             - port: "8200"
