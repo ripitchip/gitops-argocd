@@ -46,6 +46,8 @@ spec:
                 url: http://mimir-nginx.mimir.svc.cluster.local/prometheus
                 access: proxy
                 isDefault: true
+                jsonData:
+                  prometheusType: Mimir
               - name: Loki
                 type: loki
                 url: http://loki-gateway.loki.svc.cluster.local
