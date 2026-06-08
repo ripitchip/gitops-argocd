@@ -1,0 +1,53 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: mimir-security
+  namespace: mimir
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: mimir
+  ingress:
+    # Allow Grafana to query Mimir
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: grafana
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+    # Allow Alloy to push metrics to Mimir
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: alloy
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+    # Allow Mimir components to talk to each other
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: mimir
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: mimir
+    # Allow Mimir to talk to Vault for secrets if needed
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: vault
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
