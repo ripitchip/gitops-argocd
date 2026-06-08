@@ -14,7 +14,9 @@ spec:
             "k8s:io.kubernetes.pod.namespace": grafana
       toPorts:
         - ports:
-            - port: "80"
+            - port: "8080"
+              protocol: TCP
+            - port: "9095"
               protocol: TCP
     # Allow Alloy to push metrics to Mimir
     - fromEndpoints:
@@ -22,7 +24,9 @@ spec:
             "k8s:io.kubernetes.pod.namespace": alloy
       toPorts:
         - ports:
-            - port: "80"
+            - port: "8080"
+              protocol: TCP
+            - port: "9095"
               protocol: TCP
     # Allow all traffic within the mimir namespace
     - fromEndpoints:
