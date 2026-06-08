@@ -3149,10 +3149,10 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 256Mi
-            limits:
-              cpu: 200m
               memory: 512Mi
+            limits:
+              cpu: 400m
+              memory: 1Gi
           env:
             - name: OPERATOR_NAMESPACE
               value: trivy-system
@@ -3180,7 +3180,7 @@ spec:
             httpGet:
               path: /readyz/
               port: probes
-            initialDelaySeconds: 5
+            initialDelaySeconds: 15
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
@@ -3188,7 +3188,7 @@ spec:
             httpGet:
               path: /healthz/
               port: probes
-            initialDelaySeconds: 5
+            initialDelaySeconds: 15
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 10
