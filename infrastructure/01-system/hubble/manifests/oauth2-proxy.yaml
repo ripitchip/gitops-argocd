@@ -50,6 +50,8 @@ spec:
             - --cookie-samesite=lax
             - --session-store-type=cookie
             - --redirect-url=https://hubble.foobarbaz.fr/oauth2/callback
+            - --cookie-refresh=1h
+            - --pass-user-headers=true
           env:
             - name: OAUTH2_PROXY_CLIENT_ID
               value: "hubble"
