@@ -37,6 +37,7 @@ spec:
             runAsUser: 65532
           args:
             - --provider=oidc
+            - --skip-provider-button=true
             - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/master
             - --email-domain=*
             - --http-address=0.0.0.0:4180
