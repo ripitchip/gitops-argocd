@@ -36,7 +36,7 @@ spec:
             runAsNonRoot: true
             runAsUser: 65532
           args:
-            - --provider=keycloak-oidc
+            - --provider=oidc
             - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/master
             - --email-domain=*
             - --http-address=0.0.0.0:4180
