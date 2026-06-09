@@ -34,18 +34,8 @@ spec:
           - --session-store-type=cookie
 
         ingress:
-          enabled: true
+          enabled: false
           className: traefik
-          path: /oauth2
-          hosts:
-            - ntfy.foobarbaz.fr
-          annotations:
-            traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
-            traefik.ingress.kubernetes.io/router.tls: "true"
-          tls:
-            - hosts:
-                - ntfy.foobarbaz.fr
-              secretName: ntfy-tls
 
         service:
           portNumber: 80

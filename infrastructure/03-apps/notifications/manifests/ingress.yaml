@@ -47,6 +47,14 @@ spec:
     - host: ntfy.foobarbaz.fr
       http:
         paths:
+          # Endpoint pour OAuth2 Proxy (Nécessaire pour le callback)
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: ntfy-oauth2-proxy
+                port:
+                  number: 80
           # API pour l'application mobile (Bypass Auth)
           - path: /v1
             pathType: Prefix
