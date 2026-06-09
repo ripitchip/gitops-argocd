@@ -17,7 +17,6 @@ spec:
     - host: ntfy.foobarbaz.fr
       http:
         paths:
-          # L'interface utilisateur passe par oauth2-proxy (Proxy Mode)
           - path: /
             pathType: Prefix
             backend:
@@ -34,7 +33,6 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    # Priorité élevée pour bypasser l'oauth2-proxy sur les endpoints d'API
     traefik.ingress.kubernetes.io/router.priority: "100"
 spec:
   ingressClassName: traefik
@@ -46,7 +44,6 @@ spec:
     - host: ntfy.foobarbaz.fr
       http:
         paths:
-          # API pour l'application mobile (Direct vers ntfy)
           - path: /v1
             pathType: Prefix
             backend:
@@ -54,7 +51,6 @@ spec:
                 name: ntfy
                 port:
                   number: 80
-          # Topic d'alertes (Direct vers ntfy)
           - path: /alertes-cluster
             pathType: Prefix
             backend:

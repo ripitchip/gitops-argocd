@@ -8,10 +8,8 @@ spec:
     matchLabels:
       app.kubernetes.io/name: policy-reporter
   egress:
-    # 1. Kubernetes API access to read reports
     - toEntities:
         - kube-apiserver
-    # 2. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -31,7 +29,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: policy-reporter-ui
   ingress:
-    # Allow oauth2-proxy and Traefik to access UI
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
@@ -42,7 +39,6 @@ spec:
             - port: "8080"
               protocol: TCP
   egress:
-    # 1. Access to the backend
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: policy-reporter
@@ -50,7 +46,6 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-    # 2. Access to the Trivy Plugin
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: policy-reporter-trivy
@@ -58,10 +53,8 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-    # 3. Kubernetes API access
     - toEntities:
         - kube-apiserver
-    # 4. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -124,10 +117,8 @@ spec:
     matchLabels:
       app.kubernetes.io/name: policy-reporter-trivy
   egress:
-    # 1. Kubernetes API access
     - toEntities:
         - kube-apiserver
-    # 2. DNS Resolution
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
