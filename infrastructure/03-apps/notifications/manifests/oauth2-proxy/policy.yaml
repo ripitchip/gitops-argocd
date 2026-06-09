@@ -7,6 +7,7 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: oauth2-proxy
+      app.kubernetes.io/instance: ntfy-oauth2-proxy
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -27,14 +28,12 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    - toEntities:
-        - kube-apiserver
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": vault
+            app: ntfy
       toPorts:
         - ports:
-            - port: "8200"
+            - port: "80"
               protocol: TCP
     - toEntities:
         - world
