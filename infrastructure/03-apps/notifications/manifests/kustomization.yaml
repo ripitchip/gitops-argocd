@@ -9,15 +9,4 @@ resources:
   - oauth2-proxy/external-secrets.yaml
   - oauth2-proxy/middleware.yaml
   - oauth2-proxy/policy.yaml
-  - oauth2-proxy/release.yaml
-
-patches:
-  - target:
-      group: argoproj.io
-      version: v1alpha1
-      kind: Application
-      name: ntfy-oauth2-proxy
-    patch: |
-      - op: replace
-        path: /metadata/namespace
-        value: argocd
+  - oauth2-proxy/app.yaml
