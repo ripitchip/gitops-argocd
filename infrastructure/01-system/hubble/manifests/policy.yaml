@@ -59,7 +59,7 @@ spec:
               protocol: ANY
           rules:
             dns:
-              - matchPattern: "*"
+              - matchName: "auth.foobarbaz.fr"
     - toEndpoints:
         - matchLabels:
             k8s-app: hubble-ui
