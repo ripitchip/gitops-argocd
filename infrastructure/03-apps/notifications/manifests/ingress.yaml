@@ -1,12 +1,14 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ntfy
+  name: ntfy-protected
   namespace: notifications
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Middleware d'authentification pour l'interface utilisateur
+    traefik.ingress.kubernetes.io/router.middlewares: notifications-ntfy-oauth2-proxy-auth@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
@@ -17,7 +19,35 @@ spec:
     - host: ntfy.foobarbaz.fr
       http:
         paths:
-          # API Bypass (Application mobile et alertes cluster)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ntfy
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ntfy-public
+  namespace: notifications
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # Priorité élevée pour court-circuiter l'authentification sur les endpoints publics
+    traefik.ingress.kubernetes.io/router.priority: "100"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - ntfy.foobarbaz.fr
+      secretName: ntfy-tls
+  rules:
+    - host: ntfy.foobarbaz.fr
+      http:
+        paths:
+          # API pour l'application mobile (Bypass Auth)
           - path: /v1
             pathType: Prefix
             backend:
@@ -25,6 +55,7 @@ spec:
                 name: ntfy
                 port:
                   number: 80
+          # Topic d'alertes (Bypass Auth)
           - path: /alertes-cluster
             pathType: Prefix
             backend:
@@ -32,11 +63,3 @@ spec:
                 name: ntfy
                 port:
                   number: 80
-          # Tout le reste (UI) passe par OAuth2 Proxy qui redirige vers ntfy après auth
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ntfy-oauth2-proxy
-                port:
-                  number: 4180
