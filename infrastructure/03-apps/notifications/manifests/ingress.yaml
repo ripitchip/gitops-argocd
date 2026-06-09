@@ -1,13 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ntfy-ui-protected
+  name: ntfy
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    # Middleware OAuth2 Proxy
-    traefik.ingress.kubernetes.io/router.middlewares: notifications-ntfy-oauth2-proxy-auth@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
@@ -18,35 +16,7 @@ spec:
     - host: ntfy.foobarbaz.fr
       http:
         paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ntfy
-                port:
-                  number: 80
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: ntfy-api-bypass
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    # Priorite haute pour contourner OAuth2
-    traefik.ingress.kubernetes.io/router.priority: "100"
-spec:
-  ingressClassName: traefik
-  tls:
-    - hosts:
-        - ntfy.foobarbaz.fr
-      secretName: ntfy-tls
-  rules:
-    - host: ntfy.foobarbaz.fr
-      http:
-        paths:
-          # API pour l application mobile Ntfy
+          # API Bypass (Application mobile et alertes cluster)
           - path: /v1
             pathType: Prefix
             backend:
@@ -54,7 +24,6 @@ spec:
                 name: ntfy
                 port:
                   number: 80
-          # Topic specifique pour Android
           - path: /alertes-cluster
             pathType: Prefix
             backend:
@@ -62,3 +31,11 @@ spec:
                 name: ntfy
                 port:
                   number: 80
+          # Tout le reste (UI) passe par OAuth2 Proxy qui redirige vers ntfy après auth
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ntfy-oauth2-proxy
+                port:
+                  number: 4180
