@@ -46,7 +46,7 @@ spec:
               secretName: ntfy-tls
 
         service:
-          port: 4180
+          portNumber: 4180
 
         authenticatedEmailsFile:
           enabled: false
