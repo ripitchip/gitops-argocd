@@ -60,6 +60,7 @@ spec:
           rules:
             dns:
               - matchName: "auth.foobarbaz.fr"
+              - matchPattern: "*.hubble.svc.cluster.local"
     - toEndpoints:
         - matchLabels:
             k8s-app: hubble-ui
