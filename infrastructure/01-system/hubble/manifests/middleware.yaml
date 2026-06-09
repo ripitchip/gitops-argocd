@@ -1,0 +1,13 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: hubble-auth
+  namespace: hubble
+spec:
+  forwardAuth:
+    address: http://hubble-oauth2-proxy.hubble.svc.cluster.local:80/oauth2/auth
+    trustForwardHeader: true
+    authResponseHeaders:
+      - X-Auth-Request-User
+      - X-Auth-Request-Email
+      - Authorization
