@@ -2,4 +2,5 @@ resources:
   - namespace.yaml
   - external-secrets.yaml
   - policy.yaml
+  - middleware.yaml
   - release.yaml
