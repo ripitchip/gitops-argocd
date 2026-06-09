@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: oauth2-proxy
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  project: default
+  source:
+    repoURL: 'https://oauth2-proxy.github.io/manifests'
+    chart: oauth2-proxy
+    targetRevision: 10.6.0
+    helm:
+      values: |
+        config:
+          clientID: "" # Will be overridden by env from secret
+          clientSecret: "" # Will be overridden by env from secret
+          cookieSecret: "" # Will be overridden by env from secret
+        
+        extraEnv:
+          - name: OAUTH2_PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: oauth2-proxy-creds
+                key: client-id
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: oauth2-proxy-creds
+                key: client-secret
+          - name: OAUTH2_PROXY_COOKIE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: oauth2-proxy-creds
+                key: cookie-secret
+
+        # Example configuration for Keycloak (to match Grafana setup)
+        authenticatedEmailsFile:
+          enabled: false
+        
+        proxyVarsAsHeaders: true
+        
+        # Adjust these based on your provider (e.g., Keycloak)
+        # provider: keycloak-oidc
+        # oidcIssuerUrl: https://auth.foobarbaz.fr/realms/master
+        
+        replicaCount: 1
+        
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: oauth2-proxy
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

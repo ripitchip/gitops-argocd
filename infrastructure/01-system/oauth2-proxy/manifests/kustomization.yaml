@@ -1,0 +1,5 @@
+resources:
+  - namespace.yaml
+  - external-secrets.yaml
+  - policy.yaml
+  - release.yaml

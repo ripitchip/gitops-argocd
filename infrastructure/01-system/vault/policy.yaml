@@ -30,6 +30,8 @@ spec:
             io.kubernetes.pod.namespace: hubble
         - matchLabels:
             io.kubernetes.pod.namespace: immich
+        - matchLabels:
+            io.kubernetes.pod.namespace: oauth2-proxy
       toPorts:
         - ports:
             - port: "8200"
