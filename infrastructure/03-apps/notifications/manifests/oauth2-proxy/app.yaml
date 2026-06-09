@@ -52,10 +52,7 @@ spec:
             - --redirect-url=https://ntfy.foobarbaz.fr/oauth2/callback
           env:
             - name: OAUTH2_PROXY_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: ntfy-oauth2-proxy-creds
-                  key: client-id
+              value: "ntfy"
             - name: OAUTH2_PROXY_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
