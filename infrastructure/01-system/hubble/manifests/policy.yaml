@@ -1,29 +1,58 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: hubble-stack-policy
+  name: hubble-ui-ingress
   namespace: hubble
 spec:
-  endpointSelector: {} # Appliqué à tout le namespace hubble
+  endpointSelector:
+    matchLabels:
+      k8s-app: hubble-ui
   ingress:
-    # 1. Autoriser Traefik vers l'UI Hubble (8080) et ACME Solver (8089)
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik
-            app.kubernetes.io/name: traefik
+            app.kubernetes.io/name: oauth2-proxy
       toPorts:
         - ports:
             - port: "8080"
               protocol: TCP
-            - port: "8089"
-              protocol: TCP
-
   egress:
-    # 1. Autoriser tout le namespace à contacter le DNS
+    - toServices:
+        - k8sService:
+            serviceName: hubble-relay
+            namespace: kube-system
+    - toEntities:
+        - kube-apiserver
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-            k8s-app: kube-dns
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: hubble-oauth2-proxy-security
+  namespace: hubble
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: oauth2-proxy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+      toPorts:
+        - ports:
+            - port: "4180"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -31,11 +60,16 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 2. Autoriser Hubble UI vers le Relay dans kube-system
-    - toServices:
-        - k8sService:
-            serviceName: hubble-relay
-            namespace: kube-system
-    # 3. Autoriser Hubble UI vers Kubernetes API
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: hubble-ui
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
     - toEntities:
-        - kube-apiserver
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
