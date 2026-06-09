@@ -32,14 +32,10 @@ spec:
             dns:
               - matchPattern: "*"
     # 2. Autoriser Hubble UI vers le Relay dans kube-system
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-            k8s-app: hubble-relay
-      toPorts:
-        - ports:
-            - port: "80"
-              protocol: TCP
+    - toServices:
+        - k8sService:
+            serviceName: hubble-relay
+            namespace: kube-system
     # 3. Autoriser Hubble UI vers Kubernetes API
     - toEntities:
         - kube-apiserver
