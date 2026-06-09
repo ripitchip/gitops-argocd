@@ -19,6 +19,7 @@ spec:
         # Configuration OIDC (basée sur Keycloak comme Grafana)
         extraArgs:
           - --provider=keycloak-oidc
+          - --reverse-proxy=true
           - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/master
           - --email-domain=*
           - --upstream=file:///dev/null
