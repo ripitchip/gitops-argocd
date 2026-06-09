@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: oauth2-proxy
+  name: ntfy-oauth2-proxy
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "5"
@@ -14,12 +14,12 @@ spec:
     helm:
       values: |
         config:
-          existingSecret: oauth2-proxy-creds
+          existingSecret: ntfy-oauth2-proxy-creds
         
-        # Configuration OIDC (basée sur Keycloak comme Grafana)
         extraArgs:
           - --provider=keycloak-oidc
           - --reverse-proxy=true
+          - --redirect-url=https://ntfy.foobarbaz.fr/oauth2/callback
           - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/master
           - --email-domain=*
           - --upstream=file:///dev/null
@@ -64,7 +64,7 @@ spec:
             memory: 64Mi
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: oauth2-proxy
+    namespace: notifications
   syncPolicy:
     automated:
       prune: true

@@ -1,11 +1,12 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: oauth2-proxy-security
-  namespace: oauth2-proxy
+  name: ntfy-oauth2-proxy-security
+  namespace: notifications
 spec:
   endpointSelector:
-    matchLabels: {}
+    matchLabels:
+      app.kubernetes.io/name: oauth2-proxy
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -14,9 +15,6 @@ spec:
         - ports:
             - port: "4180"
               protocol: TCP
-    - fromEndpoints:
-        - matchLabels: {} # Allow all traffic within namespace
-
   egress:
     - toEndpoints:
         - matchLabels:

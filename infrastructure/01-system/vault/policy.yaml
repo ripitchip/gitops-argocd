@@ -31,7 +31,7 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: immich
         - matchLabels:
-            io.kubernetes.pod.namespace: oauth2-proxy
+            io.kubernetes.pod.namespace: notifications
       toPorts:
         - ports:
             - port: "8200"

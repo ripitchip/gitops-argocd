@@ -14,4 +14,3 @@ resources:
   - alloy/alloy-app-definition.yaml
   - mimir/mimir-app-definition.yaml
   - tempo/tempo-app-definition.yaml
-  - oauth2-proxy/oauth2-proxy-app-definition.yaml
