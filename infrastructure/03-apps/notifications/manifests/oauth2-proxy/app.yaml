@@ -3,25 +3,43 @@ kind: Deployment
 metadata:
   name: ntfy-oauth2-proxy
   namespace: notifications
+  labels:
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: ntfy-oauth2-proxy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ntfy-oauth2-proxy
+      app.kubernetes.io/name: oauth2-proxy
+      app.kubernetes.io/instance: ntfy-oauth2-proxy
   template:
     metadata:
       labels:
-        app: ntfy-oauth2-proxy
+        app.kubernetes.io/name: oauth2-proxy
+        app.kubernetes.io/instance: ntfy-oauth2-proxy
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: oauth2-proxy
           image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
           args:
             - --provider=keycloak-oidc
             - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/master
             - --email-domain=*
             - --http-address=0.0.0.0:4180
-            # Mode ForwardAuth : on ne proxy rien, on valide juste
             - --upstream=static://202
             - --reverse-proxy=true
             - --set-xauthrequest=true
@@ -64,9 +82,13 @@ kind: Service
 metadata:
   name: ntfy-oauth2-proxy
   namespace: notifications
+  labels:
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: ntfy-oauth2-proxy
 spec:
   selector:
-    app: ntfy-oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: ntfy-oauth2-proxy
   ports:
     - name: http
       port: 80
