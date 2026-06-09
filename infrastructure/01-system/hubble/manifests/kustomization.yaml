@@ -5,3 +5,5 @@ resources:
   - ui.yaml
   - ingress.yaml
   - policy.yaml
+  - external-secrets.yaml
+  - oauth2-proxy.yaml

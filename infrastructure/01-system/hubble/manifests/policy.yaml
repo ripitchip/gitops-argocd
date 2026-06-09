@@ -12,9 +12,18 @@ spec:
             app.kubernetes.io/name: traefik
       toPorts:
         - ports:
+            - port: "4180"
+              protocol: TCP
             - port: "8080"
               protocol: TCP
             - port: "8089"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: oauth2-proxy
+      toPorts:
+        - ports:
+            - port: "8080"
               protocol: TCP
 
   egress:
@@ -35,3 +44,15 @@ spec:
             namespace: kube-system
     - toEntities:
         - kube-apiserver
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: hubble-ui
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
