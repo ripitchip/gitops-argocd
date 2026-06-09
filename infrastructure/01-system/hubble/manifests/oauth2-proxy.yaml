@@ -40,7 +40,7 @@ spec:
             - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/master
             - --email-domain=*
             - --http-address=0.0.0.0:4180
-            - --upstream=file:///dev/null
+            - --upstream=http://hubble-ui:80
             - --reverse-proxy=true
             - --set-xauthrequest=true
             - --cookie-domain=.foobarbaz.fr
@@ -51,8 +51,8 @@ spec:
             - --session-store-type=cookie
             - --redirect-url=https://hubble.foobarbaz.fr/oauth2/callback
             - --pass-user-headers=true
-            - --skip-auth-preflight=true
             - --flush-interval=100ms
+            - --skip-auth-preflight=true
           env:
             - name: OAUTH2_PROXY_CLIENT_ID
               value: "hubble"
