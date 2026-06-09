@@ -7,8 +7,6 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    # Middleware d'authentification pour l'interface utilisateur
-    traefik.ingress.kubernetes.io/router.middlewares: notifications-ntfy-oauth2-proxy-auth@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
@@ -19,11 +17,12 @@ spec:
     - host: ntfy.foobarbaz.fr
       http:
         paths:
+          # L'interface utilisateur passe par oauth2-proxy (Proxy Mode)
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: ntfy
+                name: ntfy-oauth2-proxy
                 port:
                   number: 80
 ---
@@ -35,7 +34,7 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    # Priorité élevée pour court-circuiter l'authentification sur les endpoints publics
+    # Priorité élevée pour bypasser l'oauth2-proxy sur les endpoints d'API
     traefik.ingress.kubernetes.io/router.priority: "100"
 spec:
   ingressClassName: traefik
@@ -47,15 +46,7 @@ spec:
     - host: ntfy.foobarbaz.fr
       http:
         paths:
-          # Endpoint pour OAuth2 Proxy (Nécessaire pour le callback)
-          - path: /oauth2
-            pathType: Prefix
-            backend:
-              service:
-                name: ntfy-oauth2-proxy
-                port:
-                  number: 80
-          # API pour l'application mobile (Bypass Auth)
+          # API pour l'application mobile (Direct vers ntfy)
           - path: /v1
             pathType: Prefix
             backend:
@@ -63,7 +54,7 @@ spec:
                 name: ntfy
                 port:
                   number: 80
-          # Topic d'alertes (Bypass Auth)
+          # Topic d'alertes (Direct vers ntfy)
           - path: /alertes-cluster
             pathType: Prefix
             backend:

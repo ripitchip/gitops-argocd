@@ -7,6 +7,5 @@ resources:
   - mailrise.yaml
   - ingress.yaml
   - oauth2-proxy/external-secrets.yaml
-  - oauth2-proxy/middleware.yaml
   - oauth2-proxy/policy.yaml
   - oauth2-proxy/app.yaml
