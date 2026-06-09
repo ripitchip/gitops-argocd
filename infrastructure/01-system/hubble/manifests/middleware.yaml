@@ -11,3 +11,24 @@ spec:
       - X-Auth-Request-User
       - X-Auth-Request-Email
       - Authorization
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: hubble-cors
+  namespace: hubble
+spec:
+  headers:
+    accessControlAllowMethods:
+      - GET
+      - POST
+      - OPTIONS
+    accessControlAllowHeaders:
+      - authorization
+      - content-type
+      - x-grpc-web
+      - x-user-agent
+    accessControlAllowOriginList:
+      - https://hubble.foobarbaz.fr
+    accessControlMaxAge: 100
+    addVaryHeader: true
