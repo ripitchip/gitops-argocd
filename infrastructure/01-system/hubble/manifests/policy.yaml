@@ -6,13 +6,14 @@ metadata:
 spec:
   endpointSelector: {} # Appliqué à tout le namespace hubble
   ingress:
-    # 1. Autoriser Traefik vers l'UI Hubble (8080) et ACME Solver (8089)
+    # 1. Autoriser Traefik vers le proxy (4180) et l'UI Hubble (8080)
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik
-            app.kubernetes.io/name: traefik
+            "k8s:io.kubernetes.pod.namespace": traefik
       toPorts:
         - ports:
+            - port: "4180"
+              protocol: TCP
             - port: "8080"
               protocol: TCP
             - port: "8089"
@@ -22,8 +23,8 @@ spec:
     # 1. Autoriser tout le namespace à contacter le DNS
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-            k8s-app: kube-dns
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -34,12 +35,17 @@ spec:
     # 2. Autoriser Hubble UI vers le Relay dans kube-system
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-            k8s-app: hubble-relay
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": hubble-relay
       toPorts:
         - ports:
             - port: "80"
               protocol: TCP
-    # 3. Autoriser Hubble UI vers Kubernetes API
+    # 3. Autoriser Hubble UI vers Kubernetes API et Internet (pour l'auth Keycloak)
     - toEntities:
         - kube-apiserver
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

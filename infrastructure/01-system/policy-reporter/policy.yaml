@@ -31,11 +31,12 @@ spec:
     matchLabels:
       app.kubernetes.io/name: policy-reporter-ui
   ingress:
-    # Allow Traefik to access UI
+    # Allow oauth2-proxy and Traefik to access UI
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
-            "app.kubernetes.io/name": traefik
+        - matchLabels:
+            app.kubernetes.io/name: oauth2-proxy
       toPorts:
         - ports:
             - port: "8080"
@@ -69,6 +70,49 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: policy-reporter-oauth2-proxy-security
+  namespace: policy-reporter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: oauth2-proxy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+      toPorts:
+        - ports:
+            - port: "4180"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: policy-reporter-ui
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy

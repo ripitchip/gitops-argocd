@@ -17,9 +17,9 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: policy-reporter-ui
+            name: policy-reporter-oauth2-proxy
             port:
-              number: 8080
+              number: 80
   tls:
   - hosts:
     - policy-reporter.foobarbaz.fr

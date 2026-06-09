@@ -3,3 +3,5 @@ resources:
   - release.yaml
   - policy.yaml
   - manifests/ingress.yaml
+  - manifests/external-secrets.yaml
+  - manifests/oauth2-proxy.yaml
