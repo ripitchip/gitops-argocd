@@ -8,7 +8,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik
+            "k8s:io.kubernetes.pod.namespace": traefik
       toPorts:
         - ports:
             - port: "4180"
@@ -28,8 +28,8 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-            k8s-app: kube-dns
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -37,10 +37,15 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    - toServices:
-        - k8sService:
-            serviceName: hubble-relay
-            namespace: kube-system
+    - toEndpoints:
+        - matchLabels:
+            "k8s:k8s-app": hubble-relay
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "4245"
+              protocol: TCP
     - toEntities:
         - kube-apiserver
         - world
