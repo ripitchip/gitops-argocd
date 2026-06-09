@@ -5,8 +5,8 @@ metadata:
   namespace: notifications
 spec:
   forwardAuth:
-    # Utilisation de l'endpoint d'authentification et du port standard 80
-    address: http://ntfy-oauth2-proxy.notifications.svc.cluster.local/oauth2/auth
+    # On pointe vers la racine pour laisser oauth2-proxy gérer le flux de redirection
+    address: http://ntfy-oauth2-proxy.notifications.svc.cluster.local/
     trustForwardHeader: true
     authResponseHeaders:
       - X-Auth-Request-User
