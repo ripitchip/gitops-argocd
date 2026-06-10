@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingvin-share
+  namespace: pingvin-share
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingvin-share
+  template:
+    metadata:
+      labels:
+        app: pingvin-share
+    spec:
+      securityContext:
+        runAsNonRoot: false # Pingvin share might need root for initial setup or permissions on NFS
+        # Using specific user/group if known, otherwise letting it use container defaults
+      containers:
+        - name: pingvin-share
+          image: smp46/pingvin-share-x:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: TRUST_PROXY
+              value: "true"
+          volumeMounts:
+            - name: data
+              mountPath: /opt/app/backend/data
+            - name: images
+              mountPath: /opt/app/frontend/public/img
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pingvin-share-data-pvc
+        - name: images
+          persistentVolumeClaim:
+            claimName: pingvin-share-images-pvc
