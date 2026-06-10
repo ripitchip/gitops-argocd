@@ -14,8 +14,10 @@ spec:
         app: pingvin-share
     spec:
       securityContext:
-        runAsNonRoot: false # Pingvin share might need root for initial setup or permissions on NFS
-        # Using specific user/group if known, otherwise letting it use container defaults
+        runAsNonRoot: true
+        runAsUser: 19582
+        runAsGroup: 19582
+        fsGroup: 19582
       containers:
         - name: pingvin-share
           image: smp46/pingvin-share-x:latest
@@ -30,6 +32,7 @@ spec:
             - name: images
               mountPath: /opt/app/frontend/public/img
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
