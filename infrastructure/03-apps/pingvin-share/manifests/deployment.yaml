@@ -20,7 +20,7 @@ spec:
         fsGroup: 19582
       containers:
         - name: pingvin-share
-          image: smp46/pingvin-share-x:latest
+          image: ghcr.io/smp46/pingvin-share-x:v1.19.1
           ports:
             - containerPort: 3000
           env:
