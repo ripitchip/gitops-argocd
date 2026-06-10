@@ -27,10 +27,12 @@ spec:
             - name: TRUST_PROXY
               value: "true"
           volumeMounts:
-            - name: data
+            - name: storage
               mountPath: /opt/app/backend/data
-            - name: images
+              subPath: pingvin-share/data
+            - name: storage
               mountPath: /opt/app/frontend/public/img
+              subPath: pingvin-share/images
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -47,9 +49,6 @@ spec:
               cpu: "500m"
               memory: "512Mi"
       volumes:
-        - name: data
+        - name: storage
           persistentVolumeClaim:
-            claimName: pingvin-share-data-pvc
-        - name: images
-          persistentVolumeClaim:
-            claimName: pingvin-share-images-pvc
+            claimName: pingvin-share-pvc

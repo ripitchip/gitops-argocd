@@ -1,55 +1,27 @@
-# Pingvin Share Data
+# Pingvin Share Base Storage
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pingvin-share-data-pv
+  name: pingvin-share-pv
   annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
-  capacity: { storage: 10Gi }
+  capacity: { storage: 20Gi }
   accessModes: [ReadWriteOnce]
   persistentVolumeReclaimPolicy: Retain
   storageClassName: truenas-nfs
   mountOptions: ["nfsvers=4.1", "hard"]
   nfs:
     server: "10.0.60.10"
-    path: "/mnt/data/k8s-cluster/pvc-volumes/pingvin-share-data"
+    path: "/mnt/data/k8s-cluster/pvc-volumes"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pingvin-share-data-pvc
+  name: pingvin-share-pvc
   namespace: pingvin-share
   annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
   storageClassName: truenas-nfs
   accessModes: [ReadWriteOnce]
-  resources: { requests: { storage: 10Gi } }
-  volumeName: pingvin-share-data-pv
----
-# Pingvin Share Images
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pingvin-share-images-pv
-  annotations: { argocd.argoproj.io/sync-wave: "-5" }
-spec:
-  capacity: { storage: 10Gi }
-  accessModes: [ReadWriteOnce]
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: truenas-nfs
-  mountOptions: ["nfsvers=4.1", "hard"]
-  nfs:
-    server: "10.0.60.10"
-    path: "/mnt/data/k8s-cluster/pvc-volumes/pingvin-share-images"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pingvin-share-images-pvc
-  namespace: pingvin-share
-  annotations: { argocd.argoproj.io/sync-wave: "-5" }
-spec:
-  storageClassName: truenas-nfs
-  accessModes: [ReadWriteOnce]
-  resources: { requests: { storage: 10Gi } }
-  volumeName: pingvin-share-images-pv
+  resources: { requests: { storage: 20Gi } }
+  volumeName: pingvin-share-pv
