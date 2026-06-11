@@ -26,6 +26,19 @@ spec:
           env:
             - name: TRUST_PROXY
               value: "true"
+            - name: OIDC_ENABLED
+              value: "true"
+            - name: OIDC_CLIENT_ID
+              value: "share"
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: pingvin-share-secrets
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_ISSUER
+              value: "https://auth.foobarbaz.fr/realms/master"
+            - name: OIDC_NAME
+              value: "Keycloak"
           volumeMounts:
             - name: storage
               mountPath: /opt/app/backend/data

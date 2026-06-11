@@ -6,3 +6,4 @@ resources:
   - ingress.yaml
   - storage.yaml
   - policy.yaml
+  - external-secrets.yaml
