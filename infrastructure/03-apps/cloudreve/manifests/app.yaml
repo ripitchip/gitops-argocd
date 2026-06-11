@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudreve
+  namespace: cloudreve
+  labels:
+    app: cloudreve
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudreve
+  template:
+    metadata:
+      labels:
+        app: cloudreve
+    spec:
+      serviceAccountName: cloudreve-sa
+      containers:
+      - name: cloudreve
+        image: cloudreve.azurecr.io/cloudreve/pro:4.16.1
+        ports:
+        - containerPort: 5212
+        env:
+        - name: DB_Host
+          value: cloudreve-postgres
+        - name: DB_User
+          value: cloudreve
+        - name: DB_Name
+          value: cloudreve
+        - name: DB_Password
+          valueFrom:
+            secretKeyRef:
+              name: cloudreve-secrets
+              key: DB_PASSWORD
+        volumeMounts:
+        - name: cloudreve-data
+          mountPath: /cloudreve/uploads
+      volumes:
+      - name: cloudreve-data
+        persistentVolumeClaim:
+          claimName: cloudreve-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudreve
+  namespace: cloudreve
+spec:
+  selector:
+    app: cloudreve
+  ports:
+  - port: 5212
+    targetPort: 5212
