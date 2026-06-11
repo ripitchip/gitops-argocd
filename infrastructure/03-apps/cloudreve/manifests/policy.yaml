@@ -1,0 +1,72 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: cloudreve-policy
+  namespace: cloudreve
+spec:
+  endpointSelector:
+    matchLabels:
+      app: cloudreve
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        "k8s:io.kubernetes.pod.namespace": traefik
+        "k8s:app.kubernetes.io/name": traefik
+    toPorts:
+    - ports:
+      - port: "5212"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        "k8s:io.kubernetes.pod.namespace": kube-system
+        "k8s:k8s-app": kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: ANY
+  - toEndpoints:
+    - matchLabels:
+        "k8s:io.kubernetes.pod.namespace": cloudreve
+        "k8s:app": cloudreve-postgres
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+  - toEntities:
+    - world
+    - cluster
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+      - port: "80"
+        protocol: TCP
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cloudreve-cluster-reader
+rules:
+- apiGroups: [""]
+  resources: ["nodes", "namespaces"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloudreve-sa
+  namespace: cloudreve
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cloudreve-cluster-reader-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cloudreve-cluster-reader
+subjects:
+- kind: ServiceAccount
+  name: cloudreve-sa
+  namespace: cloudreve
