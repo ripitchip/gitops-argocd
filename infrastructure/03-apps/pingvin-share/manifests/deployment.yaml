@@ -28,21 +28,6 @@ spec:
               value: "true"
             - name: APP_URL
               value: "https://share.foobarbaz.fr"
-            - name: OIDC_ENABLED
-              value: "true"
-            - name: OIDC_CLIENT_ID
-              value: "share"
-            - name: OIDC_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: pingvin-share-secrets
-                  key: OIDC_CLIENT_SECRET
-            - name: OIDC_ISSUER
-              value: "https://auth.foobarbaz.fr/realms/master"
-            - name: OIDC_REDIRECT_URI
-              value: "https://share.foobarbaz.fr/api/oauth/callback/oidc"
-            - name: OIDC_NAME
-              value: "Keycloak"
           volumeMounts:
             - name: storage
               mountPath: /opt/app/backend/data
