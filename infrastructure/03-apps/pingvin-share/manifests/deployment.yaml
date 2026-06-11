@@ -26,6 +26,8 @@ spec:
           env:
             - name: TRUST_PROXY
               value: "true"
+            - name: APP_URL
+              value: "https://share.foobarbaz.fr"
             - name: OIDC_ENABLED
               value: "true"
             - name: OIDC_CLIENT_ID
