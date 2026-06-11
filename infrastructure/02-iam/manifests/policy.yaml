@@ -56,4 +56,11 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    # 3. Email Egress (OVH SMTP)
+    - toFQDNs:
+        - matchName: "ssl0.ovh.net"
+      toPorts:
+        - ports:
+            - port: "465"
+              protocol: TCP
 
