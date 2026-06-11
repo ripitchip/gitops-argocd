@@ -26,6 +26,8 @@ spec:
           env:
             - name: TRUST_PROXY
               value: "true"
+            - name: PORT
+              value: "8080"
             - name: APP_URL
               value: "https://share.foobarbaz.fr"
             - name: OIDC_ENABLED
@@ -48,6 +50,9 @@ spec:
             - name: storage
               mountPath: /opt/app/frontend/public/img
               subPath: pingvin-share/images
+            - name: config-file
+              mountPath: /opt/app/backend/data/config.yaml
+              subPath: config.yaml
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -67,3 +72,6 @@ spec:
         - name: storage
           persistentVolumeClaim:
             claimName: pingvin-share-pvc
+        - name: config-file
+          configMap:
+            name: pingvin-share-config

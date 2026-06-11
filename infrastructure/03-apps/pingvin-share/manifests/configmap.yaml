@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pingvin-share-config
+  namespace: pingvin-share
+data:
+  config.yaml: |
+    authentication:
+      oidc:
+        enabled: true
+        clientId: "share"
+        issuer: "https://auth.foobarbaz.fr/realms/master"
+        name: "Keycloak"
+    network:
+      appUrl: "https://share.foobarbaz.fr"
+      trustProxy: true
