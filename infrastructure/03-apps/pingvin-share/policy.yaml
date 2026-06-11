@@ -37,7 +37,11 @@ spec:
               protocol: TCP
     - toEntities:
         - world
+        - cluster
+        - host
       toPorts:
         - ports:
             - port: "443"
+              protocol: TCP
+            - port: "80"
               protocol: TCP
