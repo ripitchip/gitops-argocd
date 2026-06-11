@@ -39,6 +39,8 @@ spec:
                   key: OIDC_CLIENT_SECRET
             - name: OIDC_ISSUER
               value: "https://auth.foobarbaz.fr/realms/master"
+            - name: OIDC_REDIRECT_URI
+              value: "https://share.foobarbaz.fr/api/oauth/callback/oidc"
             - name: OIDC_NAME
               value: "Keycloak"
           volumeMounts:
