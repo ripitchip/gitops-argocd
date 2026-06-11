@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cloudreve-data-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 20Gi }
+  accessModes: [ReadWriteMany]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/cloudreve-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cloudreve-data-pvc
+  namespace: cloudreve
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteMany]
+  resources: { requests: { storage: 20Gi } }
+  volumeName: cloudreve-data-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cloudreve-db-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 10Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/cloudreve-db"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cloudreve-db-pvc
+  namespace: cloudreve
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 10Gi } }
+  volumeName: cloudreve-db-pv
