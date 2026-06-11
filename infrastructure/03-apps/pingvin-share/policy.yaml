@@ -25,3 +25,19 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": auth
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

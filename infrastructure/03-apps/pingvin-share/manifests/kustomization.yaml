@@ -5,6 +5,4 @@ resources:
   - service.yaml
   - ingress.yaml
   - storage.yaml
-  - policy.yaml
   - external-secrets.yaml
-  - configmap.yaml
