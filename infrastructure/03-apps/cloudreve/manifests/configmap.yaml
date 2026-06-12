@@ -6,7 +6,7 @@ metadata:
 data:
   conf.ini: |
     [System]
-    Mode = Master
+    Mode = master
     Listen = :5212
     Debug = false
 
