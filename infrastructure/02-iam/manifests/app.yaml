@@ -193,8 +193,9 @@ spec:
             - { name: KC_PROXY_HEADERS, value: "xforwarded" }
             - { name: KC_HOSTNAME, value: "auth.foobarbaz.fr" }
             - { name: KC_HOSTNAME_STRICT, value: "false" }
-            - { name: KC_HEALTH_ENABLED, value: "true" }
-            - { name: KC_CACHE, value: "local" }
+            - { name: KC_HOSTNAME_STRICT_HTTPS, value: "true" }
+            - { name: KC_HTTP_ENABLED, value: "true" }
+            - { name: KC_PROXY_HEADERS, value: "xforwarded" }
             - { name: KC_DB, value: "postgres" }
             - { name: KC_DB_URL_HOST, value: "postgres" }
             - { name: KC_DB_URL_DATABASE, value: "keycloak" }
