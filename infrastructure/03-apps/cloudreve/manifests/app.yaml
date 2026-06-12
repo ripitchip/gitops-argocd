@@ -16,6 +16,8 @@ spec:
         app: cloudreve
     spec:
       serviceAccountName: cloudreve-sa
+      imagePullSecrets:
+        - name: cloudreve-registry-secret
       securityContext:
         runAsNonRoot: true
         runAsUser: 13010
