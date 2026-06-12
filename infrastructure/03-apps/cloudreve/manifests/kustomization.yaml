@@ -6,5 +6,6 @@ resources:
   - external-secrets.yaml
   - policy.yaml
   - database.yaml
+  - configmap.yaml
   - app.yaml
   - ingress.yaml

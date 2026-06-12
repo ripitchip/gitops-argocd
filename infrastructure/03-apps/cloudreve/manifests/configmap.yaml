@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudreve-config
+  namespace: cloudreve
+data:
+  conf.ini: |
+    [System]
+    Mode = Master
+    Listen = :5212
+    Debug = false
+
+    [Database]
+    Type = postgres
+    Host = cloudreve-postgres
+    Port = 5432
+    User = cloudreve
+    Password = ${DB_PASSWORD}
+    Name = cloudreve
+    TablePrefix = cd
