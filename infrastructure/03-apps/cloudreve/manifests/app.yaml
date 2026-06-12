@@ -93,8 +93,8 @@ spec:
         persistentVolumeClaim:
           claimName: cloudreve-data-pvc
       - name: cloudreve-config
-        configMap:
-          name: cloudreve-config
+        secret:
+          secretName: cloudreve-secrets
 ---
 apiVersion: v1
 kind: Service
