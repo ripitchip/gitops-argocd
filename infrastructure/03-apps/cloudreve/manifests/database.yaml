@@ -65,6 +65,13 @@ spec:
             capabilities: { drop: ["ALL"] }
             runAsNonRoot: true
             runAsUser: 16446
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
