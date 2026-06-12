@@ -86,7 +86,7 @@ spec:
           mountPath: /cloudreve/data
           subPath: data
         - name: cloudreve-config
-          mountPath: /cloudreve/conf.ini
+          mountPath: /cloudreve/data/conf.ini
           subPath: conf.ini
       volumes:
       - name: cloudreve-data
