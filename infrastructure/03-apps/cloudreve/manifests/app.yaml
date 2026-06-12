@@ -56,17 +56,26 @@ spec:
         ports:
         - containerPort: 5212
         env:
-        - name: DB_Host
+        - name: DB_TYPE
+          value: postgres
+        - name: DB_HOST
           value: cloudreve-postgres
-        - name: DB_User
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
           value: cloudreve
-        - name: DB_Name
+        - name: DB_NAME
           value: cloudreve
-        - name: DB_Password
+        - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: cloudreve-secrets
               key: DB_PASSWORD
+        - name: CR_LICENSE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cloudreve-secrets
+              key: CR_LICENSE_KEY
         securityContext:
           allowPrivilegeEscalation: false
           capabilities: { drop: ["ALL"] }
