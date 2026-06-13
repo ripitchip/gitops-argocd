@@ -8,7 +8,8 @@ spec:
   ingress:
     # 1. Controller to Webhook
     - fromEndpoints:
-        - {}
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": external-secrets
     # 2. Webhook
     - fromEntities:
         - kube-apiserver
@@ -21,10 +22,15 @@ spec:
               protocol: TCP
             - port: "10250"
               protocol: TCP
+    # 3. Alloy
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     # 1. Internal Namespace
     - toEndpoints:
-        - {}
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": external-secrets
     # 2. DNS
     - toEndpoints:
         - matchLabels:
@@ -40,7 +46,7 @@ spec:
     # 3. Vault
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: vault
+            "k8s:io.kubernetes.pod.namespace": vault
       toPorts:
         - ports:
             - port: "8200"

@@ -10,7 +10,7 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
-    # 2. Allow Ingress from Traefik (Keycloak + ACME Solver) and Vault
+    # 2. Allow Ingress from Traefik
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
@@ -20,6 +20,7 @@ spec:
               protocol: TCP
             - port: "8089"
               protocol: TCP
+    # 3. Allow Ingress from Vault
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": vault
@@ -27,6 +28,7 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    # 4. Allow Ingress from Cloudreve (OIDC)
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": cloudreve
@@ -34,6 +36,7 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    # 5. Allow Ingress from ArgoCD (OIDC)
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": argocd
@@ -41,6 +44,7 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    # 6. Allow ALL monitoring from Alloy
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
@@ -63,9 +67,11 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
+    # 3. Allow egress to ArgoCD (Notifications/Sync)
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": argocd
+    # 4. Allow egress to Vault
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": vault
@@ -73,11 +79,17 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
-    # 3. Email Egress (OVH SMTP)
+    # 5. Email Egress (OVH SMTP)
     - toFQDNs:
         - matchName: "ssl0.ovh.net"
       toPorts:
         - ports:
             - port: "465"
               protocol: TCP
-
+    # 6. Allow egress to World for OIDC/External lookups
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

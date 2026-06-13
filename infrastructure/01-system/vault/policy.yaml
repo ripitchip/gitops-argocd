@@ -17,21 +17,23 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: auth
+            "k8s:io.kubernetes.pod.namespace": auth
         - matchLabels:
-            io.kubernetes.pod.namespace: pass
+            "k8s:io.kubernetes.pod.namespace": pass
         - matchLabels:
-            io.kubernetes.pod.namespace: external-secrets
+            "k8s:io.kubernetes.pod.namespace": external-secrets
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik
+            "k8s:io.kubernetes.pod.namespace": traefik
         - matchLabels:
-            io.kubernetes.pod.namespace: falco
+            "k8s:io.kubernetes.pod.namespace": falco
         - matchLabels:
-            io.kubernetes.pod.namespace: hubble
+            "k8s:io.kubernetes.pod.namespace": hubble
         - matchLabels:
-            io.kubernetes.pod.namespace: immich
+            "k8s:io.kubernetes.pod.namespace": immich
         - matchLabels:
-            io.kubernetes.pod.namespace: notifications
+            "k8s:io.kubernetes.pod.namespace": notifications
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
       toPorts:
         - ports:
             - port: "8200"
@@ -52,14 +54,14 @@ spec:
               - matchPattern: "*"
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: auth
+            "k8s:io.kubernetes.pod.namespace": auth
       toPorts:
         - ports:
             - port: "8080"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik
+            "k8s:io.kubernetes.pod.namespace": traefik
       toPorts:
         - ports:
             - port: "443"
