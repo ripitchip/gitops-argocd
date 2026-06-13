@@ -9,12 +9,12 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": alloy
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": kube-system
-            "k8s-app": kube-dns
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -26,7 +26,7 @@ spec:
         - kube-apiserver
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": loki
+            "k8s:io.kubernetes.pod.namespace": loki
       toPorts:
         - ports:
             - port: "3100"
@@ -37,7 +37,7 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": mimir
+            "k8s:io.kubernetes.pod.namespace": mimir
       toPorts:
         - ports:
             - port: "80"
@@ -46,7 +46,7 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": tempo
+            "k8s:io.kubernetes.pod.namespace": tempo
       toPorts:
         - ports:
             - port: "4317"
@@ -59,3 +59,6 @@ spec:
               protocol: TCP
             - port: "8080"
               protocol: TCP
+    # Allow scraping metrics from all namespaces (any port)
+    - toEndpoints:
+        - matchLabels: {}

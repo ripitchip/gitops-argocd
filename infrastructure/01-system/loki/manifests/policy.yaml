@@ -9,7 +9,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": grafana
+            "k8s:io.kubernetes.pod.namespace": grafana
       toPorts:
         - ports:
             - port: "3100"
@@ -20,7 +20,7 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": alloy
+            "k8s:io.kubernetes.pod.namespace": alloy
       toPorts:
         - ports:
             - port: "3100"
@@ -31,16 +31,16 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": loki
+            "k8s:io.kubernetes.pod.namespace": loki
 
   egress:
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": loki
+            "k8s:io.kubernetes.pod.namespace": loki
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": kube-system
-            "k8s-app": kube-dns
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"

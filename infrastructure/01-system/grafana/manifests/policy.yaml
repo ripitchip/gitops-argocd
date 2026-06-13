@@ -9,7 +9,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": traefik
+            "k8s:io.kubernetes.pod.namespace": traefik
       toPorts:
         - ports:
             - port: "3000"
@@ -17,13 +17,17 @@ spec:
             - port: "8089"
               protocol: TCP
     - fromEndpoints:
-        - matchLabels: {} # Allow all traffic within namespace
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": grafana
 
   egress:
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": kube-system
-            "k8s-app": kube-dns
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
             - port: "53"
@@ -35,14 +39,14 @@ spec:
         - kube-apiserver
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": vault
+            "k8s:io.kubernetes.pod.namespace": vault
       toPorts:
         - ports:
             - port: "8200"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": loki
+            "k8s:io.kubernetes.pod.namespace": loki
       toPorts:
         - ports:
             - port: "80"
@@ -53,7 +57,7 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": mimir
+            "k8s:io.kubernetes.pod.namespace": mimir
       toPorts:
         - ports:
             - port: "80"
@@ -62,7 +66,7 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            "io.kubernetes.pod.namespace": tempo
+            "k8s:io.kubernetes.pod.namespace": tempo
       toPorts:
         - ports:
             - port: "3100"

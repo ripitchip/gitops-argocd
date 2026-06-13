@@ -8,6 +8,15 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: argocd-repo-server
+  ingress:
+    # Allow traffic from other ArgoCD components (e.g. argocd-server)
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": argocd
+      toPorts:
+        - ports:
+            - port: "8081"
+              protocol: TCP
   egress:
     # 0. CRITICAL: Kubernetes API access
     - toEntities:
@@ -58,11 +67,24 @@ spec:
           - argocd-applicationset-controller
           - argocd-dex-server
           - argocd-notifications-controller
+  ingress:
+    # 1. Allow traffic from Traefik
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+    # 2. Allow internal communication
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": argocd
+    # 3. Allow monitoring from Alloy
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     # 1. CRITICAL: Kubernetes API access
     - toEntities:
         - kube-apiserver
-    # 2. DNS Resolution
+    # 2. DNS Resolution (Required for FQDN policies)
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -71,6 +93,9 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
     # 3. OIDC / KEYCLOAK ACCESS
     - toFQDNs:
         - matchName: "auth.foobarbaz.fr"
@@ -84,11 +109,25 @@ spec:
     # 4. INTERNAL SERVICE ACCESS
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: auth
+            "k8s:io.kubernetes.pod.namespace": auth
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: external-secrets
+            "k8s:io.kubernetes.pod.namespace": external-secrets
     # 5. Communication between ALL ArgoCD components
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: argocd
+            "k8s:io.kubernetes.pod.namespace": argocd
+
+---
+# --- POLICY 3: ALLOW ALL ARGOCD PODS TO BE SCRAPED BY ALLOY ---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: argocd-allow-monitoring
+  namespace: argocd
+spec:
+  endpointSelector: {} # Applies to all pods in the namespace
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
