@@ -15,6 +15,9 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     - toServices:
         - k8sService:
@@ -30,6 +33,9 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -48,6 +54,9 @@ spec:
         - ports:
             - port: "4180"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     - toEndpoints:
         - matchLabels:
@@ -61,8 +70,10 @@ spec:
             dns:
               - matchName: "auth.foobarbaz.fr"
               - matchPattern: "*.hubble.svc.cluster.local"
+              - matchPattern: "*"
     - toEndpoints:
         - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": hubble
             k8s-app: hubble-ui
       toPorts:
         - ports:

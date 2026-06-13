@@ -16,6 +16,9 @@ spec:
         - ports:
             - port: "3000"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     - toEndpoints:
         - matchLabels:

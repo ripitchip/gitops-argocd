@@ -18,6 +18,13 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -34,6 +41,9 @@ spec:
             "k8s:io.kubernetes.pod.namespace": traefik
         - matchLabels:
             app.kubernetes.io/name: oauth2-proxy
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
       toPorts:
         - ports:
             - port: "8080"
@@ -63,6 +73,9 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -81,6 +94,9 @@ spec:
         - ports:
             - port: "4180"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     - toEndpoints:
         - matchLabels:
@@ -127,6 +143,13 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -145,3 +168,6 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy

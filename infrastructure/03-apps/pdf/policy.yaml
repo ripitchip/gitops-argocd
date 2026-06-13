@@ -1,12 +1,10 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: stirling-pdf-isolation
+  name: pdf-isolation
   namespace: pdf
 spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: stirling-pdf
+  endpointSelector: {}
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -16,6 +14,9 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     - toEndpoints:
         - matchLabels:
@@ -25,3 +26,8 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEntities:
+        - kube-apiserver

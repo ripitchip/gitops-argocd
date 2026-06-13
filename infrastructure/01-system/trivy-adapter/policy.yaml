@@ -7,6 +7,10 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: trivy-operator-polr-adapter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     # 1. Kubernetes API access
     - toEntities:
@@ -20,3 +24,6 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"

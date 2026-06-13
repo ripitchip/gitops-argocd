@@ -16,6 +16,9 @@ spec:
     - ports:
       - port: "5212"
         protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        "k8s:io.kubernetes.pod.namespace": alloy
   egress:
   - toEndpoints:
     - matchLabels:
@@ -25,6 +28,9 @@ spec:
     - ports:
       - port: "53"
         protocol: ANY
+    rules:
+      dns:
+        - matchPattern: "*"
   - toEndpoints:
     - matchLabels:
         "k8s:io.kubernetes.pod.namespace": cloudreve
@@ -35,7 +41,7 @@ spec:
         protocol: TCP
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.pod.namespace: auth
+        "k8s:io.kubernetes.pod.namespace": auth
         app: keycloak
     toPorts:
     - ports:

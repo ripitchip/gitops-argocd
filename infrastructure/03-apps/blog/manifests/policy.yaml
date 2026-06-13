@@ -2,6 +2,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: blog-isolation
+  namespace: blog
 spec:
   endpointSelector:
     matchLabels:
@@ -17,6 +18,9 @@ spec:
               protocol: TCP
             - port: "8089"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     - toEndpoints:
         - matchLabels:
@@ -26,3 +30,6 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"

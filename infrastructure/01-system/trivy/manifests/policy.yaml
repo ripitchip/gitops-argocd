@@ -1,17 +1,25 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: trivy-operator-egress
+  name: trivy-operator-hardened
   namespace: trivy-system
 spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: trivy-operator
+  endpointSelector: {}
+  ingress:
+    # Allow traffic within the namespace
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": trivy-system
+    # Allow monitoring from Alloy
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
-    # 1. Kubernetes API access
-    - toEntities:
-        - kube-apiserver
-    # 2. DNS Resolution
+    # 1. Internal communication
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": trivy-system
+    # 2. DNS
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -23,9 +31,16 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 3. Access to image registries and vulnerability DBs
+    # 3. Kubernetes API access
     - toEntities:
-        - world
+        - kube-apiserver
+    # 4. GitHub Access (for Trivy DB updates)
+    - toFQDNs:
+        - matchPattern: "*.github.com"
+        - matchName: "github.com"
+        - matchPattern: "*.githubusercontent.com"
+        - matchPattern: "ghcr.io"
+        - matchPattern: "*.ghcr.io"
       toPorts:
         - ports:
             - port: "443"
