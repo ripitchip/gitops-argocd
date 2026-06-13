@@ -9,19 +9,15 @@ spec:
     matchLabels:
       app.kubernetes.io/name: argocd-repo-server
   ingress:
-    # Allow traffic from other ArgoCD components (e.g. argocd-server)
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": argocd
-      toPorts:
-        - ports:
-            - port: "8081"
-              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
   egress:
-    # 0. CRITICAL: Kubernetes API access
     - toEntities:
         - kube-apiserver
-    # 1. Allow DNS to resolve GitHub/GitLab
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -33,14 +29,12 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 2. Limit HTTPS egress to world for troubleshooting
     - toEntities:
         - world
       toPorts:
         - ports:
             - port: "443"
               protocol: TCP
-    # 3. Allow internal communication with Redis (Cache)
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: argocd-redis
@@ -50,7 +44,7 @@ spec:
               protocol: TCP
 
 ---
-# --- POLICY 2: CORE COMPONENTS (API, OIDC, Internal) ---
+# --- POLICY 2: CORE COMPONENTS (Server, Controllers) ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -68,23 +62,18 @@ spec:
           - argocd-dex-server
           - argocd-notifications-controller
   ingress:
-    # 1. Allow traffic from Traefik
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
-    # 2. Allow internal communication
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": argocd
-    # 3. Allow monitoring from Alloy
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
   egress:
-    # 1. CRITICAL: Kubernetes API access
     - toEntities:
         - kube-apiserver
-    # 2. DNS Resolution (Required for FQDN policies)
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -96,7 +85,6 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 3. OIDC / KEYCLOAK ACCESS
     - toFQDNs:
         - matchName: "auth.foobarbaz.fr"
     - toEntities:
@@ -106,28 +94,33 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
-    # 4. INTERNAL SERVICE ACCESS
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
-    - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": external-secrets
-    # 5. Communication between ALL ArgoCD components
-    - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": argocd
 
 ---
-# --- POLICY 3: ALLOW ALL ARGOCD PODS TO BE SCRAPED BY ALLOY ---
+# --- POLICY 3: REDIS ISOLATION ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: argocd-allow-monitoring
+  name: argocd-redis-security
   namespace: argocd
 spec:
-  endpointSelector: {} # Applies to all pods in the namespace
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-redis
   ingress:
     - fromEndpoints:
         - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": argocd
+    - fromEndpoints:
+        - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": argocd

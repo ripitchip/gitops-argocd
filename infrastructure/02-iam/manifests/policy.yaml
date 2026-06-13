@@ -6,11 +6,11 @@ metadata:
 spec:
   endpointSelector: {}
   ingress:
-    # 1. Allow all internal traffic within the 'auth' namespace
+    # 1. Internal Namespace Traffic
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
-    # 2. Allow Ingress from Traefik
+    # 2. External Traffic via Traefik
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
@@ -20,7 +20,17 @@ spec:
               protocol: TCP
             - port: "8089"
               protocol: TCP
-    # 3. Allow Ingress from Vault
+    # 3. OIDC Clients (ArgoCD, Cloudreve, etc.)
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": argocd
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": cloudreve
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    # 4. Internal Tools (Vault)
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": vault
@@ -28,32 +38,14 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-    # 4. Allow Ingress from Cloudreve (OIDC)
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": cloudreve
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
-    # 5. Allow Ingress from ArgoCD (OIDC)
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": argocd
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
-    # 6. Allow ALL monitoring from Alloy
+    # 5. MONITORING: Allow Alloy to scrape metrics
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
   egress:
-    # 1. Allow all internal traffic within the 'auth' namespace
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
-    # 2. Kubernetes API access
     - toEntities:
         - kube-apiserver
     - toEndpoints:
@@ -67,11 +59,6 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # 3. Allow egress to ArgoCD (Notifications/Sync)
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": argocd
-    # 4. Allow egress to Vault
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": vault
@@ -79,14 +66,12 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
-    # 5. Email Egress (OVH SMTP)
     - toFQDNs:
         - matchName: "ssl0.ovh.net"
       toPorts:
         - ports:
             - port: "465"
               protocol: TCP
-    # 6. Allow egress to World for OIDC/External lookups
     - toEntities:
         - world
       toPorts:

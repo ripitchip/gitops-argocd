@@ -5,12 +5,22 @@ metadata:
   namespace: alloy
 spec:
   endpointSelector:
-    matchLabels: {}
+    matchLabels:
+      app.kubernetes.io/name: alloy
   ingress:
+    # Allow Alloy to talk to its own UI/Metrics
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
   egress:
+    # 1. MONITORING MANDATE: Alloy must reach any pod/service to scrape metrics
+    - toEntities:
+        - cluster
+        - host
+    # 2. EXTERNAL MANDATE: Reach world for FQDN scraping and telemetry (e.g., stats.grafana.org)
+    - toEntities:
+        - world
+    # 3. DNS L7: Required for Cilium to correlate FQDNs with IPs
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -22,43 +32,6 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
+    # 4. API SERVER: Required for discovery
     - toEntities:
         - kube-apiserver
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": loki
-      toPorts:
-        - ports:
-            - port: "3100"
-              protocol: TCP
-            - port: "80"
-              protocol: TCP
-            - port: "8080"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": mimir
-      toPorts:
-        - ports:
-            - port: "80"
-              protocol: TCP
-            - port: "8080"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": tempo
-      toPorts:
-        - ports:
-            - port: "4317"
-              protocol: TCP
-            - port: "4318"
-              protocol: TCP
-            - port: "3100"
-              protocol: TCP
-            - port: "80"
-              protocol: TCP
-            - port: "8080"
-              protocol: TCP
-    # Allow scraping metrics from all namespaces (any port)
-    - toEndpoints:
-        - matchLabels: {}
