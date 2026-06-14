@@ -38,7 +38,7 @@ spec:
           args:
             - --provider=oidc
             - --skip-provider-button=true
-            - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/master
+            - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/foobarbaz
             - --email-domain=*
             - --http-address=0.0.0.0:4180
             - --upstream=http://hubble-ui:8080
