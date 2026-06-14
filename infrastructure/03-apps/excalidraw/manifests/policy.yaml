@@ -6,11 +6,11 @@ metadata:
 spec:
   endpointSelector: {}
   ingress:
-    # 1. Traefik to OAuth2 Proxy
+    # 1. Traefik to App
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
       toPorts:
-        - ports: [{ port: "4180", protocol: TCP }]
+        - ports: [{ port: "80", protocol: TCP }]
     # 2. Local Namespace Traffic
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": excalidraw }
@@ -29,15 +29,9 @@ spec:
       toPorts:
         - ports: [{ port: "53", protocol: ANY }]
           rules: { dns: [{ matchPattern: "*" }] }
-    # 3. Keycloak/OIDC
-    - toEndpoints:
-        - matchLabels: { "k8s:io.kubernetes.pod.namespace": auth }
-      toPorts:
-        - ports: [{ port: "8080", protocol: TCP }]
-    # 4. API Server
+    # 3. API Server
     - toEntities: [kube-apiserver]
-    # 5. Vault Access
-    - toEndpoints:
-        - matchLabels: { "k8s:io.kubernetes.pod.namespace": vault }
+    # 4. External access for sharing
+    - toEntities: [world]
       toPorts:
-        - ports: [{ port: "8200", protocol: TCP }]
+        - ports: [{ port: "443", protocol: TCP }]
