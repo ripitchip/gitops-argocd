@@ -13,7 +13,7 @@ spec:
         - ports: 
             - port: "80"
               protocol: TCP
-            - port: "8080"
+            - port: "8089"
               protocol: TCP
     # 2. Local Namespace Traffic
     - fromEndpoints:
