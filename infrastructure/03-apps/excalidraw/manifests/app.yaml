@@ -17,6 +17,14 @@ spec:
       containers:
         - name: excalidraw
           image: excalidraw/excalidraw:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 18335
+            seccompProfile:
+              type: RuntimeDefault
           resources:
             limits: { cpu: 200m, memory: 256Mi }
             requests: { cpu: 50m, memory: 128Mi }
