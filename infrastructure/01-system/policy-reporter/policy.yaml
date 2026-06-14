@@ -24,6 +24,9 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
+            app.kubernetes.io/name: policy-reporter-trivy-plugin
+    - fromEndpoints:
+        - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
 ---
 apiVersion: "cilium.io/v2"
