@@ -10,10 +10,10 @@ metadata:
 spec:
   ingressClassName: traefik
   tls:
-    - hosts: [excalidraw.foobarbaz.fr]
+    - hosts: [draw.foobarbaz.fr]
       secretName: excalidraw-tls
   rules:
-    - host: excalidraw.foobarbaz.fr
+    - host: draw.foobarbaz.fr
       http:
         paths:
           - path: /
