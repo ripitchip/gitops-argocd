@@ -15,6 +15,8 @@ spec:
               protocol: TCP
             - port: "8089"
               protocol: TCP
+            - port: "8080"
+              protocol: TCP
     # 2. Local Namespace Traffic
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": excalidraw }
