@@ -6,11 +6,15 @@ metadata:
 spec:
   endpointSelector: {}
   ingress:
-    # 1. Traefik to App
+    # 1. Traefik to App and ACME Solver
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
       toPorts:
-        - ports: [{ port: "80", protocol: TCP }]
+        - ports: 
+            - port: "80"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP
     # 2. Local Namespace Traffic
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": excalidraw }
@@ -31,7 +35,11 @@ spec:
           rules: { dns: [{ matchPattern: "*" }] }
     # 3. API Server
     - toEntities: [kube-apiserver]
-    # 4. External access for sharing
+    # 4. External access for sharing and ACME validation
     - toEntities: [world]
       toPorts:
-        - ports: [{ port: "443", protocol: TCP }]
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
