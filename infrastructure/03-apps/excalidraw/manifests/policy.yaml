@@ -1,0 +1,43 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: excalidraw-hardened
+  namespace: excalidraw
+spec:
+  endpointSelector: {}
+  ingress:
+    # 1. Traefik to OAuth2 Proxy
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
+      toPorts:
+        - ports: [{ port: "4180", protocol: TCP }]
+    # 2. Local Namespace Traffic
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": excalidraw }
+    # 3. Monitoring (Alloy)
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": alloy }
+  egress:
+    # 1. Local Namespace Traffic
+    - toEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": excalidraw }
+    # 2. DNS
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports: [{ port: "53", protocol: ANY }]
+          rules: { dns: [{ matchPattern: "*" }] }
+    # 3. Keycloak/OIDC
+    - toEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": auth }
+      toPorts:
+        - ports: [{ port: "8080", protocol: TCP }]
+    # 4. API Server
+    - toEntities: [kube-apiserver]
+    # 5. Vault Access
+    - toEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": vault }
+      toPorts:
+        - ports: [{ port: "8200", protocol: TCP }]

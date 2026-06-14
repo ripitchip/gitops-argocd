@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: excalidraw-app
+  namespace: excalidraw
+  labels: { app: excalidraw-app }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: excalidraw-app } }
+  template:
+    metadata: { labels: { app: excalidraw-app } }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 18335
+        fsGroup: 18335
+      containers:
+        - name: excalidraw
+          image: excalidraw/excalidraw:latest
+          resources:
+            limits: { cpu: 200m, memory: 256Mi }
+            requests: { cpu: 50m, memory: 128Mi }
+          ports: [{ containerPort: 80, name: http }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: excalidraw-app
+  namespace: excalidraw
+spec:
+  selector: { app: excalidraw-app }
+  ports: [{ port: 80, targetPort: 80 }]
