@@ -20,6 +20,8 @@ spec:
         - ports:
             - port: "9443"
               protocol: TCP
+            - port: "8081"
+              protocol: TCP
             - port: "10250"
               protocol: TCP
     # 3. Alloy
