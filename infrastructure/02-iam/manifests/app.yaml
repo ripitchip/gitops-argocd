@@ -184,19 +184,12 @@ spec:
             - name: keycloak-providers-volume
               mountPath: /opt/keycloak/providers
               subPath: providers-data
-        - name: reconstruct-theme
-          image: busybox:1.36
-          command:
-            - sh
-            - -c
-            - |
-              cat /parts/part-* > /opt/keycloak/providers/keycloak-theme.jar
-              chown 4648:4648 /opt/keycloak/providers/keycloak-theme.jar
+        - name: install-theme
+          image: keycloak-custom-theme:latest
+          imagePullPolicy: IfNotPresent
           volumeMounts:
-            - name: theme-parts
-              mountPath: /parts
             - name: keycloak-providers-volume
-              mountPath: /opt/keycloak/providers
+              mountPath: /data
               subPath: providers-data
         - name: prepare-lib
           image: quay.io/keycloak/keycloak:26.6.1

@@ -8,22 +8,6 @@ resources:
   - storage.yaml
   - app.yaml
 
-configMapGenerator:
-  - name: keycloak-theme-parts
-    files:
-      - theme-parts/part-aa
-      - theme-parts/part-ab
-      - theme-parts/part-ac
-      - theme-parts/part-ad
-      - theme-parts/part-ae
-      - theme-parts/part-af
-      - theme-parts/part-ag
-      - theme-parts/part-ah
-      - theme-parts/part-ai
-      - theme-parts/part-aj
-      - theme-parts/part-ak
-      - theme-parts/part-al
-
 labels:
   - pairs:
       app.kubernetes.io/part-of: iam-stack
