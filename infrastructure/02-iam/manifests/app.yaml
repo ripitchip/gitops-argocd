@@ -184,6 +184,25 @@ spec:
             - name: keycloak-providers-volume
               mountPath: /opt/keycloak/providers
               subPath: providers-data
+        - name: reconstruct-theme
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              cat /parts/aa/keycloak-theme-part-aa \
+                  /parts/ab/keycloak-theme-part-ab \
+                  /parts/ac/keycloak-theme-part-ac \
+                  /parts/ad/keycloak-theme-part-ad > /opt/keycloak/providers/keycloak-theme.jar
+              chown 4648:4648 /opt/keycloak/providers/keycloak-theme.jar
+          volumeMounts:
+            - { name: theme-part-aa, mountPath: /parts/aa }
+            - { name: theme-part-ab, mountPath: /parts/ab }
+            - { name: theme-part-ac, mountPath: /parts/ac }
+            - { name: theme-part-ad, mountPath: /parts/ad }
+            - name: keycloak-providers-volume
+              mountPath: /opt/keycloak/providers
+              subPath: providers-data
         - name: prepare-lib
           image: quay.io/keycloak/keycloak:26.6.1
           command: ["sh", "-c", "cp -rp /opt/keycloak/lib/quarkus/* /mnt/lib/"]
@@ -267,6 +286,14 @@ spec:
           emptyDir: {}
         - name: keycloak-data
           emptyDir: {}
+        - name: theme-part-aa
+          configMap: { name: keycloak-theme-part-aa }
+        - name: theme-part-ab
+          configMap: { name: keycloak-theme-part-ab }
+        - name: theme-part-ac
+          configMap: { name: keycloak-theme-part-ac }
+        - name: theme-part-ad
+          configMap: { name: keycloak-theme-part-ad }
 ---
 # --- INGRESS ---
 apiVersion: networking.k8s.io/v1
