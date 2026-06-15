@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: baikal
+  namespace: baikal
+  labels:
+    app: baikal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: baikal
+  template:
+    metadata:
+      labels:
+        app: baikal
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 57238
+        fsGroup: 57238
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "chown -R 57238:57238 /var/www/baikal/Specific"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+          volumeMounts:
+            - name: data
+              mountPath: /var/www/baikal/Specific
+      containers:
+        - name: baikal
+          image: aalmenar/baikal:0.11.1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 57238
+            seccompProfile:
+              type: RuntimeDefault
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: data
+              mountPath: /var/www/baikal/Specific
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: baikal-data-pvc
