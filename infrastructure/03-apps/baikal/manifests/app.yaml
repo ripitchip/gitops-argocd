@@ -42,7 +42,7 @@ spec:
         - name: baikal
           image: ghcr.io/aalmenar/baikal:0.11.1
           # On court-circuite l'entrypoint qui fait le chown bloquant
-          command: ["apache2-foreground"]
+          command: ["/usr/local/bin/apache2-foreground"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
