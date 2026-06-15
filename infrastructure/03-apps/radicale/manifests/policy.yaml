@@ -6,16 +6,23 @@ metadata:
 spec:
   endpointSelector: {}
   ingress:
-    # 1. Traefik to Radicale
+    # 1. Traefik to Radicale and ACME Solver
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
       toPorts:
         - ports: 
             - port: "5232"
               protocol: TCP
+            - port: "8089"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
     # 2. Local Namespace Traffic
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": radicale }
+    # 3. Monitoring (Alloy)
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": alloy }
   egress:
     # 1. Local Namespace Traffic
     - toEndpoints:
@@ -30,3 +37,11 @@ spec:
           rules: { dns: [{ matchPattern: "*" }] }
     # 3. API Server
     - toEntities: [kube-apiserver]
+    # 4. External access (ACME validation and updates)
+    - toEntities: [world]
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
