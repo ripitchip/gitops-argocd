@@ -5,3 +5,18 @@ resources:
   - app.yaml
   - ingress.yaml
   - policy.yaml
+
+configMapGenerator:
+  - name: excalidraw-libraries-1
+    namespace: excalidraw
+    files:
+      - libraries/architecture-diagram-components.excalidrawlib
+      - libraries/cloud.excalidrawlib
+      - libraries/drwnio.excalidrawlib
+      - libraries/forms.excalidrawlib
+  - name: excalidraw-libraries-2
+    namespace: excalidraw
+    files:
+      - libraries/icons.excalidrawlib
+      - libraries/software-architecture.excalidrawlib
+      - libraries/web-kit.excalidrawlib

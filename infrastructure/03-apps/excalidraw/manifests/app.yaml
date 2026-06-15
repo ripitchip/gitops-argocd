@@ -42,6 +42,10 @@ spec:
             - name: config
               mountPath: /etc/nginx/conf.d/default.conf
               subPath: default.conf
+            - name: libraries-1
+              mountPath: /usr/share/nginx/html/libraries/group1
+            - name: libraries-2
+              mountPath: /usr/share/nginx/html/libraries/group2
       volumes:
         - name: cache
           emptyDir: {}
@@ -52,6 +56,12 @@ spec:
         - name: config
           configMap:
             name: excalidraw-nginx-config
+        - name: libraries-1
+          configMap:
+            name: excalidraw-libraries-1
+        - name: libraries-2
+          configMap:
+            name: excalidraw-libraries-2
 ---
 apiVersion: v1
 kind: ConfigMap
