@@ -33,6 +33,8 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": notifications
         - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": memos
+        - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
       toPorts:
         - ports:

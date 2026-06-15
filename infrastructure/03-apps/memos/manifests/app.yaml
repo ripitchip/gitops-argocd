@@ -15,6 +15,7 @@ spec:
       labels:
         app: memos
     spec:
+      serviceAccountName: memos-vault-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 11761
