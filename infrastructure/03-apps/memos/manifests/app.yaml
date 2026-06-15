@@ -15,7 +15,6 @@ spec:
       labels:
         app: memos
     spec:
-      serviceAccountName: memos-vault-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 11761
@@ -55,15 +54,3 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: memos-pvc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: memos-pvc
-  namespace: memos
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi

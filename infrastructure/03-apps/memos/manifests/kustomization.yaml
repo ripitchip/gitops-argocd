@@ -6,5 +6,4 @@ resources:
   - service.yaml
   - ingress.yaml
   - policy.yaml
-  - vault-auth.yaml
-  - external-secrets.yaml
+  - storage.yaml
