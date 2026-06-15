@@ -20,7 +20,16 @@ spec:
         runAsUser: 57238
         fsGroup: 57238
       initContainers:
-        - name: fix-permissions
+        - name: prepare-baikal
+          image: ghcr.io/aalmenar/baikal:0.11.1
+          command: ["sh", "-c", "cp -rp /var/www/baikal/* /mnt/baikal/ && chown -R 57238:57238 /mnt/baikal/"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+          volumeMounts:
+            - name: baikal-full-dir
+              mountPath: /mnt/baikal
+        - name: fix-pvc-permissions
           image: busybox:1.36
           command: ["sh", "-c", "chown -R 57238:57238 /var/www/baikal/Specific"]
           securityContext:
@@ -32,6 +41,8 @@ spec:
       containers:
         - name: baikal
           image: ghcr.io/aalmenar/baikal:0.11.1
+          # On court-circuite l'entrypoint qui fait le chown bloquant
+          command: ["apache2-foreground"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -44,6 +55,8 @@ spec:
             - containerPort: 80
               name: http
           volumeMounts:
+            - name: baikal-full-dir
+              mountPath: /var/www/baikal
             - name: data
               mountPath: /var/www/baikal/Specific
           resources:
@@ -57,3 +70,5 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: baikal-data-pvc
+        - name: baikal-full-dir
+          emptyDir: {}
