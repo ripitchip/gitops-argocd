@@ -9,18 +9,20 @@ resources:
   - app.yaml
 
 configMapGenerator:
-  - name: keycloak-theme-part-aa
+  - name: keycloak-theme-parts
     files:
-      - theme-parts/keycloak-theme-part-aa
-  - name: keycloak-theme-part-ab
-    files:
-      - theme-parts/keycloak-theme-part-ab
-  - name: keycloak-theme-part-ac
-    files:
-      - theme-parts/keycloak-theme-part-ac
-  - name: keycloak-theme-part-ad
-    files:
-      - theme-parts/keycloak-theme-part-ad
+      - theme-parts/part-aa
+      - theme-parts/part-ab
+      - theme-parts/part-ac
+      - theme-parts/part-ad
+      - theme-parts/part-ae
+      - theme-parts/part-af
+      - theme-parts/part-ag
+      - theme-parts/part-ah
+      - theme-parts/part-ai
+      - theme-parts/part-aj
+      - theme-parts/part-ak
+      - theme-parts/part-al
 
 labels:
   - pairs:

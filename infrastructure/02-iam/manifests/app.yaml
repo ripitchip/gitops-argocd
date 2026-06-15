@@ -190,16 +190,11 @@ spec:
             - sh
             - -c
             - |
-              cat /parts/aa/keycloak-theme-part-aa \
-                  /parts/ab/keycloak-theme-part-ab \
-                  /parts/ac/keycloak-theme-part-ac \
-                  /parts/ad/keycloak-theme-part-ad > /opt/keycloak/providers/keycloak-theme.jar
+              cat /parts/part-* > /opt/keycloak/providers/keycloak-theme.jar
               chown 4648:4648 /opt/keycloak/providers/keycloak-theme.jar
           volumeMounts:
-            - { name: theme-part-aa, mountPath: /parts/aa }
-            - { name: theme-part-ab, mountPath: /parts/ab }
-            - { name: theme-part-ac, mountPath: /parts/ac }
-            - { name: theme-part-ad, mountPath: /parts/ad }
+            - name: theme-parts
+              mountPath: /parts
             - name: keycloak-providers-volume
               mountPath: /opt/keycloak/providers
               subPath: providers-data
@@ -286,14 +281,8 @@ spec:
           emptyDir: {}
         - name: keycloak-data
           emptyDir: {}
-        - name: theme-part-aa
-          configMap: { name: keycloak-theme-part-aa }
-        - name: theme-part-ab
-          configMap: { name: keycloak-theme-part-ab }
-        - name: theme-part-ac
-          configMap: { name: keycloak-theme-part-ac }
-        - name: theme-part-ad
-          configMap: { name: keycloak-theme-part-ad }
+        - name: theme-parts
+          configMap: { name: keycloak-theme-parts }
 ---
 # --- INGRESS ---
 apiVersion: networking.k8s.io/v1
