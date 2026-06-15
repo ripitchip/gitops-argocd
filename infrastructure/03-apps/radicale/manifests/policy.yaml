@@ -1,28 +1,25 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: baikal-hardened
-  namespace: baikal
+  name: radicale-hardened
+  namespace: radicale
 spec:
   endpointSelector: {}
   ingress:
-    # 1. Traefik to Baikal
+    # 1. Traefik to Radicale
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
       toPorts:
         - ports: 
-            - port: "8080"
+            - port: "5232"
               protocol: TCP
     # 2. Local Namespace Traffic
     - fromEndpoints:
-        - matchLabels: { "k8s:io.kubernetes.pod.namespace": baikal }
-    # 3. Monitoring (Alloy)
-    - fromEndpoints:
-        - matchLabels: { "k8s:io.kubernetes.pod.namespace": alloy }
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": radicale }
   egress:
     # 1. Local Namespace Traffic
     - toEndpoints:
-        - matchLabels: { "k8s:io.kubernetes.pod.namespace": baikal }
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": radicale }
     # 2. DNS
     - toEndpoints:
         - matchLabels:
@@ -33,11 +30,3 @@ spec:
           rules: { dns: [{ matchPattern: "*" }] }
     # 3. API Server
     - toEntities: [kube-apiserver]
-    # 4. External access (Updates, etc.)
-    - toEntities: [world]
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
-            - port: "80"
-              protocol: TCP

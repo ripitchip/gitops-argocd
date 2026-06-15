@@ -11,7 +11,7 @@ resources:
   - 03-apps/cloudreve-app-definition.yaml
   - 03-apps/excalidraw-app-definition.yaml
   - 03-apps/memos-app-definition.yaml
-  - 03-apps/baikal-app-definition.yaml
+  - 03-apps/radicale-app-definition.yaml
   - 03-apps/immich
   - 03-apps/pingvin-share
 

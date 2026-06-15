@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: baikal-ingress
-  namespace: baikal
+  name: radicale-ingress
+  namespace: radicale
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
@@ -11,7 +11,7 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts: [cal.foobarbaz.fr]
-      secretName: baikal-tls
+      secretName: radicale-tls
   rules:
     - host: cal.foobarbaz.fr
       http:
@@ -20,6 +20,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: baikal
+                name: radicale
                 port:
                   number: 80
