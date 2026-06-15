@@ -7,3 +7,4 @@ resources:
   - ingress.yaml
   - policy.yaml
   - storage.yaml
+  - nginx-conf.yaml

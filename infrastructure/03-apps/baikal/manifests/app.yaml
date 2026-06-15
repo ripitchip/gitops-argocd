@@ -41,8 +41,14 @@ spec:
       containers:
         - name: baikal
           image: ghcr.io/aalmenar/baikal:0.11.1
-          # On court-circuite l'entrypoint qui fait le chown bloquant
-          command: ["/usr/local/bin/apache2-foreground"]
+          command: ["sh", "-c"]
+          args:
+            - |
+              /usr/sbin/php-fpm8.5 -F -d listen=127.0.0.1:9000 -d pid=/tmp/php-fpm.pid &
+              nginx -g 'daemon off;'
+          env:
+            - name: BAIKAL_SKIP_CHOWN
+              value: "1"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -52,13 +58,24 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
           volumeMounts:
             - name: baikal-full-dir
               mountPath: /var/www/baikal
             - name: data
               mountPath: /var/www/baikal/Specific
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+            - name: nginx-run
+              mountPath: /var/run
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-lib
+              mountPath: /var/lib/nginx
+            - name: nginx-log
+              mountPath: /var/log/nginx
           resources:
             limits:
               cpu: 200m
@@ -71,4 +88,15 @@ spec:
           persistentVolumeClaim:
             claimName: baikal-data-pvc
         - name: baikal-full-dir
+          emptyDir: {}
+        - name: nginx-conf
+          configMap:
+            name: baikal-nginx-conf
+        - name: nginx-run
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-lib
+          emptyDir: {}
+        - name: nginx-log
           emptyDir: {}
