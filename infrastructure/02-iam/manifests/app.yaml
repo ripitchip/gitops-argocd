@@ -184,12 +184,18 @@ spec:
             - name: keycloak-providers-volume
               mountPath: /opt/keycloak/providers
               subPath: providers-data
-        - name: install-theme
-          image: keycloak-custom-theme:latest
-          imagePullPolicy: IfNotPresent
+        - name: fetch-theme
+          image: alpine/git:latest
+          command:
+            - sh
+            - -c
+            - |
+              git clone --depth 1 https://github.com/ripitchip/gitops-argocd.git /tmp/repo
+              cp /tmp/repo/infrastructure/02-iam/theme/custom-theme.jar /opt/keycloak/providers/keycloak-theme.jar
+              chown 4648:4648 /opt/keycloak/providers/keycloak-theme.jar
           volumeMounts:
             - name: keycloak-providers-volume
-              mountPath: /data
+              mountPath: /opt/keycloak/providers
               subPath: providers-data
         - name: prepare-lib
           image: quay.io/keycloak/keycloak:26.6.1
@@ -274,8 +280,6 @@ spec:
           emptyDir: {}
         - name: keycloak-data
           emptyDir: {}
-        - name: theme-parts
-          configMap: { name: keycloak-theme-parts }
 ---
 # --- INGRESS ---
 apiVersion: networking.k8s.io/v1
