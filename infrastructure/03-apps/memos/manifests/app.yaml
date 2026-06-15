@@ -30,6 +30,11 @@ spec:
             runAsUser: 11761
             seccompProfile:
               type: RuntimeDefault
+          env:
+            - name: MEMOS_PORT
+              value: "5230"
+            - name: MEMOS_ADDR
+              value: "0.0.0.0"
           ports:
             - containerPort: 5230
               name: http

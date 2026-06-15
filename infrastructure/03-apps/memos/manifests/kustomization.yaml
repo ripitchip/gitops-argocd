@@ -5,3 +5,4 @@ resources:
   - app.yaml
   - service.yaml
   - ingress.yaml
+  - policy.yaml
