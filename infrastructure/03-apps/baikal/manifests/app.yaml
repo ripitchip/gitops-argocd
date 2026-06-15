@@ -31,7 +31,7 @@ spec:
               mountPath: /var/www/baikal/Specific
       containers:
         - name: baikal
-          image: aalmenar/baikal:0.11.1
+          image: ghcr.io/aalmenar/baikal:0.11.1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
