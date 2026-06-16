@@ -39,7 +39,19 @@ spec:
 
               prometheus.scrape "metrics" {
                 targets    = discovery.relabel.generic_pods.output
+                forward_to = [prometheus.relabel.keycloak_metrics_fix.receiver]
+              }
+
+              prometheus.relabel "keycloak_metrics_fix" {
                 forward_to = [prometheus.remote_write.mimir.receiver]
+                
+                // Rewrite job name for Keycloak to match dashboard expectations
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_label_app"]
+                  regex         = "auth;keycloak"
+                  target_label  = "job"
+                  replacement   = "keycloak/keycloak-metrics"
+                }
               }
 
               // Specific scraping for Node Exporter
