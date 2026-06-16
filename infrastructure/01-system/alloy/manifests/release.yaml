@@ -35,11 +35,6 @@ spec:
                   regex         = "node-exporter|kube-state-metrics"
                   action        = "drop"
                 }
-                rule {
-                  source_labels = ["__meta_kubernetes_pod_label_app"]
-                  regex         = "keycloak"
-                  action        = "drop"
-                }
               }
 
               prometheus.scrape "metrics" {
@@ -133,22 +128,41 @@ spec:
                   action        = "keep"
                 }
                 rule {
+                  source_labels = ["__meta_kubernetes_pod_name"]
+                  target_label  = "pod"
+                }
+                rule {
                   action = "replace"
                   target_label = "job"
+                  replacement = "keycloak/keycloak-metrics"
+                }
+                rule {
+                  action = "replace"
+                  target_label = "namespace"
+                  replacement = "keycloak"
+                }
+                rule {
+                  action = "replace"
+                  target_label = "container"
                   replacement = "keycloak"
                 }
               }
 
-              prometheus.scrape "keycloak" {
-                targets =  [{
-                  __address__ = "keycloak.auth.svc.cluster.local:9000",
-                  job         = "keycloak-service",
-                  namespace   = "keycloak",
-                  container   = "keycloak",
-                  pod         = "keycloak-0",
-                }]
+              prometheus.scrape "keycloak_metrics" {
+                targets    = discovery.relabel.keycloak.output
                 metrics_path = "/metrics"
+                // Keycloak metrics are on port 9000
+                forward_to = [prometheus.relabel.keycloak_port.receiver]
+              }
+
+              prometheus.relabel "keycloak_port" {
                 forward_to = [prometheus.remote_write.mimir.receiver]
+                rule {
+                  source_labels = ["__address__"]
+                  regex         = "(.*):8080"
+                  target_label  = "__address__"
+                  replacement   = "${1}:9000"
+                }
               }
 
               prometheus.remote_write "mimir" {
