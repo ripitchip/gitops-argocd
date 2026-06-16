@@ -190,7 +190,7 @@ spec:
             - sh
             - -c
             - |
-              wget -O /opt/keycloak/providers/keycloak-theme.jar https://github.com/ripitchip/keycloak-theme/releases/download/v1.0.0/keycloak-theme-for-kc-22-to-25.jar
+              wget -O /opt/keycloak/providers/keycloak-theme.jar https://github.com/ripitchip/keycloak-theme/releases/download/v1.0.1/keycloak-theme-for-kc-22-to-25.jar
               chown 4648:4648 /opt/keycloak/providers/keycloak-theme.jar
           volumeMounts:
             - name: keycloak-providers-volume
