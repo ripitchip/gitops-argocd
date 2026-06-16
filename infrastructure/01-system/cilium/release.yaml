@@ -21,7 +21,7 @@ spec:
           enabled: true
           metrics:
             enabled:
-              - dns:query;labelsContext=source_ip,source_namespace,source_pod,destination_ip,destination_namespace,destination_pod,query,return_code
+              - dns
               - drop
               - tcp
               - flow
