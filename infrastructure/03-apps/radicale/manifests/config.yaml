@@ -9,8 +9,10 @@ data:
     hosts = 0.0.0.0:5232
 
     [auth]
-    type = radicale_modoboa_auth_oauth2
-    oauth2_introspection_endpoint = https://${CLIENT_ID}:${CLIENT_SECRET}@auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/token/introspect
+    type = oauth2
+    oauth2_token_endpoint = https://auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/token
+    oauth2_client_id = ${CLIENT_ID}
+    oauth2_client_secret = ${CLIENT_SECRET}
 
     [storage]
     filesystem_folder = /data/collections
