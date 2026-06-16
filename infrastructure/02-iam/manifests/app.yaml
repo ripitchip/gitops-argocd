@@ -234,7 +234,7 @@ spec:
             requests:
               cpu: 500m
               memory: 1Gi
-          args: ["start", "--http-enabled=true"]
+          args: ["start", "--http-enabled=true", "--metrics-enabled=true"]
           env:
             - { name: KC_BOOTSTRAP_ADMIN_USERNAME, value: "admin" }
             - {
