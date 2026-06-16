@@ -37,7 +37,12 @@ spec:
           rules: { dns: [{ matchPattern: "*" }] }
     # 3. API Server
     - toEntities: [kube-apiserver]
-    # 4. External access (ACME validation and updates)
+    # 4. Keycloak (Auth Namespace)
+    - toEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": auth }
+      toPorts:
+        - ports: [{ port: "8080", protocol: TCP }]
+    # 5. External access (ACME validation and updates)
     - toEntities: [world]
       toPorts:
         - ports:

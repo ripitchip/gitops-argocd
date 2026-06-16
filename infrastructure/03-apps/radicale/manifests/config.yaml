@@ -4,13 +4,13 @@ metadata:
   name: radicale-config
   namespace: radicale
 data:
-  config: |
+  config.template: |
     [server]
     hosts = 0.0.0.0:5232
 
     [auth]
     type = radicale_modoboa_auth_oauth2
-    oauth2_introspection_endpoint = https://auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/token/introspect
+    oauth2_introspection_endpoint = https://${CLIENT_ID}:${CLIENT_SECRET}@auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/token/introspect
 
     [storage]
     filesystem_folder = /data/collections

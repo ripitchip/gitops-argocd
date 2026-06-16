@@ -20,12 +20,14 @@ spec:
               protocol: TCP
             - port: "8089"
               protocol: TCP
-    # 3. OIDC Clients (ArgoCD, Cloudreve, etc.)
+    # 3. OIDC Clients (ArgoCD, Cloudreve, Radicale, etc.)
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": argocd
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": cloudreve
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": radicale
       toPorts:
         - ports:
             - port: "8080"

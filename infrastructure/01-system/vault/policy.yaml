@@ -36,6 +36,8 @@ spec:
             "k8s:io.kubernetes.pod.namespace": memos
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": radicale
       toPorts:
         - ports:
             - port: "8200"
