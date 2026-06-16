@@ -42,6 +42,14 @@ spec:
                 forward_to = [prometheus.remote_write.mimir.receiver]
               }
 
+              prometheus.scrape "kube_state_metrics" {
+                targets = [{
+                  __address__ = "kube-state-metrics.alloy.svc.cluster.local:8080",
+                  job         = "kube-state-metrics",
+                }]
+                forward_to = [prometheus.remote_write.mimir.receiver]
+              }
+
               // Specific scraping for CoreDNS
               discovery.relabel "coredns" {
                 targets = discovery.kubernetes.pods.targets
@@ -99,6 +107,27 @@ spec:
 
               prometheus.scrape "etcd" {
                 targets    = discovery.relabel.etcd.output
+                forward_to = [prometheus.remote_write.mimir.receiver]
+              }
+
+              // Specific scraping for Keycloak
+              discovery.relabel "keycloak" {
+                targets = discovery.kubernetes.pods.targets
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_label_app"]
+                  regex         = "auth;keycloak"
+                  action        = "keep"
+                }
+                rule {
+                  action = "replace"
+                  target_label = "job"
+                  replacement = "keycloak"
+                }
+              }
+
+              prometheus.scrape "keycloak" {
+                targets    = discovery.relabel.keycloak.output
+                metrics_path = "/metrics"
                 forward_to = [prometheus.remote_write.mimir.receiver]
               }
 
