@@ -190,6 +190,12 @@ spec:
                   target_label  = "container"
                 }
                 rule {
+                  source_labels = ["__meta_kubernetes_pod_container_name", "__meta_kubernetes_namespace"]
+                  regex         = "keycloak;auth"
+                  target_label  = "namespace"
+                  replacement   = "keycloak"
+                }
+                rule {
                   source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
                   separator     = "/"
                   action        = "replace"
