@@ -9,8 +9,8 @@ data:
     hosts = 0.0.0.0:5232
 
     [auth]
-    type = radicale_auth_oauth2
-    oauth2_auth_endpoint = https://${CLIENT_ID}:${CLIENT_SECRET}@auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/token
+    type = radicale_modoboa_auth_oauth2
+    oauth2_introspection_endpoint = https://${CLIENT_ID}:${CLIENT_SECRET}@auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/token/introspect
 
     [storage]
     filesystem_folder = /data/collections
