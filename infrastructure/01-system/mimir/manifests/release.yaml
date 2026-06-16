@@ -75,12 +75,14 @@ spec:
           <<: *commonSharedVolume
 
         alertmanager:
+          enabled: true
           persistentVolume:
             size: 5Gi
             storageClass: truenas-nfs
           <<: *commonSharedVolume
 
         ruler:
+          enabled: true
           persistentVolume:
             size: 5Gi
             storageClass: truenas-nfs

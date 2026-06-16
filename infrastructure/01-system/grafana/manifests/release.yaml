@@ -83,7 +83,9 @@ spec:
             drop:
               - ALL
         persistence:
-          enabled: false # Memory only for now to ensure simple deployment, can be configured later
+          type: pvc
+          enabled: true
+          existingClaim: grafana-pvc
         ingress:
           enabled: false # Managed explicitly if required, disabled by default
   destination:

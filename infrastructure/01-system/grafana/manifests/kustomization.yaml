@@ -1,5 +1,6 @@
 resources:
   - namespace.yaml
+  - storage.yaml
   - external-secrets.yaml
   - policy.yaml
   - release.yaml
