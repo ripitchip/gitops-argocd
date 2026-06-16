@@ -14,7 +14,6 @@ spec:
       labels:
         app.kubernetes.io/name: node-exporter
     spec:
-      hostIdentifier: host
       hostNetwork: true
       hostPID: true
       securityContext:
