@@ -31,6 +31,14 @@ spec:
                 forward_to = [prometheus.remote_write.mimir.receiver]
               }
 
+              prometheus.scrape "node_exporter" {
+                targets = [{
+                  __address__ = "node-exporter.alloy.svc.cluster.local:9100",
+                  job         = "node-exporter",
+                }]
+                forward_to = [prometheus.remote_write.mimir.receiver]
+              }
+
               prometheus.remote_write "mimir" {
                 endpoint {
                   url = "http://mimir-nginx.mimir.svc.cluster.local/api/v1/push"

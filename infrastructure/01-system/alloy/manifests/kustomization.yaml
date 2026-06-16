@@ -1,4 +1,5 @@
 resources:
   - namespace.yaml
+  - node-exporter.yaml
   - policy.yaml
   - release.yaml
