@@ -142,9 +142,10 @@ spec:
               prometheus.scrape "keycloak" {
                 targets =  [{
                   __address__ = "keycloak.auth.svc.cluster.local:9000",
-                  job         = "keycloak",
-                  namespace   = "auth",
+                  job         = "keycloak-service",
+                  namespace   = "keycloak",
                   container   = "keycloak",
+                  pod         = "keycloak-0",
                 }]
                 metrics_path = "/metrics"
                 forward_to = [prometheus.remote_write.mimir.receiver]
