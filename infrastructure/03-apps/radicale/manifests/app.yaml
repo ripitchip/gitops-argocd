@@ -34,8 +34,8 @@ spec:
             - name: config
               mountPath: /config
         - name: install-plugin
-          image: tomsquest/docker-radicale:3.7.3.0
-          command: ["sh", "-c", "pip install --target /plugins radicale-modoboa-auth-oauth2"]
+          image: python:3-alpine
+          command: ["sh", "-c", "pip install --target /plugins radicale-auth-oauth2"]
           volumeMounts:
             - name: plugins
               mountPath: /plugins
