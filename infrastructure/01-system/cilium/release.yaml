@@ -13,8 +13,22 @@ spec:
     targetRevision: 1.19.4
     helm:
       values: |
+        prometheus:
+          enabled: true
+          port: 9962
+
         hubble:
           enabled: true
+          metrics:
+            enabled:
+              - dns:query;labelsContext=source_ip,source_namespace,source_pod,destination_ip,destination_namespace,destination_pod,query,return_code
+              - drop
+              - tcp
+              - flow
+              - icmp
+              - http
+            serviceMonitor:
+              enabled: false # We use Alloy, so we don't need ServiceMonitors
           relay:
             enabled: true
             resources:
@@ -37,6 +51,9 @@ spec:
 
         operator:
           enabled: true
+          prometheus:
+            enabled: true
+            port: 9963
           clusterPoolIPv4PodCIDRList:
           - 10.244.0.0/16
           resources:

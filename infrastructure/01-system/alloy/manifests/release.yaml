@@ -26,16 +26,79 @@ spec:
               }
 
               // --- Metrics (Prometheus) ---
+              
+              // Standard pod scraping
               prometheus.scrape "metrics" {
                 targets    = discovery.kubernetes.pods.targets
                 forward_to = [prometheus.remote_write.mimir.receiver]
               }
 
+              // Specific scraping for Node Exporter
               prometheus.scrape "node_exporter" {
                 targets = [{
                   __address__ = "node-exporter.alloy.svc.cluster.local:9100",
                   job         = "node-exporter",
                 }]
+                forward_to = [prometheus.remote_write.mimir.receiver]
+              }
+
+              // Specific scraping for CoreDNS
+              discovery.relabel "coredns" {
+                targets = discovery.kubernetes.pods.targets
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_label_k8s_app"]
+                  regex         = "kube-system;kube-dns"
+                  action        = "keep"
+                }
+                rule {
+                  action = "replace"
+                  target_label = "job"
+                  replacement = "coredns"
+                }
+              }
+
+              prometheus.scrape "coredns" {
+                targets    = discovery.relabel.coredns.output
+                forward_to = [prometheus.remote_write.mimir.receiver]
+              }
+
+              // Specific scraping for Cilium
+              discovery.relabel "cilium" {
+                targets = discovery.kubernetes.pods.targets
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_k8s_app"]
+                  regex         = "cilium"
+                  action        = "keep"
+                }
+                rule {
+                  action = "replace"
+                  target_label = "job"
+                  replacement = "cilium"
+                }
+              }
+
+              prometheus.scrape "cilium" {
+                targets    = discovery.relabel.cilium.output
+                forward_to = [prometheus.remote_write.mimir.receiver]
+              }
+
+              // Specific scraping for etcd
+              discovery.relabel "etcd" {
+                targets = discovery.kubernetes.pods.targets
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_label_component"]
+                  regex         = "kube-system;etcd"
+                  action        = "keep"
+                }
+                rule {
+                  action = "replace"
+                  target_label = "job"
+                  replacement = "etcd"
+                }
+              }
+
+              prometheus.scrape "etcd" {
+                targets    = discovery.relabel.etcd.output
                 forward_to = [prometheus.remote_write.mimir.receiver]
               }
 
