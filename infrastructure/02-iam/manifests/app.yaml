@@ -264,6 +264,9 @@ spec:
                       { name: keycloak-passwords, key: admin-password },
                   },
               }
+          ports:
+            - name: http
+              containerPort: 8080
           volumeMounts:
             - name: keycloak-providers-volume
               mountPath: /opt/keycloak/providers
