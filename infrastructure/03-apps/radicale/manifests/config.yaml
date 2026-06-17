@@ -22,6 +22,12 @@ data:
     file = /config/rights
 
   rights: |
+    # Accès à la racine pour lister les collections
+    [root]
+    user = .+
+    collection = 
+    permissions = r
+
     # Administrateur (accès complet à toutes les collections)
     [admin]
     user = ^thomas$
