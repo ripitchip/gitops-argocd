@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
+  - external-secrets.yaml
+  - oauth2-proxy.yaml
   - storage.yaml
   - deployment.yaml
   - service.yaml

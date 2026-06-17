@@ -32,6 +32,12 @@ spec:
               value: "/music"
             - name: ND_LOGLEVEL
               value: "info"
+            - name: ND_EXTAUTH_TRUSTEDSOURCES
+              value: "0.0.0.0/0"
+            - name: ND_EXTAUTH_USERHEADER
+              value: "X-Forwarded-User"
+            - name: ND_ENABLEUSEREDITING
+              value: "false"
           volumeMounts:
             - name: data
               mountPath: /data
