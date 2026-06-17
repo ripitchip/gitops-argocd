@@ -16,3 +16,20 @@ data:
 
     [storage]
     filesystem_folder = /data/collections
+
+    [rights]
+    type = from_file
+    file = /config/rights
+
+  rights: |
+    # Administrateur (accès complet à toutes les collections)
+    [admin]
+    user = ^thomas$
+    collection = .*
+    permission = rw
+
+    # Utilisateurs classiques (accès uniquement à leurs propres collections)
+    [owner-write]
+    user = .+
+    collection = ^%(login)s($|/.*)
+    permission = rw

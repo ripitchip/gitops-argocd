@@ -88,6 +88,9 @@ spec:
             - name: config
               mountPath: /config/config
               subPath: config
+            - name: config-template
+              mountPath: /config/rights
+              subPath: rights
           resources:
             limits:
               cpu: 200m
@@ -109,3 +112,5 @@ spec:
             items:
               - key: config.template
                 path: config.template
+              - key: rights
+                path: rights
