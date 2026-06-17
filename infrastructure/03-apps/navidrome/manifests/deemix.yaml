@@ -174,4 +174,3 @@ spec:
     - name: http
       port: 80
       targetPort: 4180
-     targetPort: 4180
