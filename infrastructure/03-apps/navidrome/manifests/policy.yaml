@@ -68,6 +68,8 @@ spec:
         - ports:
             - port: "4533"
               protocol: TCP
+            - port: "80"
+              protocol: TCP
     - toEntities:
         - world
       toPorts:
@@ -152,6 +154,8 @@ spec:
       toPorts:
         - ports:
             - port: "6595"
+              protocol: TCP
+            - port: "80"
               protocol: TCP
     - toEntities:
         - world
