@@ -5,6 +5,10 @@ resources:
   - namespace.yaml
   - external-secrets.yaml
   - oauth2-proxy.yaml
+  - deemix-storage.yaml
+  - deemix-external-secrets.yaml
+  - deemix.yaml
+  - deemix-ingress.yaml
   - storage.yaml
   - deployment.yaml
   - service.yaml
