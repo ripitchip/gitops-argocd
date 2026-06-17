@@ -39,6 +39,7 @@ spec:
               mountPath: /music
               readOnly: true
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
