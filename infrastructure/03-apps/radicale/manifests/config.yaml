@@ -18,12 +18,7 @@ data:
     filesystem_folder = /data/collections
 
     [rights]
-    type = from_file
-    file = /config/rights
+    type = authenticated
 
   rights: |
-    # Test permissif pour debug
-    [allow-all]
-    user = .+
-    collection = .*
-    permissions = rw
+    # Temporairement désactivé
