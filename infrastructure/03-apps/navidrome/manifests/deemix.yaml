@@ -57,6 +57,10 @@ spec:
               mountPath: /config
             - name: downloads
               mountPath: /downloads
+            - name: run
+              mountPath: /run
+            - name: tmp
+              mountPath: /tmp
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
