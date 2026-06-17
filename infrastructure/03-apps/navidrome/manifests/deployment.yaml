@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: navidrome
-          image: deluan/navidrome:latest
+          image: deluan/navidrome:0.62.0
           ports:
             - containerPort: 4533
           env:
