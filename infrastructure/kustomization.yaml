@@ -12,6 +12,7 @@ resources:
   - 03-apps/excalidraw-app-definition.yaml
   - 03-apps/memos-app-definition.yaml
   - 03-apps/radicale-app-definition.yaml
+  - 03-apps/navidrome/navidrome-app-definition.yaml
   - 03-apps/immich
   - 03-apps/pingvin-share
 

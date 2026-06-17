@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: navidrome
+  namespace: navidrome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: navidrome
+  template:
+    metadata:
+      labels:
+        app: navidrome
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 45249
+        runAsGroup: 45249
+        fsGroup: 45249
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: navidrome
+          image: deluan/navidrome:latest
+          ports:
+            - containerPort: 4533
+          env:
+            - name: ND_DATAFOLDER
+              value: "/data"
+            - name: ND_MUSICFOLDER
+              value: "/music"
+            - name: ND_LOGLEVEL
+              value: "info"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: music
+              mountPath: /music
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: navidrome-data-pvc
+        - name: music
+          persistentVolumeClaim:
+            claimName: navidrome-music-pvc

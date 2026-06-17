@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: navidrome-data-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 1Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/navidrome-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: navidrome-data-pvc
+  namespace: navidrome
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 1Gi } }
+  volumeName: navidrome-data-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: navidrome-music-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 100Gi }
+  accessModes: [ReadWriteMany]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/navidrome-music"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: navidrome-music-pvc
+  namespace: navidrome
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteMany]
+  resources: { requests: { storage: 100Gi } }
+  volumeName: navidrome-music-pv
