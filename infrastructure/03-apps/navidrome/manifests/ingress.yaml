@@ -17,6 +17,20 @@ spec:
     - host: music.foobarbaz.fr
       http:
         paths:
+          - path: /rest
+            pathType: Prefix
+            backend:
+              service:
+                name: navidrome
+                port:
+                  number: 80
+          - path: /share
+            pathType: Prefix
+            backend:
+              service:
+                name: navidrome
+                port:
+                  number: 80
           - path: /
             pathType: Prefix
             backend:
