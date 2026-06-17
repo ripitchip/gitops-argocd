@@ -35,7 +35,7 @@ spec:
             - name: ND_EXTAUTH_TRUSTEDSOURCES
               value: "0.0.0.0/0"
             - name: ND_EXTAUTH_USERHEADER
-              value: "X-Forwarded-User"
+              value: "X-Forwarded-Preferred-Username"
             - name: ND_ENABLEUSEREDITING
               value: "true"
           volumeMounts:

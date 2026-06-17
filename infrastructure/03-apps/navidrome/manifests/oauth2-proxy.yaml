@@ -64,13 +64,6 @@ spec:
           ports:
             - containerPort: 4180
               name: http
-          resources:
-            limits:
-              cpu: 100m
-              memory: 128Mi
-            requests:
-              cpu: 50m
-              memory: 64Mi
 ---
 apiVersion: v1
 kind: Service
