@@ -31,5 +31,5 @@ data:
     # Utilisateurs classiques (accès uniquement à leurs propres collections)
     [owner-write]
     user = .+
-    collection = ^%(login)s($|/.*)
+    collection = ^{user}($|/.*)
     permissions = rw
