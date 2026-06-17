@@ -26,10 +26,10 @@ data:
     [admin]
     user = ^thomas$
     collection = .*
-    permission = rw
+    permissions = rw
 
     # Utilisateurs classiques (accès uniquement à leurs propres collections)
     [owner-write]
     user = .+
     collection = ^%(login)s($|/.*)
-    permission = rw
+    permissions = rw
