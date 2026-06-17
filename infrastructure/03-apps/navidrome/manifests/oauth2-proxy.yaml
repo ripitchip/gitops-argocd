@@ -35,12 +35,9 @@ spec:
             - --skip-provider-button=true
             - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/foobarbaz
             - --user-id-claim=preferred_username
-            - --email-domain=*
-            - --http-address=0.0.0.0:4180
-            - --upstream=http://navidrome:80
-            - --reverse-proxy=true
             - --set-xauthrequest=true
             - --pass-user-headers=true
+            - --email-domain=*
             - --cookie-domain=.foobarbaz.fr
             - --whitelist-domain=.foobarbaz.fr
             - --cookie-secure=true
