@@ -22,20 +22,8 @@ data:
     file = /config/rights
 
   rights: |
-    # Accès à la racine pour lister les collections
-    [root]
+    # Test permissif pour debug
+    [allow-all]
     user = .+
-    collection = 
-    permissions = r
-
-    # Administrateur (accès complet à toutes les collections)
-    [admin]
-    user = ^thomas$
     collection = .*
-    permissions = rw
-
-    # Utilisateurs classiques (accès uniquement à leurs propres collections)
-    [owner-write]
-    user = .+
-    collection = ^{user}($|/.*)
     permissions = rw
