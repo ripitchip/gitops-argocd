@@ -44,7 +44,18 @@ spec:
         - name: deemix
           image: ghcr.io/bambanah/deemix:v4.5.2
           ports:
-            - containerPort: 6595
+            - name: http
+              containerPort: 6595
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
           env:
             - name: PUID
               value: "45249"
@@ -96,7 +107,7 @@ spec:
     app: deemix
   ports:
     - port: 80
-      targetPort: 6595
+      targetPort: http
   type: ClusterIP
 ---
 apiVersion: apps/v1
