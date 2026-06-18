@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: navidrome-auth-redirect-html
+  namespace: navidrome
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Redirecting...</title>
+        <script>
+            window.location.href = "/oauth2/start?rd=" + encodeURIComponent(window.location.href);
+        </script>
+    </head>
+    <body>
+        <p>Redirecting to login...</p>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: navidrome-auth-redirect
+  namespace: navidrome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: navidrome-auth-redirect
+  template:
+    metadata:
+      labels:
+        app: navidrome-auth-redirect
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: web
+          image: busybox:1.36
+          command: ["busybox", "httpd", "-f", "-p", "8080", "-h", "/www"]
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: html
+              mountPath: /www
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65534
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "10Mi"
+            limits:
+              cpu: "50m"
+              memory: "20Mi"
+      volumes:
+        - name: html
+          configMap:
+            name: navidrome-auth-redirect-html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: navidrome-auth-redirect
+  namespace: navidrome
+spec:
+  selector:
+    app: navidrome-auth-redirect
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  type: ClusterIP

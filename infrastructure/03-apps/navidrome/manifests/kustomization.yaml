@@ -15,4 +15,5 @@ resources:
   - ingress.yaml
   - ingress-web.yaml
   - middlewares.yaml
+  - redirect-service.yaml
   - policy.yaml

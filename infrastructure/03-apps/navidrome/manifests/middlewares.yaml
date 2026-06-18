@@ -24,6 +24,6 @@ spec:
     status:
       - "401"
     service:
-      name: navidrome-oauth2-proxy
+      name: navidrome-auth-redirect
       port: 80
-    query: "/oauth2/start?rd={url}"
+    query: "/"
