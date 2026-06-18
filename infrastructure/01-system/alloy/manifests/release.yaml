@@ -39,7 +39,38 @@ spec:
                   regex         = "auth;keycloak"
                   action        = "drop"
                 }
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  target_label  = "namespace"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_name"]
+                  target_label  = "pod"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_container_name"]
+                  target_label  = "container"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                  regex         = "argocd-server"
+                  target_label  = "job"
+                  replacement   = "argocd-server-metrics"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                  regex         = "argocd-application-controller"
+                  target_label  = "job"
+                  replacement   = "argocd-metrics"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                  regex         = "argocd-repo-server"
+                  target_label  = "job"
+                  replacement   = "argocd-repo-server-metrics"
+                }
               }
+
 
               prometheus.scrape "metrics" {
                 targets    = discovery.relabel.generic_pods.output
