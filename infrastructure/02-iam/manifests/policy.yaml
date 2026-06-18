@@ -41,11 +41,14 @@ spec:
       toPorts:
         - ports:
             - port: "8080"
-              protocol: TCP
-    # 5. MONITORING: Allow Alloy to scrape metrics
+    # 5. MONITORING: Allow Alloy to scrape metrics on port 9000
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
