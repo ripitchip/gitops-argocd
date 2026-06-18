@@ -13,4 +13,6 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - ingress-web.yaml
+  - middlewares.yaml
   - policy.yaml
