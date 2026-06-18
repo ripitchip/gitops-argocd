@@ -26,7 +26,6 @@ spec:
               }
 
               // --- Metrics (Prometheus) ---
-              
               // Standard pod scraping (excluding specialized jobs to avoid duplicates)
               discovery.relabel "generic_pods" {
                 targets = discovery.kubernetes.pods.targets
@@ -142,6 +141,10 @@ spec:
                   target_label  = "pod"
                 }
                 rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app"]
+                  target_label  = "deployment"
+                }
+                rule {
                   action = "replace"
                   target_label = "job"
                   replacement = "keycloak/keycloak-metrics"
@@ -241,12 +244,12 @@ spec:
           mounts:
             varlog: true
             dockercontainers: true
-          
+
           securityContext:
             runAsUser: 0
             runAsGroup: 0
             runAsNonRoot: false
-        
+
         controller:
           type: daemonset
 
