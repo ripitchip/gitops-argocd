@@ -35,23 +35,16 @@ spec:
                   regex         = "node-exporter|kube-state-metrics"
                   action        = "drop"
                 }
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_label_app"]
+                  regex         = "auth;keycloak"
+                  action        = "drop"
+                }
               }
 
               prometheus.scrape "metrics" {
                 targets    = discovery.relabel.generic_pods.output
-                forward_to = [prometheus.relabel.keycloak_metrics_fix.receiver]
-              }
-
-              prometheus.relabel "keycloak_metrics_fix" {
                 forward_to = [prometheus.remote_write.mimir.receiver]
-                
-                // Rewrite job name for Keycloak to match dashboard expectations
-                rule {
-                  source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_label_app"]
-                  regex         = "auth;keycloak"
-                  target_label  = "job"
-                  replacement   = "keycloak/keycloak-metrics"
-                }
               }
 
               // Specific scraping for Node Exporter
@@ -140,6 +133,11 @@ spec:
                   action        = "keep"
                 }
                 rule {
+                  source_labels = ["__meta_kubernetes_pod_container_port_number"]
+                  regex         = "9000"
+                  action        = "keep"
+                }
+                rule {
                   source_labels = ["__meta_kubernetes_pod_name"]
                   target_label  = "pod"
                 }
@@ -163,18 +161,7 @@ spec:
               prometheus.scrape "keycloak_metrics" {
                 targets    = discovery.relabel.keycloak.output
                 metrics_path = "/metrics"
-                // Keycloak metrics are on port 9000
-                forward_to = [prometheus.relabel.keycloak_port.receiver]
-              }
-
-              prometheus.relabel "keycloak_port" {
                 forward_to = [prometheus.remote_write.mimir.receiver]
-                rule {
-                  source_labels = ["__address__"]
-                  regex         = "(.*):8080"
-                  target_label  = "__address__"
-                  replacement   = "${1}:9000"
-                }
               }
 
               prometheus.remote_write "mimir" {
