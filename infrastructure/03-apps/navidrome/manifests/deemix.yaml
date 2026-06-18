@@ -43,6 +43,8 @@ spec:
       containers:
         - name: deemix
           image: ghcr.io/bambanah/deemix:v4.5.2
+          command: ["node", "/app/packages/webui/dist/main.js"]
+          args: ["--port", "6595", "--host", "0.0.0.0", "--singleuser"]
           ports:
             - name: http
               containerPort: 6595
@@ -57,6 +59,10 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
           env:
+            - name: DEEMIX_DATA_DIR
+              value: "/config"
+            - name: DEEMIX_MUSIC_DIR
+              value: "/downloads"
             - name: PUID
               value: "45249"
             - name: PGID
