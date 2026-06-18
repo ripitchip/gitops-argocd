@@ -31,7 +31,7 @@ spec:
                 targets = discovery.kubernetes.pods.targets
                 rule {
                   source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-                  regex         = "node-exporter|kube-state-metrics"
+                  regex         = "node-exporter|kube-state-metrics|argocd-server|argocd-application-controller|argocd-repo-server"
                   action        = "drop"
                 }
                 rule {
@@ -50,24 +50,6 @@ spec:
                 rule {
                   source_labels = ["__meta_kubernetes_pod_container_name"]
                   target_label  = "container"
-                }
-                rule {
-                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-                  regex         = "argocd-server"
-                  target_label  = "job"
-                  replacement   = "argocd-server-metrics"
-                }
-                rule {
-                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-                  regex         = "argocd-application-controller"
-                  target_label  = "job"
-                  replacement   = "argocd-metrics"
-                }
-                rule {
-                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-                  regex         = "argocd-repo-server"
-                  target_label  = "job"
-                  replacement   = "argocd-repo-server-metrics"
                 }
               }
 
@@ -195,6 +177,70 @@ spec:
               prometheus.scrape "keycloak_metrics" {
                 targets    = discovery.relabel.keycloak.output
                 metrics_path = "/metrics"
+                forward_to = [prometheus.remote_write.mimir.receiver]
+              }
+
+              // Specific scraping for ArgoCD components
+              discovery.relabel "argocd" {
+                targets = discovery.kubernetes.pods.targets
+
+                // Keep only targets in the 'argocd' namespace
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  regex         = "argocd"
+                  action        = "keep"
+                }
+
+                // Keep only targets that correspond to the metrics port of each component
+                // - argocd-server: port 8083
+                // - argocd-application-controller: port 8082
+                // - argocd-repo-server: port 8084
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name", "__meta_kubernetes_pod_container_port_number"]
+                  regex         = "(argocd-server;8083)|(argocd-application-controller;8082)|(argocd-repo-server;8084)"
+                  action        = "keep"
+                }
+
+                // Set standard labels
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  target_label  = "namespace"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_name"]
+                  target_label  = "pod"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_container_name"]
+                  target_label  = "container"
+                }
+
+                // Map pod name to job name:
+                // - argocd-server -> argocd-server-metrics
+                // - argocd-application-controller -> argocd-metrics
+                // - argocd-repo-server -> argocd-repo-server-metrics
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                  regex         = "argocd-server"
+                  target_label  = "job"
+                  replacement   = "argocd-server-metrics"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                  regex         = "argocd-application-controller"
+                  target_label  = "job"
+                  replacement   = "argocd-metrics"
+                }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                  regex         = "argocd-repo-server"
+                  target_label  = "job"
+                  replacement   = "argocd-repo-server-metrics"
+                }
+              }
+
+              prometheus.scrape "argocd" {
+                targets    = discovery.relabel.argocd.output
                 forward_to = [prometheus.remote_write.mimir.receiver]
               }
 
