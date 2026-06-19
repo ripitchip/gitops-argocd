@@ -28,7 +28,9 @@ spec:
             - -c
             - |
               mkdir -p /data/plugins
-              curl -L -s -o /data/plugins/nd-lyrics.ndp https://github.com/J0R6IT0/navidrome-lyrics-plugin/releases/latest/download/nd-lyrics.ndp
+              if [ ! -f /data/plugins/nd-lyrics.ndp ]; then
+                curl -L -s -o /data/plugins/nd-lyrics.ndp https://github.com/J0R6IT0/navidrome-lyrics-plugin/releases/latest/download/nd-lyrics.ndp
+              fi
           volumeMounts:
             - name: data
               mountPath: /data
@@ -49,7 +51,7 @@ spec:
             - name: ND_MUSICFOLDER
               value: "/music"
             - name: ND_LOGLEVEL
-              value: "info"
+              value: "debug"
             - name: ND_EXTAUTH_TRUSTEDSOURCES
               value: "0.0.0.0/0"
             - name: ND_EXTAUTH_USERHEADER
