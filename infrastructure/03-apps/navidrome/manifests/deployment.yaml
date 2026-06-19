@@ -20,6 +20,24 @@ spec:
         fsGroup: 45249
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: download-lyrics-plugin
+          image: curlimages/curl:8.5.0
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /data/plugins
+              curl -L -s -o /data/plugins/nd-lyrics.ndp https://github.com/J0R6IT0/navidrome-lyrics-plugin/releases/latest/download/nd-lyrics.ndp
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
       containers:
         - name: navidrome
           image: deluan/navidrome:0.62.0
@@ -38,12 +56,17 @@ spec:
               value: "X-Auth-Request-Preferred-Username"
             - name: ND_ENABLEUSEREDITING
               value: "true"
+            - name: ND_PLUGINSENABLED
+              value: "true"
+            - name: ND_PLUGINSFOLDER
+              value: "/data/plugins"
+            - name: ND_LYRICSPRIORITY
+              value: ".lrc,nd-lyrics,embedded"
           volumeMounts:
             - name: data
               mountPath: /data
             - name: music
               mountPath: /music
-              readOnly: true
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
