@@ -33,6 +33,7 @@ spec:
           args:
             - --provider=oidc
             - --skip-provider-button=true
+            - --prompt=login
             - --oidc-issuer-url=https://auth.foobarbaz.fr/realms/foobarbaz
             - --user-id-claim=preferred_username
             - --email-domain=*
