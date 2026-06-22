@@ -27,3 +27,13 @@ spec:
       name: navidrome-auth-redirect
       port: 80
     query: "/"
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: subwave-strip-api
+  namespace: navidrome
+spec:
+  stripPrefix:
+    prefixes:
+      - /api
