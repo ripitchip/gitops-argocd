@@ -1,0 +1,175 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-models-pvc
+  namespace: navidrome
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  storageClassName: truenas-nfs
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 15Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: navidrome
+  labels:
+    app: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 24484
+        runAsGroup: 24484
+        fsGroup: 24484
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: ollama
+          image: ollama/ollama:0.5.7
+          env:
+            - name: OLLAMA_MODELS
+              value: "/models"
+          ports:
+            - containerPort: 11434
+              name: http
+          volumeMounts:
+            - name: models-volume
+              mountPath: /models
+            - name: root-volume
+              mountPath: /root
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "2Gi"
+            limits:
+              cpu: "4000m"
+              memory: "8Gi"
+      volumes:
+        - name: models-volume
+          persistentVolumeClaim:
+            claimName: ollama-models-pvc
+        - name: root-volume
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  namespace: navidrome
+spec:
+  selector:
+    app: ollama
+  ports:
+    - name: http
+      port: 11434
+      targetPort: 11434
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ollama-allowlist
+  namespace: navidrome
+spec:
+  ipAllowList:
+    sourceRange:
+      - 10.0.10.0/24
+      - 10.0.20.0/24
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ollama
+  namespace: navidrome
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Whitelist local network IPs using the ipAllowList middleware.
+    # To use OAuth2-Proxy authentication instead, uncomment the following line and comment out the allowlist middleware:
+    # traefik.ingress.kubernetes.io/router.middlewares: navidrome-navidrome-auth-errors@kubernetescrd,navidrome-navidrome-auth@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: navidrome-ollama-allowlist@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - ollama.foobarbaz.fr
+      secretName: ollama-tls
+  rules:
+    - host: ollama.foobarbaz.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ollama
+                port:
+                  number: 11434
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: ollama-hardened
+  namespace: navidrome
+spec:
+  endpointSelector:
+    matchLabels:
+      app: ollama
+  ingress:
+    # 1. Traefik to Ollama
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+    # 2. Local Namespace Traffic (including subwave-backend)
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": navidrome
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+    # 3. Monitoring (Alloy)
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    # 1. DNS
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports: [{ port: "53", protocol: ANY }]
+          rules: { dns: [{ matchPattern: "*" }] }
+    # 2. External access (to download models from registry)
+    - toEntities: [world]
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
