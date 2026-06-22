@@ -17,3 +17,7 @@ resources:
   - middlewares.yaml
   - redirect-service.yaml
   - policy.yaml
+  - subwave-storage.yaml
+  - subwave.yaml
+  - subwave-ingress.yaml
+  - subwave-policy.yaml

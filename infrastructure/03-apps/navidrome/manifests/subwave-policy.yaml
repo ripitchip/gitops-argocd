@@ -1,0 +1,53 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: subwave-hardened
+  namespace: navidrome
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - subwave-backend
+          - subwave-web
+  ingress:
+    # 1. Traefik to web and backend
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
+      toPorts:
+        - ports: 
+            - port: "3000"
+              protocol: TCP
+            - port: "7701"
+              protocol: TCP
+            - port: "7702"
+              protocol: TCP
+    # 2. Local Namespace Traffic (including Navidrome pod)
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": navidrome }
+    # 3. Monitoring (Alloy)
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": alloy }
+  egress:
+    # 1. Local Namespace Traffic (including Navidrome pod)
+    - toEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": navidrome }
+    # 2. DNS
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports: [{ port: "53", protocol: ANY }]
+          rules: { dns: [{ matchPattern: "*" }] }
+    # 3. API Server
+    - toEntities: [kube-apiserver]
+    # 4. External access (LLM APIs, Hugging Face, etc.)
+    - toEntities: [world]
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP

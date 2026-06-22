@@ -1,0 +1,240 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subwave-backend
+  namespace: navidrome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subwave-backend
+  template:
+    metadata:
+      labels:
+        app: subwave-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 24484
+        runAsGroup: 24484
+        fsGroup: 24484
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: controller
+          image: ghcr.io/perminder-klair/subwave-controller:0.5.0
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: TZ
+              value: "Europe/Paris"
+            - name: STATE_DIR
+              value: "/var/sub-wave"
+            - name: SOUNDS_DIR
+              value: "/sounds"
+            - name: TTS_HEAVY_URL
+              value: "http://localhost:8080"
+            - name: NAVIDROME_URL
+              value: "http://navidrome:80"
+            - name: SUBSONIC_USER
+              valueFrom:
+                secretKeyRef:
+                  name: navidrome-lyrics-fetcher-creds
+                  key: subsonic-user
+            - name: SUBSONIC_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: navidrome-lyrics-fetcher-creds
+                  key: subsonic-pass
+            - name: ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: navidrome-lyrics-fetcher-creds
+                  key: subwave-admin-user
+            - name: ADMIN_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: navidrome-lyrics-fetcher-creds
+                  key: subwave-admin-pass
+          ports:
+            - containerPort: 7701
+              name: controller
+          volumeMounts:
+            - name: state-volume
+              mountPath: /var/sub-wave
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"
+        
+        - name: broadcast
+          image: ghcr.io/perminder-klair/subwave-broadcast:0.5.0
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+          ports:
+            - containerPort: 7702
+              name: icecast
+          volumeMounts:
+            - name: state-volume
+              mountPath: /var/sub-wave
+            - name: state-volume
+              mountPath: /var/log/liquidsoap
+              subPath: logs
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"
+          livenessProbe:
+            httpGet:
+              path: /status-json.xsl
+              port: 7702
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /status-json.xsl
+              port: 7702
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+
+        - name: tts-heavy
+          image: ghcr.io/perminder-klair/subwave-tts-heavy:0.5.0
+          env:
+            - name: TTS_HEAVY_DEVICE
+              value: "cpu"
+            - name: POCKET_TTS_VOICE
+              value: "alba"
+          ports:
+            - containerPort: 8080
+              name: tts
+          volumeMounts:
+            - name: state-volume
+              mountPath: /var/sub-wave
+            - name: state-volume
+              mountPath: /opt/chatterbox/hf-cache
+              subPath: hf-cache-chatterbox
+            - name: state-volume
+              mountPath: /opt/pocket-tts/hf-cache
+              subPath: hf-cache-pocket
+            - name: state-volume
+              mountPath: /opt/analyzer/hf-cache
+              subPath: hf-cache-analyzer
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "2000m"
+              memory: "2048Mi"
+      
+      volumes:
+        - name: state-volume
+          persistentVolumeClaim:
+            claimName: subwave-state-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subwave-web
+  namespace: navidrome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subwave-web
+  template:
+    metadata:
+      labels:
+        app: subwave-web
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 24484
+        runAsGroup: 24484
+        fsGroup: 24484
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: web
+          image: ghcr.io/perminder-klair/subwave-web:0.5.0
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: SUBWAVE_HOMEPAGE
+              value: "player"
+            - name: SITE_URL
+              value: "https://radio.foobarbaz.fr"
+            - name: CONTROLLER_INTERNAL_URL
+              value: "http://subwave-backend:7701"
+          ports:
+            - containerPort: 3000
+              name: http
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: subwave-backend
+  namespace: navidrome
+spec:
+  selector:
+    app: subwave-backend
+  ports:
+    - name: controller
+      port: 7701
+      targetPort: 7701
+    - name: icecast
+      port: 7702
+      targetPort: 7702
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: subwave-web
+  namespace: navidrome
+spec:
+  selector:
+    app: subwave-web
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000

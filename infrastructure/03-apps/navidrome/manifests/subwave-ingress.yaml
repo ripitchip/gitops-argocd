@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: subwave
+  namespace: navidrome
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - radio.foobarbaz.fr
+      secretName: subwave-tls
+  rules:
+    - host: radio.foobarbaz.fr
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: subwave-backend
+                port:
+                  number: 7701
+          - path: /stream.mp3
+            pathType: Prefix
+            backend:
+              service:
+                name: subwave-backend
+                port:
+                  number: 7702
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: subwave-web
+                port:
+                  number: 3000
