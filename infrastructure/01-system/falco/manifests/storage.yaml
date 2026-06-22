@@ -18,21 +18,6 @@ spec:
     server: "10.0.60.10"
     path: "/mnt/data/k8s-cluster/pvc-volumes/falco-redis"
   claimRef:
-    name: falco-redis-pvc-static
+    name: falco-helm-falcosidekick-ui-redis-data-falco-helm-falcosidekick-ui-redis-0
     namespace: falco
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: falco-redis-pvc-static
-  namespace: falco
-  annotations:
-    argocd.argoproj.io/sync-wave: "-15"
-spec:
-  storageClassName: truenas-nfs
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  volumeName: falco-redis-pv-static
+

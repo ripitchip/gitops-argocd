@@ -87,9 +87,7 @@ spec:
                 runAsNonRoot: true
                 runAsUser: 9253
                 runAsGroup: 9253
-              storage:
-                enabled: true
-                existingClaim: "falco-redis-pvc-static"
+              storageEnabled: true
               resources:
                 limits:
                   cpu: 200m
