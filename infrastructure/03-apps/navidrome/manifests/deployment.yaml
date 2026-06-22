@@ -45,6 +45,7 @@ spec:
           image: deluan/navidrome:0.62.0
           ports:
             - containerPort: 4533
+              name: http
           env:
             - name: ND_DATAFOLDER
               value: "/data"
@@ -58,10 +59,12 @@ spec:
               value: "X-Auth-Request-Preferred-Username"
             - name: ND_ENABLEUSEREDITING
               value: "true"
-            - name: ND_PLUGINSENABLED
+            - name: ND_PLUGINS_ENABLED
               value: "true"
-            - name: ND_PLUGINSFOLDER
+            - name: ND_PLUGINS_FOLDER
               value: "/data/plugins"
+            - name: ND_PLUGINS_LOGLEVEL
+              value: "debug"
             - name: ND_LYRICSPRIORITY
               value: ".lrc,nd-lyrics,embedded"
           volumeMounts:
