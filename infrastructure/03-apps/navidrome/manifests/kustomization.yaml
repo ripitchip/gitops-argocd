@@ -19,5 +19,6 @@ resources:
   - policy.yaml
   - subwave-storage.yaml
   - subwave.yaml
+  - subwave-entrypoint.yaml
   - subwave-ingress.yaml
   - subwave-policy.yaml

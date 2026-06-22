@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: subwave-broadcast-entrypoint
+  namespace: navidrome
+data:
+  entrypoint.sh: |
+    #!/usr/bin/env bash
+    set -eu
+
+    SECRETS=/var/sub-wave/icecast-secrets.env
+    TEMPLATE=/etc/icecast2/icecast.xml.template
+    RENDERED=/etc/icecast2/icecast.xml
+
+    # ---- Bootstrap shared state dirs --------------------------------------------
+    mkdir -p /var/sub-wave \
+             /var/sub-wave/voice \
+             /var/sub-wave/voices \
+             /var/sub-wave/archive \
+             /var/sub-wave/jingles \
+             /var/sub-wave/logs \
+             /var/sub-wave/sessions \
+             /var/sub-wave/sfx
+    chmod 777 /var/sub-wave \
+              /var/sub-wave/voice \
+              /var/sub-wave/voices \
+              /var/sub-wave/archive \
+              /var/sub-wave/jingles \
+              /var/sub-wave/logs \
+              /var/sub-wave/sessions \
+              /var/sub-wave/sfx || true
+    
+    # Bootstrap empty m3u files Liquidsoap's reload_mode="watch" needs to see.
+    touch /var/sub-wave/auto.m3u /var/sub-wave/jingles.m3u
+    chmod 666 /var/sub-wave/auto.m3u /var/sub-wave/jingles.m3u || true
+
+    mkdir -p /var/log/liquidsoap
+
+    # ---- Resolve passwords ------------------------------------------------------
+    ENV_SRC="${ICECAST_SOURCE_PASSWORD:-}"
+    ENV_ADM="${ICECAST_ADMIN_PASSWORD:-}"
+    ENV_REL="${ICECAST_RELAY_PASSWORD:-}"
+
+    if [ -f "$SECRETS" ]; then
+        # shellcheck disable=SC1090
+        . "$SECRETS"
+    fi
+
+    # Env values win when present (operator override via root .env).
+    [ -n "$ENV_SRC" ] && ICECAST_SOURCE_PASSWORD="$ENV_SRC"
+    [ -n "$ENV_ADM" ] && ICECAST_ADMIN_PASSWORD="$ENV_ADM"
+    [ -n "$ENV_REL" ] && ICECAST_RELAY_PASSWORD="$ENV_REL"
+
+    # Anything still empty gets a fresh random value.
+    [ -z "${ICECAST_SOURCE_PASSWORD:-}" ] && ICECAST_SOURCE_PASSWORD="$(openssl rand -hex 16)"
+    [ -z "${ICECAST_ADMIN_PASSWORD:-}"  ] && ICECAST_ADMIN_PASSWORD="$(openssl rand -hex 16)"
+    [ -z "${ICECAST_RELAY_PASSWORD:-}"  ] && ICECAST_RELAY_PASSWORD="$(openssl rand -hex 16)"
+
+    cat > "$SECRETS" <<EOF
+    ICECAST_SOURCE_PASSWORD=$ICECAST_SOURCE_PASSWORD
+    ICECAST_ADMIN_PASSWORD=$ICECAST_ADMIN_PASSWORD
+    ICECAST_RELAY_PASSWORD=$ICECAST_RELAY_PASSWORD
+    EOF
+    chmod 644 "$SECRETS"
+
+    export ICECAST_SOURCE_PASSWORD ICECAST_ADMIN_PASSWORD ICECAST_RELAY_PASSWORD
+    export ICECAST_HOST=localhost
+
+    # ---- Render icecast.xml -----------------------------------------------------
+    sed \
+        -e "s|\${ICECAST_SOURCE_PASSWORD}|$ICECAST_SOURCE_PASSWORD|g" \
+        -e "s|\${ICECAST_ADMIN_PASSWORD}|$ICECAST_ADMIN_PASSWORD|g" \
+        -e "s|\${ICECAST_RELAY_PASSWORD}|$ICECAST_RELAY_PASSWORD|g" \
+        "$TEMPLATE" > "$RENDERED"
+
+    # ---- Launch icecast in the background --------------------------------------
+    echo "broadcast: starting icecast2 (directly as non-root user)" >&2
+    icecast2 -n -c "$RENDERED" &
+    ICECAST_PID=$!
+
+    # Wait up to ~10s for icecast to accept HTTP.
+    for i in 1 2 3 4 5 6 7 8 9 10; do
+        if curl -fsS http://localhost:7702/ > /dev/null 2>&1; then
+            echo "broadcast: icecast accepting connections after ${i}s" >&2
+            break
+        fi
+        sleep 1
+    done
+
+    # ---- Launch liquidsoap in the background -----------------------------------
+    echo "broadcast: starting liquidsoap (directly as non-root user)" >&2
+    liquidsoap /etc/liquidsoap/radio.liq &
+    LIQ_PID=$!
+
+    trap 'kill -TERM "$ICECAST_PID" "$LIQ_PID" 2>/dev/null || true' INT TERM
+
+    wait -n "$ICECAST_PID" "$LIQ_PID"
+    EXIT=$?
+
+    echo "broadcast: child exited ($EXIT) — taking the other down" >&2
+    kill -TERM "$ICECAST_PID" "$LIQ_PID" 2>/dev/null || true
+    wait 2>/dev/null || true
+
+    exit "$EXIT"

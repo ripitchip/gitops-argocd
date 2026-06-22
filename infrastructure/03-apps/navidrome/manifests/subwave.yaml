@@ -95,6 +95,8 @@ spec:
         
         - name: broadcast
           image: ghcr.io/perminder-klair/subwave-broadcast:0.5.0
+          command:
+            - /scripts/entrypoint.sh
           env:
             - name: TZ
               value: "Europe/Paris"
@@ -109,6 +111,9 @@ spec:
               subPath: logs
             - name: icecast-config
               mountPath: /etc/icecast2
+            - name: broadcast-entrypoint
+              mountPath: /scripts/entrypoint.sh
+              subPath: entrypoint.sh
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -179,6 +184,10 @@ spec:
             claimName: subwave-state-pvc
         - name: icecast-config
           emptyDir: {}
+        - name: broadcast-entrypoint
+          configMap:
+            name: subwave-broadcast-entrypoint
+            defaultMode: 0755
 ---
 apiVersion: apps/v1
 kind: Deployment
