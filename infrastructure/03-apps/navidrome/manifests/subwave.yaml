@@ -20,6 +20,22 @@ spec:
         fsGroup: 24484
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: init-icecast-config
+          image: ghcr.io/perminder-klair/subwave-broadcast:0.5.0
+          command:
+            - sh
+            - -c
+            - cp -a /etc/icecast2/. /mnt/icecast2/
+          volumeMounts:
+            - name: icecast-config
+              mountPath: /mnt/icecast2
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
       containers:
         - name: controller
           image: ghcr.io/perminder-klair/subwave-controller:0.5.0
@@ -90,6 +106,8 @@ spec:
             - name: state-volume
               mountPath: /var/log/liquidsoap
               subPath: logs
+            - name: icecast-config
+              mountPath: /etc/icecast2
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -158,6 +176,8 @@ spec:
         - name: state-volume
           persistentVolumeClaim:
             claimName: subwave-state-pvc
+        - name: icecast-config
+          emptyDir: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
