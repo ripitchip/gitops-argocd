@@ -102,6 +102,7 @@ spec:
               import random
               import string
               import sys
+              import time
 
               NAVIDROME_DB = os.getenv("NAVIDROME_DB", "/data/navidrome.db")
               NAVIDROME_URL = os.getenv("NAVIDROME_URL", "http://localhost:4533")
@@ -123,7 +124,17 @@ spec:
                       print(f"Erreur : La base de donnees {NAVIDROME_DB} est introuvable.", file=sys.stderr)
                       return
 
-                  conn = sqlite3.connect(NAVIDROME_DB)
+                  auth_query = get_auth_params(USERNAME, PASSWORD)
+                  print("Attente du demarrage de Navidrome...")
+                  for _ in range(60):
+                      try:
+                          urllib.request.urlopen(f"{NAVIDROME_URL}/rest/ping.view?{auth_query}", timeout=2)
+                          print("Navidrome est pret !")
+                          break
+                      except Exception:
+                          time.sleep(1)
+
+                  conn = sqlite3.connect(f'file:{NAVIDROME_DB}?mode=ro', uri=True)
                   cursor = conn.cursor()
 
                   try:
@@ -135,7 +146,6 @@ spec:
                       return
 
                   print(f"Analyse de {len(tracks)} morceaux...")
-                  auth_query = get_auth_params(USERNAME, PASSWORD)
                   requests_sent = 0
 
                   for path, artist, title in tracks:
@@ -171,6 +181,8 @@ spec:
                 sleep 3600
               done
           env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
             - name: SUBSONIC_USER
               valueFrom:
                 secretKeyRef:
