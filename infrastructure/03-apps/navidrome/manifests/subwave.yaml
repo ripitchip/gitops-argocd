@@ -26,16 +26,17 @@ spec:
           command:
             - sh
             - -c
-            - cp -a /etc/icecast2/. /mnt/icecast2/
+            - cp -a /etc/icecast2/. /mnt/icecast2/ && chown -R 24484:24484 /mnt/icecast2/
           volumeMounts:
             - name: icecast-config
               mountPath: /mnt/icecast2
           securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
+            runAsUser: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
             capabilities:
-              drop:
-                - ALL
+              add: ["CHOWN", "FOWNER"]
+              drop: ["ALL"]
       containers:
         - name: controller
           image: ghcr.io/perminder-klair/subwave-controller:0.5.0
