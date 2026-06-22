@@ -53,6 +53,8 @@ spec:
               value: "http://localhost:8080"
             - name: NAVIDROME_URL
               value: "http://navidrome:80"
+            - name: ICECAST_STATUS_URL
+              value: "http://localhost:7702/status-json.xsl"
             - name: SUBSONIC_USER
               valueFrom:
                 secretKeyRef:
