@@ -43,6 +43,8 @@ spec:
           env:
             - name: OLLAMA_MODELS
               value: "/models"
+            - name: HOME
+              value: "/root"
           ports:
             - containerPort: 11434
               name: http
