@@ -34,8 +34,7 @@ data:
         synced_lyrics=$(echo "$response" | grep -o '"syncedLyrics":"[^"]*"' | head -n 1 | sed 's/"syncedLyrics":"//' | sed 's/"$//')
         if [ ! -z "$synced_lyrics" ] && [ "$synced_lyrics" != "null" ]; then
             echo "[LRCLIB-FIX] Matching payload extracted successfully. Compiling LRC structure..."
-            echo "$synced_lyrics" | sed 's/\\n/\
-/g' | sed 's/\\"/"/g' > "$lrc_path"
+            echo "$synced_lyrics" | sed 's/\\"/"/g' | awk '{gsub(/\\n/, "\n")}1' > "$lrc_path"
             chown 45249:45249 "$lrc_path" 2>/dev/null
             echo "[LRCLIB-FIX] Status: Dynamic lyrics injected dynamically."
         else
@@ -71,7 +70,8 @@ spec:
       initContainers:
         - name: fix-permissions
           image: busybox:1.36
-          command: ["sh", "-c", "chown -R 45249:45249 /run /tmp /config /downloads"]
+          command:
+            ["sh", "-c", "chown -R 45249:45249 /run /tmp /config /downloads"]
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
