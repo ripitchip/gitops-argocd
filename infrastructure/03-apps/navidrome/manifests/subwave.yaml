@@ -248,7 +248,7 @@ metadata:
   name: subwave-backend
   namespace: navidrome
   annotations:
-    traefik.ingress.kubernetes.io/service.serverstransport: navidrome-subwave-transport@kubernetescrd
+    traefik.ingress.kubernetes.io/service.serverstransport: subwave-transport@kubernetescrd
 spec:
   selector:
     app: subwave-backend
