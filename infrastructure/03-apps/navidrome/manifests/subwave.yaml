@@ -224,7 +224,7 @@ spec:
             - name: CONTROLLER_INTERNAL_URL
               value: "http://subwave-backend:7701"
           ports:
-            - containerPort: 3000
+            - containerPort: 7700
               name: http
           securityContext:
             runAsNonRoot: true
@@ -266,5 +266,5 @@ spec:
     app: subwave-web
   ports:
     - name: http
-      port: 3000
-      targetPort: 3000
+      port: 7700
+      targetPort: 7700

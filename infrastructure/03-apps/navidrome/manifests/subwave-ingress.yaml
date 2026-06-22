@@ -37,4 +37,4 @@ spec:
               service:
                 name: subwave-web
                 port:
-                  number: 3000
+                  number: 7700
