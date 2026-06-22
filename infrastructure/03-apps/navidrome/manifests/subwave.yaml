@@ -26,7 +26,7 @@ spec:
           command:
             - sh
             - -c
-            - cp -a /etc/icecast2/. /mnt/icecast2/ && chown -R 24484:24484 /mnt/icecast2/
+            - cp -r /etc/icecast2/. /mnt/icecast2/ && chown -R 24484:24484 /mnt/icecast2/
           volumeMounts:
             - name: icecast-config
               mountPath: /mnt/icecast2
@@ -35,7 +35,7 @@ spec:
             runAsNonRoot: false
             allowPrivilegeEscalation: true
             capabilities:
-              add: ["CHOWN", "FOWNER"]
+              add: ["CHOWN", "FOWNER", "DAC_OVERRIDE"]
               drop: ["ALL"]
       containers:
         - name: controller
