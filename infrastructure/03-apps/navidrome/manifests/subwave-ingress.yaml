@@ -7,6 +7,47 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - radio.foobarbaz.fr
+      secretName: subwave-tls
+  rules:
+    - host: radio.foobarbaz.fr
+      http:
+        paths:
+          - path: /stream.mp3
+            pathType: Prefix
+            backend:
+              service:
+                name: subwave-backend
+                port:
+                  number: 7702
+          - path: /stream.opus
+            pathType: Prefix
+            backend:
+              service:
+                name: subwave-backend
+                port:
+                  number: 7702
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: subwave-web
+                port:
+                  number: 7700
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: subwave-api
+  namespace: navidrome
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     traefik.ingress.kubernetes.io/router.middlewares: navidrome-subwave-strip-api@kubernetescrd
 spec:
   ingressClassName: traefik
@@ -25,17 +66,3 @@ spec:
                 name: subwave-backend
                 port:
                   number: 7701
-          - path: /stream.mp3
-            pathType: Prefix
-            backend:
-              service:
-                name: subwave-backend
-                port:
-                  number: 7702
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: subwave-web
-                port:
-                  number: 7700
