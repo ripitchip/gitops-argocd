@@ -106,6 +106,7 @@ spec:
 
               NAVIDROME_DB = os.getenv("NAVIDROME_DB", "/data/navidrome.db")
               NAVIDROME_URL = os.getenv("NAVIDROME_URL", "http://localhost:4533")
+              MUSIC_DIR = os.getenv("ND_MUSICFOLDER", "/music")
               USERNAME = os.getenv("SUBSONIC_USER")
               PASSWORD = os.getenv("SUBSONIC_PASS")
 
@@ -152,7 +153,8 @@ spec:
                       if not path or not artist or not title:
                           continue
 
-                      base_path, _ = os.path.splitext(path)
+                      full_path = os.path.join(MUSIC_DIR, path)
+                      base_path, _ = os.path.splitext(full_path)
                       lrc_path = base_path + ".lrc"
                       txt_path = base_path + ".txt"
 
