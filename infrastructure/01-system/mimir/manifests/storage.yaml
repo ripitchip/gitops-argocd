@@ -25,3 +25,148 @@ spec:
   accessModes: [ReadWriteMany]
   resources: { requests: { storage: 100Gi } }
   volumeName: mimir-storage-pv
+---
+# Static PVs for Mimir StatefulSets
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-alertmanager-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 5Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage-mimir-alertmanager"
+  claimRef:
+    name: storage-mimir-alertmanager-0
+    namespace: mimir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-compactor-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 20Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage-mimir-compactor"
+  claimRef:
+    name: storage-mimir-compactor-0
+    namespace: mimir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-ingester-a-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 10Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage-mimir-ingester-zone-a"
+  claimRef:
+    name: storage-mimir-ingester-zone-a-0
+    namespace: mimir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-ingester-b-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 10Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage-mimir-ingester-zone-b"
+  claimRef:
+    name: storage-mimir-ingester-zone-b-0
+    namespace: mimir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-ingester-c-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 10Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage-mimir-ingester-zone-c"
+  claimRef:
+    name: storage-mimir-ingester-zone-c-0
+    namespace: mimir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-store-gateway-a-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 10Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage-mimir-store-gateway-zone-a"
+  claimRef:
+    name: storage-mimir-store-gateway-zone-a-0
+    namespace: mimir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-store-gateway-b-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 10Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage-mimir-store-gateway-zone-b"
+  claimRef:
+    name: storage-mimir-store-gateway-zone-b-0
+    namespace: mimir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mimir-store-gateway-c-pv-static
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 10Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/mimir-storage-mimir-store-gateway-zone-c"
+  claimRef:
+    name: storage-mimir-store-gateway-zone-c-0
+    namespace: mimir
