@@ -48,45 +48,71 @@ spec:
             - name: mimir-storage
               mountPath: /mimir-storage
 
+        # Default resources with limits for Kyverno compliance
+        defaultResources: &defaultResources
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+
         ingester:
           replicas: 1
           persistentVolume:
             size: 10Gi
             storageClass: truenas-nfs
-          <<: *commonSharedVolume
+          <<: [*commonSharedVolume, *defaultResources]
 
         querier:
           replicas: 1
-          <<: *commonSharedVolume
+          <<: [*commonSharedVolume, *defaultResources]
 
         distributor:
           replicas: 1
+          <<: *defaultResources
 
         compactor:
           persistentVolume:
             size: 20Gi
             storageClass: truenas-nfs
-          <<: *commonSharedVolume
+          <<: [*commonSharedVolume, *defaultResources]
 
         store_gateway:
           persistentVolume:
             size: 10Gi
             storageClass: truenas-nfs
-          <<: *commonSharedVolume
+          <<: [*commonSharedVolume, *defaultResources]
 
         alertmanager:
           enabled: true
           persistentVolume:
             size: 5Gi
             storageClass: truenas-nfs
-          <<: *commonSharedVolume
+          <<: [*commonSharedVolume, *defaultResources]
 
         ruler:
           enabled: true
           persistentVolume:
             size: 5Gi
             storageClass: truenas-nfs
-          <<: *commonSharedVolume
+          <<: [*commonSharedVolume, *defaultResources]
+
+        nginx:
+          <<: *defaultResources
+
+        rollout_operator:
+          <<: *defaultResources
+
+        overrides_exporter:
+          <<: *defaultResources
+
+        query_frontend:
+          <<: *defaultResources
+
+        query_scheduler:
+          <<: *defaultResources
 
         # Security Context for Kyverno compliance (Restricted Profile)
         global:
@@ -103,15 +129,6 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 11985
-
-        # Resource limits for Kyverno compliance
-        resources:
-          requests:
-            cpu: 100m
-            memory: 512Mi
-          limits:
-            cpu: 500m
-            memory: 1Gi
         
         # Disable MinIO as we use NFS filesystem storage
         minio:
