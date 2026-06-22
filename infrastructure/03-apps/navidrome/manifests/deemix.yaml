@@ -1,3 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: deemix-scripts
+  namespace: navidrome
+data:
+  fix_lyrics.sh: |
+    #!/bin/sh
+    echo "[LRCLIB-FIX] Starting recursive scanning for MP3 files missing LRC lyrics..."
+    find /downloads -type f -name "*.mp3" | while read -r mp3_path; do
+        base_path="${mp3_path%.mp3}"
+        lrc_path="$base_path.lrc"
+        if [ -f "$lrc_path" ]; then
+            continue
+        fi
+        relative_path=$(echo "$mp3_path" | sed 's|^/downloads/||')
+        artist=$(echo "$relative_path" | cut -d'/' -f1)
+        filename=$(basename "$base_path")
+        clean_title=$(echo "$filename" | sed -E 's/^[0-9]+[[:space:]]*-[[:space:]]*//')
+        echo "[LRCLIB-FIX] --------------------------------------------------------"
+        echo "[LRCLIB-FIX] Target File Detected: $filename"
+        echo "[LRCLIB-FIX] Extracted Artist: $artist"
+        echo "[LRCLIB-FIX] Extracted Track Title: $clean_title"
+        artist_enc=$(echo "$artist" | sed 's/ /%20/g; s/(/%28/g; s/)/%29/g; s/&/%26/g; s/’/%27/g; s/'\''/%27/g' | tr -d '\n' | tr -d '\r')
+        title_enc=$(echo "$clean_title" | sed 's/ /%20/g; s/(/%28/g; s/)/%29/g; s/&/%26/g; s/’/%27/g; s/'\''/%27/g' | tr -d '\n' | tr -d '\r')
+        url_api="https://lrclib.net/api/search?artist_name=${artist_enc}&track_name=${title_enc}"
+        echo "[LRCLIB-FIX] Querying Target Endpoint: $url_api"
+        response=$(curl -s "$url_api")
+        if [ -z "$response" ] || [ "$response" = "[]" ]; then
+            echo "[LRCLIB-FIX] HTTP Alert: Payload empty or metadata unmatched on LRCLIB servers."
+            echo "[LRCLIB-FIX] Status: Execution Failed."
+            continue
+        fi
+        synced_lyrics=$(echo "$response" | grep -o '"syncedLyrics":"[^"]*"' | head -n 1 | sed 's/"syncedLyrics":"//' | sed 's/"$//')
+        if [ ! -z "$synced_lyrics" ] && [ "$synced_lyrics" != "null" ]; then
+            echo "[LRCLIB-FIX] Matching payload extracted successfully. Compiling LRC structure..."
+            echo "$synced_lyrics" | sed 's/\\n/\
+/g' | sed 's/\\"/"/g' > "$lrc_path"
+            chown 45249:45249 "$lrc_path" 2>/dev/null
+            echo "[LRCLIB-FIX] Status: Dynamic lyrics injected dynamically."
+        else
+            echo "[LRCLIB-FIX] Parser Alert: Track identified on LRCLIB but missing time-synced data blocks."
+            echo "[LRCLIB-FIX] Status: Execution Failed."
+        fi
+    done
+    echo "[LRCLIB-FIX] --------------------------------------------------------"
+    echo "[LRCLIB-FIX] Scanning procedure completed successfully."
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -78,6 +126,8 @@ spec:
               mountPath: /run
             - name: tmp
               mountPath: /tmp
+            - name: scripts
+              mountPath: /scripts
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -102,6 +152,10 @@ spec:
           emptyDir: {}
         - name: tmp
           emptyDir: {}
+        - name: scripts
+          configMap:
+            name: deemix-scripts
+            defaultMode: 0755
 ---
 apiVersion: v1
 kind: Service
