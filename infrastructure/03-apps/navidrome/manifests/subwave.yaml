@@ -47,6 +47,8 @@ spec:
               value: "Europe/Paris"
             - name: STATE_DIR
               value: "/var/sub-wave"
+            - name: LIQUIDSOAP_HOST
+              value: "localhost"
             - name: SOUNDS_DIR
               value: "/sounds"
             - name: NAVIDROME_URL
@@ -98,7 +100,7 @@ spec:
             limits:
               cpu: "1000m"
               memory: "1024Mi"
-        
+
         - name: broadcast
           image: ghcr.io/perminder-klair/subwave-broadcast:0.5.0
           command:
@@ -147,7 +149,7 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 5
             timeoutSeconds: 3
-      
+
       volumes:
         - name: state-volume
           persistentVolumeClaim:
