@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: miniflux
+  namespace: miniflux
+  labels:
+    app: miniflux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: miniflux
+  template:
+    metadata:
+      labels:
+        app: miniflux
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: miniflux
+        image: miniflux/miniflux:2.2.19
+        ports:
+        - containerPort: 8080
+        env:
+        - name: RUN_MIGRATIONS
+          value: "1"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: miniflux-secrets
+              key: DATABASE_URL
+        - name: OAUTH2_PROVIDER
+          value: oidc
+        - name: OAUTH2_CLIENT_ID
+          value: miniflux
+        - name: OAUTH2_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: miniflux-secrets
+              key: OAUTH2_CLIENT_SECRET
+        - name: OAUTH2_REDIRECT_URL
+          value: https://flux.foobarbaz.fr/oauth2/oidc/callback
+        - name: OAUTH2_OIDC_DISCOVERY_ENDPOINT
+          value: https://auth.foobarbaz.fr/realms/foobarbaz
+        - name: OAUTH2_USER_CREATION
+          value: "1"
+        - name: OAUTH2_OIDC_PROVIDER_NAME
+          value: Keycloak
+        - name: CREATE_ADMIN
+          value: "1"
+        - name: ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: miniflux-secrets
+              key: ADMIN_USERNAME
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: miniflux-secrets
+              key: ADMIN_PASSWORD
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities: { drop: ["ALL"] }
+          runAsNonRoot: true
+          runAsUser: 1000
+        resources:
+          limits:
+            cpu: 300m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: miniflux
+  namespace: miniflux
+spec:
+  selector:
+    app: miniflux
+  ports:
+  - port: 80
+    targetPort: 8080
