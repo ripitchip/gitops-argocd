@@ -25,7 +25,7 @@ spec:
       initContainers:
         - name: fix-permissions
           image: busybox:1.36
-          command: ["sh", "-c", "chown -R 18446:18446 /var/lib/postgresql/data"]
+          command: ["sh", "-c", "mkdir -p /var/lib/postgresql/data/pgdata && chown -R 18446:18446 /var/lib/postgresql/data"]
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
@@ -75,10 +75,14 @@ spec:
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
+            - name: postgres-run
+              mountPath: /var/run/postgresql
       volumes:
         - name: postgres-data
           persistentVolumeClaim: 
             claimName: miniflux-db-pvc
+        - name: postgres-run
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
