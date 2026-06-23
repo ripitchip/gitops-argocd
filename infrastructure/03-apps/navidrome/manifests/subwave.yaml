@@ -49,8 +49,6 @@ spec:
               value: "/var/sub-wave"
             - name: SOUNDS_DIR
               value: "/sounds"
-            - name: TTS_HEAVY_URL
-              value: "http://localhost:8080"
             - name: NAVIDROME_URL
               value: "http://navidrome:80"
             - name: ICECAST_STATUS_URL
@@ -149,42 +147,6 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 5
             timeoutSeconds: 3
-
-        - name: tts-heavy
-          image: ghcr.io/perminder-klair/subwave-tts-heavy:0.5.0
-          env:
-            - name: TTS_HEAVY_DEVICE
-              value: "cpu"
-            - name: POCKET_TTS_VOICE
-              value: "alba"
-          ports:
-            - containerPort: 8080
-              name: tts
-          volumeMounts:
-            - name: state-volume
-              mountPath: /var/sub-wave
-            - name: state-volume
-              mountPath: /opt/chatterbox/hf-cache
-              subPath: hf-cache-chatterbox
-            - name: state-volume
-              mountPath: /opt/pocket-tts/hf-cache
-              subPath: hf-cache-pocket
-            - name: state-volume
-              mountPath: /opt/analyzer/hf-cache
-              subPath: hf-cache-analyzer
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          resources:
-            requests:
-              cpu: "200m"
-              memory: "512Mi"
-            limits:
-              cpu: "2000m"
-              memory: "2048Mi"
       
       volumes:
         - name: state-volume
