@@ -50,3 +50,7 @@ spec:
         protocol: TCP
       - port: "636"
         protocol: TCP
+      - port: "8389"
+        protocol: TCP
+      - port: "8636"
+        protocol: TCP
