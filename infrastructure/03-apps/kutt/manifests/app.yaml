@@ -79,6 +79,23 @@ spec:
                 secretKeyRef:
                   name: kutt-secrets
                   key: JWT_SECRET
+            - name: OIDC_ENABLED
+              value: "true"
+            - name: OIDC_ISSUER
+              value: https://auth.foobarbaz.fr/realms/foobarbaz
+            - name: OIDC_CLIENT_ID
+              value: kutt
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: kutt-secrets
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_SCOPE
+              value: openid profile email
+            - name: OIDC_EMAIL_CLAIM
+              value: email
+            - name: DISALLOW_LOGIN_FORM
+              value: "true"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities: { drop: ["ALL"] }
