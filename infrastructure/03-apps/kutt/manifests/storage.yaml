@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kutt-db-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 5Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/kutt-db"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kutt-db-pvc
+  namespace: kutt
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 5Gi } }
+  volumeName: kutt-db-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kutt-custom-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 1Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/kutt-custom"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kutt-custom-pvc
+  namespace: kutt
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 1Gi } }
+  volumeName: kutt-custom-pv

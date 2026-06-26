@@ -1,0 +1,102 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: kutt-policy
+  namespace: kutt
+spec:
+  endpointSelector:
+    matchLabels:
+      app: kutt
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+            "k8s:app.kubernetes.io/name": traefik
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kutt
+            "k8s:app": kutt-postgres
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kutt
+            "k8s:app": kutt-redis
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - toEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: kutt-postgres-policy
+  namespace: kutt
+spec:
+  endpointSelector:
+    matchLabels:
+      app: kutt-postgres
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kutt
+            "k8s:app": kutt
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: kutt-redis-policy
+  namespace: kutt
+spec:
+  endpointSelector:
+    matchLabels:
+      app: kutt-redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kutt
+            "k8s:app": kutt
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy

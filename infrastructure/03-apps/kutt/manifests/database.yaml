@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kutt-postgres
+  namespace: kutt
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: kutt-postgres
+  template:
+    metadata:
+      labels:
+        app: kutt-postgres
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 18447
+        runAsGroup: 18447
+        fsGroup: 18447
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "mkdir -p /var/lib/postgresql/data/pgdata && chown -R 18447:18447 /var/lib/postgresql/data"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
+            capabilities:
+              add: ["CHOWN", "FOWNER"]
+              drop: ["ALL"]
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          env:
+            - name: POSTGRES_USER
+              value: kutt
+            - name: POSTGRES_DB
+              value: kutt
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kutt-secrets
+                  key: DB_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            runAsNonRoot: true
+            runAsUser: 18447
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: postgres-run
+              mountPath: /var/run/postgresql
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: kutt-db-pvc
+        - name: postgres-run
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kutt-postgres
+  namespace: kutt
+spec:
+  selector:
+    app: kutt-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
