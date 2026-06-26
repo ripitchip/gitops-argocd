@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: kutt.foobarbaz.fr
+    - host: url.foobarbaz.fr
       http:
         paths:
           - path: /
@@ -22,5 +22,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - kutt.foobarbaz.fr
+        - url.foobarbaz.fr
       secretName: kutt-tls
