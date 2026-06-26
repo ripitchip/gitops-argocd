@@ -52,6 +52,9 @@ spec:
             - containerPort: 8096
               name: http
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 18096
+            runAsGroup: 18096
             allowPrivilegeEscalation: false
             capabilities:
               drop:
