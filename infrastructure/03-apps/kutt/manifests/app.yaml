@@ -45,7 +45,7 @@ spec:
               memory: 64Mi
       containers:
         - name: kutt
-          image: kutt/kutt:v3.2.3
+          image: kutt/kutt:main
           ports:
             - containerPort: 3000
           env:
