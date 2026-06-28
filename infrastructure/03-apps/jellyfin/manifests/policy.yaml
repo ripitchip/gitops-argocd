@@ -18,6 +18,14 @@ spec:
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
+        "k8s:io.kubernetes.pod.namespace": jellyseerr
+        "k8s:app": jellyseerr
+    toPorts:
+    - ports:
+      - port: "8096"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
         "k8s:io.kubernetes.pod.namespace": alloy
   egress:
   - toEndpoints:
