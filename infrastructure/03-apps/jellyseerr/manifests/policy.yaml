@@ -32,9 +32,9 @@ spec:
             dns:
               - matchPattern: "*"
     - toEndpoints:
-    - matchLabels:
-        "k8s:io.kubernetes.pod.namespace": jellyfin
-        "k8s:app": jellyfin
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": jellyfin
+            "k8s:app": jellyfin
       toPorts:
         - ports:
             - port: "80"
