@@ -1,0 +1,159 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sure
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/we-promise/sure.git"
+    targetRevision: main
+    path: charts/sure
+    helm:
+      releaseName: sure
+      values: |
+        image:
+          tag: stable
+
+        rails:
+          existingSecret: sure-secrets
+          encryptionEnv:
+            enabled: false
+          settings:
+            SELF_HOSTED: "true"
+            ONBOARDING_STATE: "open"
+            AI_DEBUG_MODE: "false"
+          extraEnv:
+            APP_DOMAIN: budget.foobarbaz.fr
+            RAILS_ASSUME_SSL: "true"
+            WEBAUTHN_RP_ID: foobarbaz.fr
+            WEBAUTHN_ALLOWED_ORIGINS: https://budget.foobarbaz.fr
+            EXCHANGE_RATE_PROVIDER: yahoo_finance
+            SECURITIES_PROVIDER: yahoo_finance
+          extraEnvVars:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sure-secrets
+                  key: DATABASE_URL
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sure-secrets
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: sure-secrets
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: sure-secrets
+                  key: OIDC_ISSUER
+            - name: OIDC_REDIRECT_URI
+              valueFrom:
+                secretKeyRef:
+                  name: sure-secrets
+                  key: OIDC_REDIRECT_URI
+
+        cnpg:
+          enabled: false
+          cluster:
+            enabled: false
+
+        redisOperator:
+          enabled: false
+          managed:
+            enabled: false
+
+        redisSimple:
+          enabled: true
+          auth:
+            enabled: true
+            existingSecret: sure-secrets
+            passwordKey: redis-password
+          persistence:
+            enabled: true
+            size: 1Gi
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 256Mi
+
+        ingress:
+          enabled: true
+          className: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: "true"
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          hosts:
+            - host: budget.foobarbaz.fr
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - budget.foobarbaz.fr
+              secretName: sure-tls
+
+        web:
+          replicas: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+
+        worker:
+          replicas: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+
+        migrations:
+          strategy: job
+          job:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+          fsGroupChangePolicy: OnRootMismatch
+
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: sure
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
