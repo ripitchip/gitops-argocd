@@ -38,6 +38,8 @@ spec:
             "k8s:io.kubernetes.pod.namespace": alloy
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": radicale
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": sure
       toPorts:
         - ports:
             - port: "8200"
