@@ -32,6 +32,8 @@ spec:
             cpu: 50m
             memory: 128Mi
         webhook:
+          failurePolicy: Ignore
+          replicaCount: 2
           podSecurityContext:
             enabled: true
             runAsUser: 5823
@@ -43,6 +45,11 @@ spec:
             runAsUser: 5823
             runAsGroup: 5823
           lookaheadInterval: 5m
+          readinessProbe:
+            initialDelaySeconds: 45
+            failureThreshold: 12
+            periodSeconds: 5
+            timeoutSeconds: 5
           resources:
             limits:
               cpu: 200m
@@ -61,6 +68,15 @@ spec:
             runAsNonRoot: true
             runAsUser: 6934
             runAsGroup: 6934
+          readinessProbe:
+            initialDelaySeconds: 45
+            failureThreshold: 12
+            periodSeconds: 5
+            timeoutSeconds: 5
+          startupProbe:
+            enabled: true
+            failureThreshold: 30
+            periodSeconds: 10
           resources:
             limits:
               cpu: 200m
