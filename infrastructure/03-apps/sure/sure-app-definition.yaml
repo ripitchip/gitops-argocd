@@ -32,6 +32,8 @@ spec:
             WEBAUTHN_ALLOWED_ORIGINS: https://budget.foobarbaz.fr
             EXCHANGE_RATE_PROVIDER: yahoo_finance
             SECURITIES_PROVIDER: yahoo_finance
+            ASSISTANT_TYPE: external
+            EXTERNAL_ASSISTANT_ALLOWED_EMAILS: disabled@sure.local
           extraEnvVars:
             - name: DATABASE_URL
               valueFrom:
