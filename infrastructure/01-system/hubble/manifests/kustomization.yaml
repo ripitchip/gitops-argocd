@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - ui.yaml
   - ingress.yaml
+  - baseline-network-policy.yaml
   - policy.yaml
   - external-secrets.yaml
   - oauth2-proxy.yaml
+  - edge-middlewares.yaml

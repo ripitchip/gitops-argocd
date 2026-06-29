@@ -5,6 +5,7 @@ resources:
   - app.yaml
   - service.yaml
   - ingress.yaml
+  - baseline-network-policy.yaml
   - policy.yaml
   - storage.yaml
   - config.yaml

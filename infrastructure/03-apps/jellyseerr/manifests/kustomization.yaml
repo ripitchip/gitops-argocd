@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - storage.yaml
+  - baseline-network-policy.yaml
   - policy.yaml
   - app.yaml
   - ingress.yaml

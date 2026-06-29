@@ -1,0 +1,35 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  namespace: book
+spec:
+  headers:
+    stsSeconds: 31536000
+    stsIncludeSubdomains: true
+    stsPreload: true
+    forceSTSHeader: true
+    contentTypeNosniff: true
+    browserXssFilter: true
+    referrerPolicy: strict-origin-when-cross-origin
+    permissionsPolicy: "camera=(), microphone=(), geolocation=()"
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata: { name: rate-limit, namespace: book }
+spec: { rateLimit: { average: 100, burst: 200 } }
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata: { name: compress, namespace: book }
+spec: { compress: {} }
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata: { name: public-chain, namespace: book }
+spec:
+  chain:
+    middlewares:
+      - name: security-headers
+      - name: rate-limit
+      - name: compress

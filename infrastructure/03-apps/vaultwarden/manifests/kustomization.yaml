@@ -4,8 +4,10 @@ kind: Kustomization
 resources:
   - storage.yaml
   - external-secrets.yaml
+  - baseline-network-policy.yaml
   - policy.yaml
   - app.yaml
+  - edge-middlewares.yaml
 
 labels:
   - pairs:

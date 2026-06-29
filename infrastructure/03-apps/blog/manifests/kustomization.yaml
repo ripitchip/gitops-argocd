@@ -4,5 +4,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - baseline-network-policy.yaml
   - policy.yaml
   - middlewares.yaml
+  - edge-middlewares.yaml

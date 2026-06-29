@@ -3,4 +3,5 @@ kind: Kustomization
 
 resources:
   - pdf-app-definition.yaml
+  - baseline-network-policy.yaml
   - policy.yaml

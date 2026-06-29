@@ -1,0 +1,29 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  namespace: pass
+spec:
+  headers:
+    stsSeconds: 31536000
+    stsIncludeSubdomains: true
+    stsPreload: true
+    forceSTSHeader: true
+    contentTypeNosniff: true
+    browserXssFilter: true
+    referrerPolicy: strict-origin-when-cross-origin
+    permissionsPolicy: "camera=(), microphone=(), geolocation=()"
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata: { name: login-rate-limit, namespace: pass }
+spec: { rateLimit: { average: 20, burst: 40 } }
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata: { name: public-chain, namespace: pass }
+spec:
+  chain:
+    middlewares:
+      - name: security-headers
+      - name: login-rate-limit

@@ -4,7 +4,9 @@ resources:
   - namespace.yaml
   - storage.yaml
   - external-secrets.yaml
+  - baseline-network-policy.yaml
   - policy.yaml
   - database.yaml
   - app.yaml
   - ingress.yaml
+  - edge-middlewares.yaml

@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - external-secrets.yaml
+  - baseline-network-policy.yaml
   - oauth2-proxy.yaml
   - deemix-storage.yaml
   - deemix-external-secrets.yaml

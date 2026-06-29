@@ -1,7 +1,9 @@
 resources:
   - namespace.yaml
   - release.yaml
+  - baseline-network-policy.yaml
   - policy.yaml
   - manifests/ingress.yaml
   - manifests/external-secrets.yaml
   - manifests/oauth2-proxy.yaml
+  - edge-middlewares.yaml

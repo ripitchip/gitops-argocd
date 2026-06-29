@@ -5,7 +5,7 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: blog-redirect-https@kubernetescrd, blog-add-trailing-slash@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: blog-redirect-https@kubernetescrd,blog-add-trailing-slash@kubernetescrd,blog-public-chain@kubernetescrd
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: traefik

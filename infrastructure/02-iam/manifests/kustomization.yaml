@@ -3,10 +3,12 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
+  - baseline-network-policy.yaml
   - policy.yaml
   - external-secrets.yaml
   - storage.yaml
   - app.yaml
+  - edge-middlewares.yaml
 
 labels:
   - pairs:

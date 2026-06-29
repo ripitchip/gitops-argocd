@@ -6,6 +6,7 @@ resources:
   - ntfy.yaml
   - mailrise.yaml
   - ingress.yaml
+  - baseline-network-policy.yaml
   - oauth2-proxy/external-secrets.yaml
   - oauth2-proxy/policy.yaml
   - oauth2-proxy/app.yaml

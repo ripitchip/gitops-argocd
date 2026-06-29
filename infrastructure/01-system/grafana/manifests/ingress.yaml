@@ -5,6 +5,7 @@ metadata:
   namespace: grafana
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.middlewares: grafana-public-chain@kubernetescrd
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: traefik
