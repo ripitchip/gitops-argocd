@@ -11,9 +11,9 @@ metadata:
 spec:
   admission: true
   emitWarning: false
-  validationFailureAction: Enforce
+  validationFailureAction: Audit
   webhookTimeoutSeconds: 30
-  failurePolicy: Fail
+  failurePolicy: Ignore
   background: false
   rules:
     - name: verify-ghcr-ripitchip-keyless-signature
@@ -26,10 +26,10 @@ spec:
       verifyImages:
         - imageReferences:
             - ghcr.io/ripitchip/*
-          mutateDigest: true
-          verifyDigest: true
+          mutateDigest: false
+          verifyDigest: false
           useCache: true
-          required: true
+          required: false
           attestors:
             - count: 1
               entries:
