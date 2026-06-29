@@ -32,7 +32,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  volumeName: sure-db-pv
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -68,4 +67,3 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: sure-redis-pv
