@@ -11,3 +11,17 @@ spec:
   resources:
     requests:
       storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sure-redis-pvc
+  namespace: sure
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

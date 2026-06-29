@@ -6,4 +6,5 @@ resources:
   - storage.yaml
   - external-secrets.yaml
   - database.yaml
+  - redis.yaml
   - policy.yaml
