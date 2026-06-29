@@ -9,6 +9,8 @@ metadata:
     policies.kyverno.io/description: >-
       Require keyless Cosign signatures for images published under ghcr.io/ripitchip.
 spec:
+  admission: true
+  emitWarning: false
   validationFailureAction: Enforce
   webhookTimeoutSeconds: 30
   failurePolicy: Fail
@@ -25,6 +27,8 @@ spec:
         - imageReferences:
             - ghcr.io/ripitchip/*
           mutateDigest: true
+          verifyDigest: true
+          useCache: true
           required: true
           attestors:
             - count: 1
@@ -34,3 +38,4 @@ spec:
                     subjectRegExp: ^https://github.com/ripitchip/.+/.github/workflows/.+@refs/heads/main$
                     rekor:
                       url: https://rekor.sigstore.dev
+                  signatureAlgorithm: sha256

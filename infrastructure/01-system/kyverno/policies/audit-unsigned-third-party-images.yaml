@@ -9,6 +9,8 @@ metadata:
     policies.kyverno.io/description: >-
       Audit unsigned third party images before enforcing repository-wide signature checks.
 spec:
+  admission: true
+  emitWarning: false
   validationFailureAction: Audit
   webhookTimeoutSeconds: 30
   failurePolicy: Ignore
@@ -36,6 +38,7 @@ spec:
             - ghcr.io/ripitchip/*
           mutateDigest: false
           verifyDigest: false
+          useCache: true
           required: false
           attestors:
             - count: 1
@@ -45,3 +48,4 @@ spec:
                     subjectRegExp: ^https://github.com/.+/.github/workflows/.+
                     rekor:
                       url: https://rekor.sigstore.dev
+                  signatureAlgorithm: sha256
