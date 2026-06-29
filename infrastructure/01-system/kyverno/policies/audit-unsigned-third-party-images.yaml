@@ -31,7 +31,7 @@ spec:
       verifyImages:
         - imageReferences:
             - "*"
-          excludeImageReferences:
+          skipImageReferences:
             - ghcr.io/ripitchip/*
           mutateDigest: false
           required: false
@@ -41,3 +41,5 @@ spec:
                 - keyless:
                     issuer: https://token.actions.githubusercontent.com
                     subjectRegExp: ^https://github.com/.+/.github/workflows/.+
+                    rekor:
+                      url: https://rekor.sigstore.dev

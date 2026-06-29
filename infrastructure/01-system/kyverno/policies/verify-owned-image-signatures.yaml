@@ -32,3 +32,5 @@ spec:
                 - keyless:
                     issuer: https://token.actions.githubusercontent.com
                     subjectRegExp: ^https://github.com/ripitchip/.+/.github/workflows/.+@refs/heads/main$
+                    rekor:
+                      url: https://rekor.sigstore.dev
