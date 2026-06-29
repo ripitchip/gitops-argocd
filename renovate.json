@@ -1,0 +1,45 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits"
+  ],
+  "timezone": "Europe/Paris",
+  "labels": [
+    "dependencies",
+    "supply-chain"
+  ],
+  "kubernetes": {
+    "fileMatch": [
+      "(^|/)infrastructure/.+\\.ya?ml$"
+    ]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)infrastructure/.+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "repoURL:\\s*[\"']?(?<registryUrl>https?://[^\"'\\n]+)[\"']?\\s*\\n\\s*chart:\\s*[\"']?(?<depName>[^\"'\\n]+)[\"']?\\s*\\n\\s*targetRevision:\\s*[\"']?(?<currentValue>[^\"'\\n]+)[\"']?"
+      ],
+      "datasourceTemplate": "helm"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "docker",
+        "helm"
+      ],
+      "groupName": "container and chart updates"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    }
+  ]
+}

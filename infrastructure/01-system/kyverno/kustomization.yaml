@@ -4,3 +4,5 @@ resources:
   - policies/disallow-privileged-containers.yaml
   - policies/require-resource-limits.yaml
   - policies/disallow-root-user.yaml
+  - policies/verify-owned-image-signatures.yaml
+  - policies/audit-unsigned-third-party-images.yaml

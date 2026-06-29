@@ -1,0 +1,43 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: audit-unsigned-third-party-images
+  annotations:
+    policies.kyverno.io/title: Audit Unsigned Third Party Images
+    policies.kyverno.io/category: Software Supply Chain Security
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Audit unsigned third party images before enforcing repository-wide signature checks.
+spec:
+  validationFailureAction: Audit
+  webhookTimeoutSeconds: 30
+  failurePolicy: Ignore
+  background: false
+  rules:
+    - name: audit-third-party-signatures
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - cilium-system
+                - kyverno
+      skipBackgroundRequests: true
+      verifyImages:
+        - imageReferences:
+            - "*"
+          excludeImageReferences:
+            - ghcr.io/ripitchip/*
+          mutateDigest: false
+          required: false
+          attestors:
+            - count: 1
+              entries:
+                - keyless:
+                    issuer: https://token.actions.githubusercontent.com
+                    subjectRegExp: ^https://github.com/.+/.github/workflows/.+

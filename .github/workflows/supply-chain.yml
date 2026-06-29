@@ -1,0 +1,107 @@
+name: Supply Chain Security
+
+on:
+  pull_request:
+    paths:
+      - "infrastructure/**"
+      - ".github/workflows/supply-chain.yml"
+      - ".trivyignore"
+      - "trivy.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - "infrastructure/**"
+      - ".github/workflows/supply-chain.yml"
+      - ".trivyignore"
+      - "trivy.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trivy-config:
+    name: Trivy IaC and secret scan
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Scan repository
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          trivy-config: trivy.yaml
+
+  trivy-images:
+    name: Trivy image scan
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.0
+        with:
+          cache: true
+
+      - name: Extract image references
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/trivy-images
+          grep -RhoE 'image:[[:space:]]*"?[^"[:space:]]+' infrastructure \
+            | sed -E 's/^image:[[:space:]]*"?//' \
+            | grep -v '^!' \
+            | sort -u > /tmp/trivy-images/images.txt
+          cat /tmp/trivy-images/images.txt
+
+      - name: Block CRITICAL vulnerabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r image; do
+            echo "::group::trivy image ${image}"
+            trivy image \
+              --exit-code 1 \
+              --ignore-unfixed \
+              --severity CRITICAL \
+              --vuln-type os,library \
+              --ignorefile .trivyignore \
+              "${image}"
+            echo "::endgroup::"
+          done < /tmp/trivy-images/images.txt
+
+  cosign-owned-images:
+    name: Verify owned image signatures
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Verify ripitchip GHCR signatures
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -RhoE 'image:[[:space:]]*"?ghcr.io/ripitchip/[^"[:space:]]+' infrastructure \
+            | sed -E 's/^image:[[:space:]]*"?//' \
+            | sort -u > /tmp/owned-images.txt
+
+          if [ ! -s /tmp/owned-images.txt ]; then
+            echo "No owned GHCR images found."
+            exit 0
+          fi
+
+          while IFS= read -r image; do
+            echo "::group::cosign verify ${image}"
+            cosign verify \
+              --certificate-identity-regexp '^https://github.com/ripitchip/.+/.github/workflows/.+@refs/heads/main$' \
+              --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
+              "${image}"
+            echo "::endgroup::"
+          done < /tmp/owned-images.txt
