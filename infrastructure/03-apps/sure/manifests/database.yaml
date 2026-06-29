@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: sure-postgres
   namespace: sure
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
   labels:
     app: sure-postgres
 spec:
@@ -89,6 +91,8 @@ kind: Service
 metadata:
   name: sure-postgres
   namespace: sure
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   selector:
     app: sure-postgres
