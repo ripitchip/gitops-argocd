@@ -18,6 +18,10 @@ spec:
           reportingEnabled: false
           metricsGenerator:
             enabled: true
+            storage:
+              path: /var/tempo/metrics-generator
+            traces_storage:
+              path: /var/tempo/generator-traces
           resources:
             requests:
               cpu: 100m
@@ -29,29 +33,33 @@ spec:
             trace:
               backend: local
               local:
-                path: /tmp/tempo/traces
+                path: /var/tempo/traces
               wal:
-                path: /tmp/tempo/wal
+                path: /var/tempo/wal
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 12906
+            runAsGroup: 12906
 
         builder:
           replicas: 1
 
-        # Pod security context to comply with Kyverno policies.
-        # The tempo chart maps this value to pod.spec.securityContext.
-        podSecurityContext:
-          runAsNonRoot: true
-          runAsUser: 12906
-          runAsGroup: 12906
-
-        # Keep container-only fields out of this chart value. Kubernetes drops
-        # them from pod.spec.securityContext, which creates permanent Argo CD drift.
         securityContext:
           runAsNonRoot: true
           runAsUser: 12906
           runAsGroup: 12906
         
         persistence:
-          enabled: false
+          enabled: true
+          storageClassName: truenas-nfs
+          accessModes:
+            - ReadWriteOnce
+          size: 50Gi
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: tempo

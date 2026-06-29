@@ -1,4 +1,5 @@
 resources:
   - namespace.yaml
+  - storage.yaml
   - release.yaml
   - policy.yaml
