@@ -27,6 +27,7 @@ spec:
                 - kube-system
                 - cilium-system
                 - kyverno
+                - trivy-system
       skipBackgroundRequests: true
       verifyImages:
         - imageReferences:
@@ -34,6 +35,7 @@ spec:
           skipImageReferences:
             - ghcr.io/ripitchip/*
           mutateDigest: false
+          verifyDigest: false
           required: false
           attestors:
             - count: 1
