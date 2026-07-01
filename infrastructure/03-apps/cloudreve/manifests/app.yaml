@@ -52,7 +52,7 @@ spec:
               memory: 64Mi
       containers:
       - name: cloudreve
-        image: cloudreve.azurecr.io/cloudreve/pro:4.16.1
+        image: cloudreve.azurecr.io/cloudreve/pro:4.17.0
         ports:
         - containerPort: 5212
         env:
