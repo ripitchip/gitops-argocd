@@ -25,3 +25,31 @@ spec:
   - hosts:
     - drive.foobarbaz.fr
     secretName: cloudreve-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloudreve-webdav
+  namespace: cloudreve
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.priority: "100"
+    traefik.ingress.kubernetes.io/router.middlewares: cloudreve-webdav-chain@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: drive.foobarbaz.fr
+    http:
+      paths:
+      - path: /dav
+        pathType: Prefix
+        backend:
+          service:
+            name: cloudreve
+            port:
+              number: 5212
+  tls:
+  - hosts:
+    - drive.foobarbaz.fr
+    secretName: cloudreve-tls
