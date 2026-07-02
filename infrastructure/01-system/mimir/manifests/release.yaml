@@ -118,6 +118,8 @@ spec:
                     send_resolved: true
                     from: contact@foobarbaz.fr
                     smarthost: mailrise.notifications.svc.cluster.local:25
+                    auth_username: ""
+                    auth_password_file: ""
                     require_tls: false
 
           persistentVolume:

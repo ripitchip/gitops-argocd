@@ -8,6 +8,9 @@ data:
       cluster-alerts:
         urls:
           - ntfy://ntfy:80/alertes-cluster
+      cluster-alerts@mailrise:
+        urls:
+          - ntfy://ntfy:80/alertes-cluster
 ---
 apiVersion: v1
 kind: Service

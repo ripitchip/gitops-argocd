@@ -65,6 +65,8 @@ spec:
         - ports:
             - port: "25"
               protocol: TCP
+            - port: "8025"
+              protocol: TCP
     - toEntities:
         - world
       toPorts:

@@ -7,6 +7,16 @@ spec:
   endpointSelector:
     matchLabels:
       app: mailrise
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": mimir
+      toPorts:
+        - ports:
+            - port: "25"
+              protocol: TCP
+            - port: "8025"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
