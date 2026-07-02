@@ -1,0 +1,20 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: mailrise-to-ntfy
+  namespace: notifications
+spec:
+  endpointSelector:
+    matchLabels:
+      app: mailrise
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": notifications
+            "k8s:app": ntfy
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP

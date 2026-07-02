@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - ntfy.yaml
   - mailrise.yaml
+  - mailrise-network-policy.yaml
   - ingress.yaml
   - baseline-network-policy.yaml
   - oauth2-proxy/external-secrets.yaml
