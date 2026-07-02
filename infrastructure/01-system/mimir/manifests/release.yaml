@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: mimir
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
 spec:
   project: default
   source:
@@ -87,9 +89,48 @@ spec:
 
         alertmanager:
           enabled: true
+          fallbackConfig: |
+            global:
+              smtp_from: contact@foobarbaz.fr
+              smtp_smarthost: ssl0.ovh.net:587
+              smtp_auth_username: contact@foobarbaz.fr
+              smtp_auth_password_file: /etc/alertmanager-smtp/smtp-password
+              smtp_require_tls: true
+
+            route:
+              receiver: alerts-both
+              group_by: [cluster, alertname]
+              group_wait: 30s
+              group_interval: 5m
+              repeat_interval: 4h
+
+            receivers:
+              - name: alerts-both
+                email_configs:
+                  - to: contact@foobarbaz.fr
+                    send_resolved: true
+                    from: contact@foobarbaz.fr
+                    smarthost: ssl0.ovh.net:587
+                    auth_username: contact@foobarbaz.fr
+                    auth_password_file: /etc/alertmanager-smtp/smtp-password
+                    require_tls: true
+                  - to: cluster-alerts@mailrise.xyz
+                    send_resolved: true
+                    from: contact@foobarbaz.fr
+                    smarthost: mailrise.notifications.svc.cluster.local:25
+                    require_tls: false
+
           persistentVolume:
             size: 5Gi
             storageClass: truenas-nfs
+          extraVolumes:
+            - name: alertmanager-smtp
+              secret:
+                secretName: mimir-alertmanager-smtp
+          extraVolumeMounts:
+            - name: alertmanager-smtp
+              mountPath: /etc/alertmanager-smtp
+              readOnly: true
           <<: [*commonSharedVolume, *defaultResources]
 
         ruler:
