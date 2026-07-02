@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: poll-config
+  namespace: poll
+data:
+  NEXT_PUBLIC_BASE_URL: "https://poll.foobarbaz.fr"
+  OIDC_ISSUER: "https://auth.foobarbaz.fr/realms/foobarbaz"
+  OIDC_CLIENT_ID: "slotline"
+  NODE_ENV: "production"
+  PORT: "3000"
