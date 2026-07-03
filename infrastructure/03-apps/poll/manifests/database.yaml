@@ -17,6 +17,8 @@ spec:
       labels:
         app: poll-mongodb
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-worker-04
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -85,8 +87,9 @@ spec:
               mountPath: /data/db
       volumes:
         - name: mongo-data
-          persistentVolumeClaim:
-            claimName: poll-mongo-pvc
+          hostPath:
+            path: /var/lib/k8s-local/poll-mongo
+            type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
