@@ -15,6 +15,9 @@ spec:
         - ports:
             - port: "3000"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app: poll-mongodb
   egress:
     - toEndpoints:
         - matchLabels:
