@@ -5,6 +5,7 @@ metadata:
   namespace: poll
 data:
   NEXT_PUBLIC_BASE_URL: "https://poll.foobarbaz.fr"
+  NEXTAUTH_URL: "https://poll.foobarbaz.fr"
   OIDC_ISSUER: "https://auth.foobarbaz.fr/realms/foobarbaz"
   OIDC_CLIENT_ID: "slotline"
   NODE_ENV: "production"
