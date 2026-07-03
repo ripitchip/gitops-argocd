@@ -7,6 +7,7 @@ resources:
   - 02-iam/keycloak-app-definition.yaml
   - 03-apps/vaultwarden/vaultwarden-app-definition.yaml
   - 03-apps/blog/blog-app-definition.yaml
+  - 03-apps/poll/poll-app-definition.yaml
   - 03-apps/notifications/notifications-app-definition.yaml
   - 03-apps/cloudreve-app-definition.yaml
   - 03-apps/memos-app-definition.yaml
