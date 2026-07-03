@@ -87,9 +87,8 @@ spec:
               mountPath: /data/db
       volumes:
         - name: mongo-data
-          hostPath:
-            path: /var/lib/k8s-local/poll-mongo
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: poll-mongo-pvc
 ---
 apiVersion: v1
 kind: Service
