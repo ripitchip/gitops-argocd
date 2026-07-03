@@ -88,7 +88,7 @@ spec:
       volumes:
         - name: mongo-data
           persistentVolumeClaim:
-            claimName: poll-mongo-pvc
+            claimName: poll-mongo-local-pvc
 ---
 apiVersion: v1
 kind: Service
