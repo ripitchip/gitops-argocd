@@ -39,6 +39,7 @@ spec:
             - name: HOSTNAME
               value: "0.0.0.0"
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
