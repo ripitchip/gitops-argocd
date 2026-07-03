@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: poll
-          image: ghcr.io/ripitchip/slotline:sha-08b352a
+          image: ghcr.io/ripitchip/slotline:sha-248014e
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
