@@ -67,12 +67,16 @@ spec:
                   key: NEXTAUTH_SECRET
             - name: NEXTAUTH_URL
               value: "https://link.foobarbaz.fr"
+            - name: HOME
+              value: "/tmp"
           ports:
             - containerPort: 3000
               name: http
           volumeMounts:
             - name: data
               mountPath: /data/data
+            - name: tmp
+              mountPath: /tmp
           resources:
             limits:
               cpu: 1000m
@@ -84,3 +88,6 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: linkwarden-data-pvc
+        - name: tmp
+          emptyDir: {}
+
