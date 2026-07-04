@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkwarden-meilisearch
+  namespace: linkwarden
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: linkwarden-meilisearch
+  template:
+    metadata:
+      labels:
+        app: linkwarden-meilisearch
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 19449
+        runAsGroup: 19449
+        fsGroup: 19449
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "mkdir -p /meili_data && chown -R 19449:19449 /meili_data"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
+            capabilities:
+              add: ["CHOWN", "FOWNER"]
+              drop: ["ALL"]
+          volumeMounts:
+            - name: meili-data
+              mountPath: /meili_data
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+      containers:
+        - name: meilisearch
+          image: getmeili/meilisearch:v1.12.8
+          env:
+            - name: MEILI_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: linkwarden-secrets
+                  key: MEILI_MASTER_KEY
+            - name: MEILI_NO_ANALYTICS
+              value: "true"
+            - name: MEILI_DB_PATH
+              value: "/meili_data"
+          ports:
+            - containerPort: 7700
+              name: meili
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            runAsNonRoot: true
+            runAsUser: 19449
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: meili-data
+              mountPath: /meili_data
+      volumes:
+        - name: meili-data
+          persistentVolumeClaim:
+            claimName: linkwarden-meili-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkwarden-meilisearch
+  namespace: linkwarden
+spec:
+  selector:
+    app: linkwarden-meilisearch
+  ports:
+    - port: 7700
+      targetPort: 7700

@@ -39,6 +39,14 @@ spec:
         - ports:
             - port: "5432"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": linkwarden
+            "app": linkwarden-meilisearch
+      toPorts:
+        - ports:
+            - port: "7700"
+              protocol: TCP
     - toEntities:
         - world
         - cluster
@@ -70,3 +78,26 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: linkwarden-meilisearch-policy
+  namespace: linkwarden
+spec:
+  endpointSelector:
+    matchLabels:
+      app: linkwarden-meilisearch
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": linkwarden
+            "app": linkwarden
+      toPorts:
+        - ports:
+            - port: "7700"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+

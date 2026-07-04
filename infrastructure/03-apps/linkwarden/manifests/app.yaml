@@ -65,8 +65,8 @@ spec:
                   key: NEXTAUTH_SECRET
             - name: NEXTAUTH_URL
               value: "https://link.foobarbaz.fr"
-            - name: HOME
-              value: "/tmp"
+            - name: COREPACK_HOME
+              value: "/tmp/corepack"
             - name: NEXT_PUBLIC_KEYCLOAK_ENABLED
               value: "true"
             - name: KEYCLOAK_ISSUER
@@ -78,7 +78,13 @@ spec:
                 secretKeyRef:
                   name: linkwarden-secrets
                   key: KEYCLOAK_CLIENT_SECRET
-
+            - name: MEILI_HOST
+              value: "http://linkwarden-meilisearch:7700"
+            - name: MEILI_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: linkwarden-secrets
+                  key: MEILI_MASTER_KEY
 
           ports:
             - containerPort: 3000
@@ -88,6 +94,8 @@ spec:
               mountPath: /data/data
             - name: tmp
               mountPath: /tmp
+            - name: next-cache
+              mountPath: /data/apps/web/.next/cache
           resources:
             limits:
               cpu: 1000m
@@ -101,4 +109,5 @@ spec:
             claimName: linkwarden-data-pvc
         - name: tmp
           emptyDir: {}
-
+        - name: next-cache
+          emptyDir: {}

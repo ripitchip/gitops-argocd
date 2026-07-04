@@ -51,3 +51,31 @@ spec:
   accessModes: [ReadWriteOnce]
   resources: { requests: { storage: 10Gi } }
   volumeName: linkwarden-data-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: linkwarden-meili-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 5Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/linkwarden-meili"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: linkwarden-meili-pvc
+  namespace: linkwarden
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 5Gi } }
+  volumeName: linkwarden-meili-pv
+

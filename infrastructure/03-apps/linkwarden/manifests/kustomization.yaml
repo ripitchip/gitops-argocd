@@ -11,3 +11,5 @@ resources:
   - policy.yaml
   - baseline-network-policy.yaml
   - edge-middlewares.yaml
+  - meilisearch.yaml
+
