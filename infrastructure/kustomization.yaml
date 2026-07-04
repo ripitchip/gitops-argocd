@@ -21,3 +21,5 @@ resources:
   - 03-apps/immich
   - 03-apps/pingvin-share
   - 03-apps/sure
+  - 03-apps/linkwarden-app-definition.yaml
+
