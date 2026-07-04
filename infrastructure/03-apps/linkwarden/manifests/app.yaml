@@ -67,6 +67,18 @@ spec:
               value: "https://link.foobarbaz.fr"
             - name: HOME
               value: "/tmp"
+            - name: NEXT_PUBLIC_KEYCLOAK_ENABLED
+              value: "true"
+            - name: KEYCLOAK_ISSUER
+              value: "https://auth.foobarbaz.fr/realms/foobarbaz"
+            - name: KEYCLOAK_CLIENT_ID
+              value: "linkwarden"
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: linkwarden-secrets
+                  key: KEYCLOAK_CLIENT_SECRET
+
 
           ports:
             - containerPort: 3000
