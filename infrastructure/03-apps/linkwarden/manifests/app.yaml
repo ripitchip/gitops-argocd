@@ -53,13 +53,11 @@ spec:
             runAsNonRoot: true
             runAsUser: 19447
           env:
-            - name: POSTGRES_PASSWORD
+            - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: linkwarden-secrets
-                  key: DB_PASSWORD
-            - name: DATABASE_URL
-              value: postgresql://linkwarden:$(POSTGRES_PASSWORD)@linkwarden-postgres:5432/linkwarden
+                  key: DATABASE_URL
             - name: NEXTAUTH_SECRET
               valueFrom:
                 secretKeyRef:
@@ -69,6 +67,7 @@ spec:
               value: "https://link.foobarbaz.fr"
             - name: HOME
               value: "/tmp"
+
           ports:
             - containerPort: 3000
               name: http
