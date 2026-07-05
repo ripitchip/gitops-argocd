@@ -21,6 +21,7 @@ spec:
           - resources:
               namespaces:
                 - kube-system
+                - crowdsec
           - resources:
               selector:
                 matchLabels:

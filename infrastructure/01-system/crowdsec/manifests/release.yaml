@@ -27,10 +27,24 @@ spec:
             data:
               enabled: true
               existingClaim: crowdsec-db-pvc
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
         agent:
           env:
             - name: COLLECTIONS
               value: "crowdsecurity/traefik"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
           acquisition:
             - namespace: traefik
               podName: traefik-*
