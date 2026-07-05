@@ -32,8 +32,8 @@ spec:
               cpu: 500m
               memory: 512Mi
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 10m
+              memory: 50Mi
         agent:
           env:
             - name: COLLECTIONS
@@ -43,8 +43,8 @@ spec:
               cpu: 500m
               memory: 256Mi
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 10m
+              memory: 50Mi
           acquisition:
             - namespace: traefik
               podName: traefik-*
