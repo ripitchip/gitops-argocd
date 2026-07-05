@@ -31,6 +31,10 @@ spec:
       blackListMode: false # Whitelist mode: only allow countries in the list
       countries:
         - FR
+      api: "https://get.geojs.io/v1/ip/country/{ip}"
+      cacheSize: 100
+
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
