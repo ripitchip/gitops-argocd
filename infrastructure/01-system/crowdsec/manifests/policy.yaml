@@ -32,7 +32,10 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-    # 2. Allow LAPI to contact CrowdSec API (central hubs, updates)
+    # 2. Allow contact to Kubernetes API server
+    - toEntities:
+        - kube-apiserver
+    # 3. Allow LAPI to contact CrowdSec API (central hubs, updates)
     - toEntities:
         - world
       toPorts:
