@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crowdsec
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  project: default
+  source:
+    repoURL: 'https://crowdsecurity.github.io/helm-charts'
+    chart: crowdsec
+    targetRevision: 0.24.0
+    helm:
+      values: |
+        lapi:
+          env:
+            # Pre-register Traefik bouncer using the secret token
+            - name: BOUNCER_KEY_traefik
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-bouncer-key
+                  key: bouncer-key
+          persistentVolume:
+            config:
+              enabled: false
+            data:
+              enabled: true
+              existingClaim: crowdsec-db-pvc
+        agent:
+          acquisition:
+            - namespace: traefik
+              podName: traefik-*
+              program: traefik
+              env:
+                - name: COLLECTIONS
+                  value: "crowdsecurity/traefik"
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: crowdsec
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

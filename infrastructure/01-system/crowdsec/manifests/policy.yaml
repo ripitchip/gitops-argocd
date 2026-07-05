@@ -1,0 +1,41 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: crowdsec-security
+  namespace: crowdsec
+spec:
+  endpointSelector:
+    matchLabels: {}
+  ingress:
+    # 1. Allow Traefik pods to query LAPI
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    # 2. Allow CrowdSec agents to talk to LAPI
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": crowdsec
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    # 1. Allow communication between components in same namespace
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": crowdsec
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    # 2. Allow LAPI to contact CrowdSec API (central hubs, updates)
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

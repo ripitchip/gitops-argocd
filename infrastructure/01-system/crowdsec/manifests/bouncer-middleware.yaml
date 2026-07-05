@@ -1,0 +1,13 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: crowdsec-bouncer
+  namespace: crowdsec
+spec:
+  plugin:
+    crowdsec-bouncer:
+      enabled: true
+      crowdsecLapiUrl: "http://crowdsec-lapi.crowdsec.svc.cluster.local:8080"
+      crowdsecBouncerApiTokenSecretName: "crowdsec-bouncer-key"
+      # Tells the plugin to read the token from the secret in the crowdsec namespace
+      crowdsecBouncerApiTokenSecretNamespace: "crowdsec"
