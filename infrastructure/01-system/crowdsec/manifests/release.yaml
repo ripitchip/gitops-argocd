@@ -28,13 +28,13 @@ spec:
               enabled: true
               existingClaim: crowdsec-db-pvc
         agent:
+          env:
+            - name: COLLECTIONS
+              value: "crowdsecurity/traefik"
           acquisition:
             - namespace: traefik
               podName: traefik-*
               program: traefik
-              env:
-                - name: COLLECTIONS
-                  value: "crowdsecurity/traefik"
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: crowdsec
