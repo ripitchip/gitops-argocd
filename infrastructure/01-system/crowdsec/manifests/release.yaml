@@ -46,7 +46,14 @@ spec:
         agent:
           env:
             - name: COLLECTIONS
-              value: "crowdsecurity/traefik crowdsecurity/linux crowdsecurity/whitelist-good-actors crowdsecurity/base-http-scenarios crowdsecurity/http-cve crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
+              value: >-
+                crowdsecurity/traefik
+                crowdsecurity/linux
+                crowdsecurity/whitelist-good-actors
+                crowdsecurity/base-http-scenarios
+                crowdsecurity/http-cve
+                crowdsecurity/appsec-virtual-patching
+                crowdsecurity/appsec-generic-rules
 
           acquisition:
             - namespace: traefik
