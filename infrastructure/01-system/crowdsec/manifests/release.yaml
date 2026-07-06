@@ -59,6 +59,7 @@ spec:
             - namespace: traefik
               podName: traefik-*
               program: traefik
+              type: containerd
               poll_without_inotify: true
 
           resources:
