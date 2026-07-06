@@ -4,6 +4,7 @@ resources:
   - vault
   - argocd
   - cert-manager
+  - traefik
   - kyverno
   - trivy
   - trivy-adapter

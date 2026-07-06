@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: traefik
+    repoURL: ghcr.io/traefik/helm
+    targetRevision: 41.0.1
+    helm:
+      values: |
+        service:
+          type: LoadBalancer
+        deployment:
+          podSecurityContext:
+            fsGroup: 65532
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65532
+          runAsGroup: 65532
+        ingressClass:
+          enabled: true
+          isDefaultClass: true
+        ports:
+          web:
+            exposedPort: 80
+            http:
+              redirections:
+                entryPoint:
+                  to: websecure
+                  scheme: https
+                  permanent: true
+          websecure:
+            exposedPort: 443
+        logs:
+          general:
+            level: INFO
+          access:
+            enabled: true
+            format: common
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
