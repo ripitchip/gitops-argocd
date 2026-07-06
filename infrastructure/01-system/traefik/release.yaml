@@ -38,7 +38,7 @@ spec:
           level: INFO
         accessLog:
           enabled: true
-          format: common
+          format: json
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
