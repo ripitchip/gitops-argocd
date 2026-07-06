@@ -55,11 +55,15 @@ spec:
                 crowdsecurity/appsec-virtual-patching
                 crowdsecurity/appsec-generic-rules
 
-          acquisition:
-            - namespace: traefik
-              podName: traefik-*
-              program: traefik
-              type: containerd
+          acquisition: []
+
+          additionalAcquisition:
+            - source: file
+              filenames:
+                - /var/log/containers/traefik-*_traefik_*.log
+              labels:
+                type: containerd
+                program: traefik
               poll_without_inotify: true
 
           resources:
