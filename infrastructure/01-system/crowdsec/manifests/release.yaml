@@ -13,6 +13,12 @@ spec:
     targetRevision: 0.24.0
     helm:
       values: |
+        config:
+          simulation.yaml: |
+            simulation: false
+            exclusions:
+              - crowdsecurity/http-probing
+              - crowdsecurity/http-crawl-non_statics
         lapi:
           env:
             # Pre-register Traefik bouncer using the secret token
@@ -37,7 +43,7 @@ spec:
         agent:
           env:
             - name: COLLECTIONS
-              value: "crowdsecurity/traefik"
+              value: "crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/linux crowdsecurity/whitelist-good-actors crowdsecurity/base-http-scenarios crowdsecurity/http-cve"
           resources:
             limits:
               cpu: 500m
