@@ -4,7 +4,7 @@ metadata:
   name: policy-reporter-stack
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "20"
 spec:
   project: default
   source:
