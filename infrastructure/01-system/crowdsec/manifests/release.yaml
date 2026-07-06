@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://crowdsecurity.github.io/helm-charts'
+    repoURL: https://crowdsecurity.github.io/helm-charts
     chart: crowdsec
     targetRevision: 0.24.0
     helm:
@@ -19,20 +19,22 @@ spec:
             exclusions:
               - crowdsecurity/http-probing
               - crowdsecurity/http-crawl-non_statics
+
         lapi:
           env:
-            # Pre-register Traefik bouncer using the secret token
             - name: BOUNCER_KEY_traefik
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-bouncer-key
                   key: bouncer-key
+
           persistentVolume:
             config:
               enabled: false
             data:
               enabled: true
               existingClaim: crowdsec-db-pvc
+
           resources:
             limits:
               cpu: 500m
@@ -40,10 +42,18 @@ spec:
             requests:
               cpu: 10m
               memory: 50Mi
+
         agent:
           env:
             - name: COLLECTIONS
-              value: "crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/linux crowdsecurity/whitelist-good-actors crowdsecurity/base-http-scenarios crowdsecurity/http-cve"
+              value: "crowdsecurity/traefik crowdsecurity/linux crowdsecurity/whitelist-good-actors crowdsecurity/base-http-scenarios crowdsecurity/http-cve crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
+
+          acquisition:
+            - namespace: traefik
+              podName: traefik-*
+              program: traefik
+              poll_without_inotify: true
+
           resources:
             limits:
               cpu: 500m
@@ -51,13 +61,11 @@ spec:
             requests:
               cpu: 10m
               memory: 50Mi
-          acquisition:
-            - namespace: traefik
-              podName: traefik-*
-              program: traefik
+
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: https://kubernetes.default.svc
     namespace: crowdsec
+
   syncPolicy:
     automated:
       prune: true
