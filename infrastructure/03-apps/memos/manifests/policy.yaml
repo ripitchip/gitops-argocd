@@ -4,7 +4,9 @@ metadata:
   name: memos-hardened
   namespace: memos
 spec:
-  endpointSelector: {}
+  endpointSelector:
+    matchLabels:
+      app: memos
   ingress:
     # 1. Traefik to Memos
     - fromEndpoints:
