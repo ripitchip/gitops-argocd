@@ -34,12 +34,11 @@ spec:
                   permanent: true
           websecure:
             exposedPort: 443
-        logs:
-          general:
-            level: INFO
-          access:
-            enabled: true
-            format: common
+        log:
+          level: INFO
+        accessLog:
+          enabled: true
+          format: common
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
