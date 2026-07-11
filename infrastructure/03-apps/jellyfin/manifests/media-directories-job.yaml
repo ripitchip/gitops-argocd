@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jellyfin-media-directories
+  namespace: jellyfin
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+spec:
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: jellyfin-media-directories
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 18096
+        runAsGroup: 18096
+        fsGroup: 18096
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: OnFailure
+      containers:
+        - name: create-directories
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              mkdir -p /media/movies /media/series /media/anime /media/documentaries
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 18096
+            runAsGroup: 18096
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          volumeMounts:
+            - name: media-volume
+              mountPath: /media
+      volumes:
+        - name: media-volume
+          persistentVolumeClaim:
+            claimName: jellyfin-media-pvc
