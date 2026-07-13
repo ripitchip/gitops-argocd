@@ -28,11 +28,36 @@ spec:
           env:
             - name: OLLAMA_BASE_URL
               value: "http://ollama.ai.svc.cluster.local:11434"
+            - name: WEBUI_URL
+              value: "https://ai.foobarbaz.fr"
             - name: WEBUI_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: open-webui-secret
                   key: webui-secret-key
+            - name: ENABLE_OAUTH_PERSISTENT_CONFIG
+              value: "false"
+            - name: ENABLE_OAUTH_SIGNUP
+              value: "true"
+            - name: OAUTH_PROVIDER_NAME
+              value: "Keycloak"
+            - name: OAUTH_CLIENT_ID
+              value: "open-webui"
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui-secret
+                  key: oauth-client-secret
+            - name: OPENID_PROVIDER_URL
+              value: "https://auth.foobarbaz.fr/realms/foobarbaz/.well-known/openid-configuration"
+            - name: OPENID_REDIRECT_URI
+              value: "https://ai.foobarbaz.fr/oauth/oidc/callback"
+            - name: OAUTH_SCOPES
+              value: "openid email profile"
+            - name: ENABLE_OAUTH_ID_TOKEN_COOKIE
+              value: "false"
+            - name: ENABLE_PROFILE_IMAGE_URL_FORWARDING
+              value: "false"
           ports:
             - containerPort: 8080
               name: http
