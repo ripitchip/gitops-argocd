@@ -2,5 +2,6 @@ resources:
   - cmd-params.yaml
   - service.yaml
   - ingress.yaml
+  - rbac.yaml
   - external-secrets-ignore-differences.yaml
   - policy.yaml
