@@ -13,6 +13,8 @@ spec:
       labels:
         app: immich-machine-learning
     spec:
+      nodeSelector:
+        node-role.kubernetes.io/worker: worker
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

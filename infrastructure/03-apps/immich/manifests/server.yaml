@@ -13,6 +13,8 @@ spec:
       labels:
         app: immich-server
     spec:
+      nodeSelector:
+        node-role.kubernetes.io/worker: worker
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
