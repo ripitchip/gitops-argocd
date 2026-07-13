@@ -61,7 +61,7 @@ spec:
               memory: 64Mi
       containers:
         - name: microservices
-          image: ghcr.io/immich-app/immich-server:v2.7.5
+          image: ghcr.io/immich-app/immich-server:v3.0.2
           command: ["immich"]
           args: ["microservices"]
           envFrom:

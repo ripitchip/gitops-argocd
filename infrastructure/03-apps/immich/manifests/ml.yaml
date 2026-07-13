@@ -39,7 +39,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: ml
-          image: ghcr.io/immich-app/immich-machine-learning:release-openvino
+          image: ghcr.io/immich-app/immich-machine-learning:v3.0.2-openvino
           envFrom:
             - configMapRef: { name: immich-config }
           env:
