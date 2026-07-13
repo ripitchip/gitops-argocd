@@ -23,4 +23,3 @@ resources:
   - subwave-entrypoint.yaml
   - subwave-ingress.yaml
   - subwave-policy.yaml
-  - ollama.yaml

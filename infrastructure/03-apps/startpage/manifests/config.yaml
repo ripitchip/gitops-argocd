@@ -126,9 +126,9 @@ data:
               <span class="icon">N</span>
               <span><strong>Ntfy</strong><small>Notifications</small></span>
             </a>
-            <a class="tile" href="https://ollama.foobarbaz.fr">
+            <a class="tile" href="https://ai.foobarbaz.fr">
               <span class="icon">O</span>
-              <span><strong>Ollama</strong><small>IA locale</small></span>
+              <span><strong>Open WebUI</strong><small>IA locale</small></span>
             </a>
             <a class="tile" href="https://deemix.foobarbaz.fr">
               <span class="icon">D</span>

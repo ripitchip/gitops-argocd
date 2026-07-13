@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ai-ollama-models-pv
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/ai-ollama-models"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-models-pvc
+  namespace: ai
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  storageClassName: truenas-nfs
+  volumeName: ai-ollama-models-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ai-open-webui-data-pv
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/ai-open-webui-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: open-webui-data-pvc
+  namespace: ai
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  storageClassName: truenas-nfs
+  volumeName: ai-open-webui-data-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
