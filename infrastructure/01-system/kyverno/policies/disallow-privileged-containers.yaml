@@ -26,6 +26,7 @@ spec:
                 - kube-system
                 - falco
                 - cilium-system
+                - metallb-system
       skipBackgroundRequests: true
       validate:
         allowExistingViolations: true
