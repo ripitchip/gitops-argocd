@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: ollama
-          image: ollama/ollama:0.5.7
+          image: ollama/ollama:0.31.2
           env:
             - name: OLLAMA_MODELS
               value: "/models"
