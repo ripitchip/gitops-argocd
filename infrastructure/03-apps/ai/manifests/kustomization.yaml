@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
+  - external-secrets.yaml
   - baseline-network-policy.yaml
   - storage.yaml
   - ollama.yaml
