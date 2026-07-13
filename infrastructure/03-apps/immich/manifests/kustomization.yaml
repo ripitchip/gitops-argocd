@@ -6,6 +6,7 @@ resources:
   - external-secrets.yaml
   - config.yaml
   - baseline-network-policy.yaml
+  - policy.yaml
   - database.yaml
   - redis.yaml
   - server.yaml

@@ -1,0 +1,173 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-server-policy
+  namespace: immich
+spec:
+  endpointSelector:
+    matchLabels:
+      app: immich-server
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+      toPorts:
+        - ports:
+            - port: "2283"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            "k8s:app": immich-postgres
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            "k8s:app": immich-redis
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            "k8s:app": immich-machine-learning
+      toPorts:
+        - ports:
+            - port: "3003"
+              protocol: TCP
+    - toEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-postgres-policy
+  namespace: immich
+spec:
+  endpointSelector:
+    matchLabels:
+      app: immich-postgres
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            "k8s:app": immich-server
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-redis-policy
+  namespace: immich
+spec:
+  endpointSelector:
+    matchLabels:
+      app: immich-redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            "k8s:app": immich-server
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-machine-learning-policy
+  namespace: immich
+spec:
+  endpointSelector:
+    matchLabels:
+      app: immich-machine-learning
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            "k8s:app": immich-server
+      toPorts:
+        - ports:
+            - port: "3003"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
