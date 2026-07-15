@@ -35,6 +35,8 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": memos
         - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": n8n
+        - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": radicale
