@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: bentopdf
+  name: n8n
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "10"
@@ -10,13 +10,14 @@ spec:
   source:
     repoURL: "https://github.com/ripitchip/gitops-argocd.git"
     targetRevision: HEAD
-    path: infrastructure/03-apps/pdf/manifests
+    path: infrastructure/03-apps/n8n/manifests
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: pdf
+    namespace: n8n
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
