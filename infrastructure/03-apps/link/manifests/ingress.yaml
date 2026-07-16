@@ -7,7 +7,6 @@ metadata:
     argocd.argoproj.io/sync-wave: "-10"
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: karakeep-public-chain@kubernetescrd
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: traefik
