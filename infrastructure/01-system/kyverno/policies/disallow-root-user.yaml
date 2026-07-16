@@ -37,6 +37,10 @@ spec:
               selector:
                 matchLabels:
                   acme.cert-manager.io/http01-solver: "true"
+          - resources:
+              selector:
+                matchLabels:
+                  app: karakeep
       skipBackgroundRequests: true
       validate:
         allowExistingViolations: true
