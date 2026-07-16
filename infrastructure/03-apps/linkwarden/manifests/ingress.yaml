@@ -1,18 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: linkwarden-ingress
+  name: karakeep-ingress
   namespace: linkwarden
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: linkwarden-public-chain@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: karakeep-public-chain@kubernetescrd
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: traefik
   tls:
     - hosts: [link.foobarbaz.fr]
-      secretName: linkwarden-tls
+      secretName: karakeep-tls
   rules:
     - host: link.foobarbaz.fr
       http:
@@ -21,6 +21,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: linkwarden
+                name: karakeep
                 port:
                   number: 80

@@ -1,105 +1,72 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkwarden
+  name: karakeep
   namespace: linkwarden
   labels:
-    app: linkwarden
+    app: karakeep
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkwarden
+      app: karakeep
   template:
     metadata:
       labels:
-        app: linkwarden
+        app: karakeep
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 19447
-        runAsGroup: 19447
-        fsGroup: 19447
-        seccompProfile:
-          type: RuntimeDefault
-      initContainers:
-        - name: fix-permissions
-          image: ghcr.io/linkwarden/linkwarden:v2.14.1
-          command: ["sh", "-c", "chown -R 19447:19447 /data/data && mkdir -p /tmp/ms-playwright && (cp -rp /root/.cache/ms-playwright/. /tmp/ms-playwright/ || cp -rp /home/node/.cache/ms-playwright/. /tmp/ms-playwright/ || true) && chown -R 19447:19447 /tmp/ms-playwright"]
-          securityContext:
-            runAsUser: 0
-            runAsNonRoot: false
-            allowPrivilegeEscalation: true
-            capabilities:
-              add: ["CHOWN", "FOWNER"]
-              drop: ["ALL"]
-          volumeMounts:
-            - name: data
-              mountPath: /data/data
-            - name: tmp
-              mountPath: /tmp
-          resources:
-            limits:
-              cpu: 100m
-              memory: 256Mi
-            requests:
-              cpu: 10m
-              memory: 64Mi
       containers:
-        - name: linkwarden
-          image: ghcr.io/linkwarden/linkwarden:v2.14.1
+        - name: karakeep
+          image: ghcr.io/karakeep-app/karakeep:0.32.0
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
             runAsNonRoot: true
-            runAsUser: 19447
           env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: linkwarden-secrets
-                  key: DATABASE_URL
             - name: NEXTAUTH_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: linkwarden-secrets
+                  name: karakeep-secrets
                   key: NEXTAUTH_SECRET
             - name: NEXTAUTH_URL
-              value: "https://link.foobarbaz.fr/api/v1/auth"
-            - name: COREPACK_HOME
-              value: "/tmp/corepack"
-            - name: PLAYWRIGHT_BROWSERS_PATH
-              value: "/tmp/ms-playwright"
-            - name: NEXT_PUBLIC_KEYCLOAK_ENABLED
-              value: "true"
-            - name: KEYCLOAK_ISSUER
-              value: "https://auth.foobarbaz.fr/realms/foobarbaz"
-            - name: KEYCLOAK_CLIENT_ID
-              value: "linkwarden"
-            - name: KEYCLOAK_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: linkwarden-secrets
-                  key: KEYCLOAK_CLIENT_SECRET
-            - name: MEILI_HOST
-              value: "http://linkwarden-meilisearch:7700"
+              value: "https://link.foobarbaz.fr"
+            - name: DATA_DIR
+              value: "/data"
+            - name: MEILI_ADDR
+              value: "http://karakeep-meilisearch:7700"
             - name: MEILI_MASTER_KEY
               valueFrom:
                 secretKeyRef:
-                  name: linkwarden-secrets
+                  name: karakeep-secrets
                   key: MEILI_MASTER_KEY
+            - name: OAUTH_WELLKNOWN_URL
+              value: "https://auth.foobarbaz.fr/realms/foobarbaz/.well-known/openid-configuration"
+            - name: OAUTH_CLIENT_ID
+              value: "linkwarden"
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: karakeep-secrets
+                  key: OAUTH_CLIENT_SECRET
+            - name: OAUTH_PROVIDER_NAME
+              value: "Keycloak"
+            - name: OAUTH_SCOPE
+              value: "openid email profile"
+            - name: OAUTH_AUTO_REDIRECT
+              value: "true"
+            - name: DISABLE_PASSWORD_AUTH
+              value: "true"
+            - name: LOG_LEVEL
+              value: "notice"
+            - name: BROWSER_WEB_URL
+              value: "http://karakeep-chrome:9222"
           ports:
             - containerPort: 3000
               name: http
-
           volumeMounts:
             - name: data
-              mountPath: /data/data
-            - name: tmp
-              mountPath: /tmp
-            - name: next-cache
-              mountPath: /data/apps/web/.next/cache
+              mountPath: /data
           resources:
             limits:
               cpu: 1000m
@@ -110,8 +77,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: linkwarden-data-pvc
-        - name: tmp
-          emptyDir: {}
-        - name: next-cache
-          emptyDir: {}
+            claimName: karakeep-data-pvc

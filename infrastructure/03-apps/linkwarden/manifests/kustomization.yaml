@@ -3,8 +3,8 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - app.yaml
-  - database.yaml
   - service.yaml
+  - chrome.yaml
   - ingress.yaml
   - external-secrets.yaml
   - storage.yaml
@@ -12,4 +12,3 @@ resources:
   - baseline-network-policy.yaml
   - edge-middlewares.yaml
   - meilisearch.yaml
-

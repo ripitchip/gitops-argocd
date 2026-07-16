@@ -1,12 +1,12 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: linkwarden-policy
+  name: karakeep-policy
   namespace: linkwarden
 spec:
   endpointSelector:
     matchLabels:
-      app: linkwarden
+      app: karakeep
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -34,18 +34,18 @@ spec:
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": linkwarden
-            "app": linkwarden-postgres
+            "app": karakeep-meilisearch
       toPorts:
         - ports:
-            - port: "5432"
+            - port: "7700"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": linkwarden
-            "app": linkwarden-meilisearch
+            "app": karakeep-chrome
       toPorts:
         - ports:
-            - port: "7700"
+            - port: "9222"
               protocol: TCP
     - toEntities:
         - world
@@ -60,20 +60,20 @@ spec:
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: linkwarden-postgres-policy
+  name: karakeep-meilisearch-policy
   namespace: linkwarden
 spec:
   endpointSelector:
     matchLabels:
-      app: linkwarden-postgres
+      app: karakeep-meilisearch
   ingress:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": linkwarden
-            "app": linkwarden
+            "app": karakeep
       toPorts:
         - ports:
-            - port: "5432"
+            - port: "7700"
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
@@ -82,22 +82,21 @@ spec:
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: linkwarden-meilisearch-policy
+  name: karakeep-chrome-policy
   namespace: linkwarden
 spec:
   endpointSelector:
     matchLabels:
-      app: linkwarden-meilisearch
+      app: karakeep-chrome
   ingress:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": linkwarden
-            "app": linkwarden
+            "app": karakeep
       toPorts:
         - ports:
-            - port: "7700"
+            - port: "9222"
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
-
