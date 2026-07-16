@@ -34,6 +34,8 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
+            runAsUser: 25376
+            runAsGroup: 25376
             runAsNonRoot: true
           resources:
             limits:
