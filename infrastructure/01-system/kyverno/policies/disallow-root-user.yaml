@@ -32,7 +32,7 @@ spec:
                 - tempo
                 - crowdsec
                 - metallb-system
-                - linkwarden
+                - karakeep
           - resources:
               selector:
                 matchLabels:

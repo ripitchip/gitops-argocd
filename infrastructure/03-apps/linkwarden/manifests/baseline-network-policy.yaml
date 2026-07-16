@@ -2,7 +2,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: baseline-default-deny
-  namespace: linkwarden
+  namespace: karakeep
 spec:
   endpointSelector: {}
   ingress: []
@@ -12,7 +12,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: baseline-allow-dns
-  namespace: linkwarden
+  namespace: karakeep
 spec:
   endpointSelector: {}
   egress:

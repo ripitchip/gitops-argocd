@@ -13,7 +13,7 @@ spec:
     path: infrastructure/03-apps/linkwarden/manifests
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: linkwarden
+    namespace: karakeep
   syncPolicy:
     automated:
       prune: true

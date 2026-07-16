@@ -2,7 +2,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: karakeep-policy
-  namespace: linkwarden
+  namespace: karakeep
 spec:
   endpointSelector:
     matchLabels:
@@ -33,7 +33,7 @@ spec:
               - matchPattern: "*"
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": linkwarden
+            "k8s:io.kubernetes.pod.namespace": karakeep
             "app": karakeep-meilisearch
       toPorts:
         - ports:
@@ -41,7 +41,7 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": linkwarden
+            "k8s:io.kubernetes.pod.namespace": karakeep
             "app": karakeep-chrome
       toPorts:
         - ports:
@@ -61,7 +61,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: karakeep-meilisearch-policy
-  namespace: linkwarden
+  namespace: karakeep
 spec:
   endpointSelector:
     matchLabels:
@@ -69,7 +69,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": linkwarden
+            "k8s:io.kubernetes.pod.namespace": karakeep
             "app": karakeep
       toPorts:
         - ports:
@@ -83,7 +83,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: karakeep-chrome-policy
-  namespace: linkwarden
+  namespace: karakeep
 spec:
   endpointSelector:
     matchLabels:
@@ -91,7 +91,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": linkwarden
+            "k8s:io.kubernetes.pod.namespace": karakeep
             "app": karakeep
       toPorts:
         - ports:
