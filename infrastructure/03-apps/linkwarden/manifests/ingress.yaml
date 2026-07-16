@@ -4,6 +4,7 @@ metadata:
   name: karakeep-ingress
   namespace: karakeep
   annotations:
+    argocd.argoproj.io/sync-wave: "-10"
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.middlewares: karakeep-public-chain@kubernetescrd
