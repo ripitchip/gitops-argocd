@@ -15,6 +15,27 @@ spec:
       labels:
         app: karakeep
     spec:
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "chown -R 25917:25917 /data"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
+            capabilities:
+              add: ["CHOWN", "FOWNER"]
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
       containers:
         - name: karakeep
           image: ghcr.io/karakeep-app/karakeep:0.32.0
@@ -22,6 +43,8 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
+            runAsUser: 25917
+            runAsGroup: 25917
             runAsNonRoot: true
           env:
             - name: NEXTAUTH_SECRET
