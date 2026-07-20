@@ -52,7 +52,7 @@ spec:
             - name: ND_MUSICFOLDER
               value: "/music"
             - name: ND_LOGLEVEL
-              value: "debug"
+              value: "info"
             - name: ND_EXTAUTH_TRUSTEDSOURCES
               value: "0.0.0.0/0"
             - name: ND_EXTAUTH_USERHEADER
@@ -80,8 +80,8 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: "500m"
+              memory: "512Mi"
             limits:
               cpu: "2000m"
               memory: "2048Mi"
