@@ -22,7 +22,7 @@ spec:
         fsGroup: 26335
         seccompProfile:
           type: RuntimeDefault
-      containers:
+      initContainers:
         - name: git-clone
           image: alpine/git:2.49.1
           command:
@@ -34,8 +34,38 @@ spec:
               git clone --depth=1 --branch main https://github.com/selfhst/icons.git /work/repository
               echo "[2/3] Removing Git metadata..."
               rm -rf /work/repository/.git
-              echo "[3/3] Copying icons to persistent storage..."
-              cp -a /work/repository/. /data/
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 52444
+            runAsGroup: 26335
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: work
+              mountPath: /work
+      containers:
+        - name: rsync
+          image: instrumentisto/rsync-ssh:alpine3.23-r3
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              echo "[3/3] Synchronizing icons to persistent storage..."
+              rsync -rlt \
+                --checksum \
+                --info=progress2,stats2 \
+                --exclude='.git/' \
+                /work/repository/ /data/
               echo "Icon synchronization completed successfully."
           securityContext:
             runAsNonRoot: true
