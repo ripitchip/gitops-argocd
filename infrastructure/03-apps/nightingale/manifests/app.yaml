@@ -34,7 +34,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: nightingale
-          image: ghcr.io/rzru/nightingale:0.9.0
+          image: razzaru/nightingale:0.9.0
           env:
             - name: NIGHTINGALE_BIND
               value: "0.0.0.0:8080"
