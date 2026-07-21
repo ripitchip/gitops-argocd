@@ -78,7 +78,7 @@ spec:
               memory: 1Gi
             limits:
               cpu: "4"
-              memory: 8Gi
+              memory: 16Gi
           volumeMounts:
             - name: data
               mountPath: /data
