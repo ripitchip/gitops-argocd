@@ -5,6 +5,7 @@ metadata:
   namespace: icons
   annotations:
     argocd.argoproj.io/sync-wave: "-4"
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
 spec:
   backoffLimit: 3
   ttlSecondsAfterFinished: 86400
