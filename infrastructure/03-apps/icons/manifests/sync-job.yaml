@@ -60,12 +60,13 @@ spec:
             - -c
             - |
               set -eu
+              set -o pipefail
               echo "[3/3] Synchronizing icons to persistent storage..."
               rsync -rlt \
                 --checksum \
                 --info=progress2,stats2 \
                 --exclude='.git/' \
-                /work/repository/ /data/
+                /work/repository/ /data/ 2>&1 | tr '\r' '\n'
               echo "Icon synchronization completed successfully."
           securityContext:
             runAsNonRoot: true
