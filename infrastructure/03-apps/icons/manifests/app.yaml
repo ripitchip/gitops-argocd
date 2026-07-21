@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: icons
+  namespace: icons
+spec:
+  selector:
+    app: icons
+  ports:
+    - name: http
+      port: 80
+      targetPort: 4050
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icons
+  namespace: icons
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icons
+  template:
+    metadata:
+      labels:
+        app: icons
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: icons
+          image: ghcr.io/selfhst/icons:4.0.3
+          ports:
+            - name: http
+              containerPort: 4050
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          readinessProbe:
+            exec:
+              command: ["/server", "-healthcheck"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["/server", "-healthcheck"]
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 20m
+              memory: 64Mi

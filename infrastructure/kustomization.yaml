@@ -18,6 +18,7 @@ resources:
   - 03-apps/jellyseerr-app-definition.yaml
   - 03-apps/radicale-app-definition.yaml
   - 03-apps/startpage-app-definition.yaml
+  - 03-apps/icons-app-definition.yaml
   - 03-apps/navidrome/navidrome-app-definition.yaml
   - 03-apps/ai/ai-app-definition.yaml
   - 03-apps/immich
