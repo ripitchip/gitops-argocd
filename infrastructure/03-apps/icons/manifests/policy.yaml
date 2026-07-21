@@ -25,6 +25,8 @@ kind: CiliumNetworkPolicy
 metadata:
   name: icons-sync-egress
   namespace: icons
+  annotations:
+    argocd.argoproj.io/sync-wave: "-6"
 spec:
   endpointSelector:
     matchLabels:

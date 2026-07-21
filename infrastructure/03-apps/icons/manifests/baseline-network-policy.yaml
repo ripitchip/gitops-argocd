@@ -3,6 +3,8 @@ kind: CiliumNetworkPolicy
 metadata:
   name: baseline-default-deny
   namespace: icons
+  annotations:
+    argocd.argoproj.io/sync-wave: "-7"
 spec:
   endpointSelector: {}
   ingress: []
@@ -13,6 +15,8 @@ kind: CiliumNetworkPolicy
 metadata:
   name: baseline-allow-dns
   namespace: icons
+  annotations:
+    argocd.argoproj.io/sync-wave: "-7"
 spec:
   endpointSelector: {}
   egress:
