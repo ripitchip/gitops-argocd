@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nightingale-python-constraints
+  namespace: nightingale
+data:
+  constraints.txt: |
+    # audio-separator 0.44.2 allows any onnx-weekly version. The 2026-07-20
+    # CPython 3.10 Linux wheel is invalid because it has no .dist-info folder.
+    onnx-weekly==1.23.0.dev20260713

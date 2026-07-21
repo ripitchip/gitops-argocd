@@ -45,6 +45,12 @@ spec:
               value: /data
             - name: NIGHTINGALE_LIBRARY_PATH
               value: /songs
+            - name: UV_CONSTRAINT
+              value: /etc/nightingale-python/constraints.txt
+            - name: UV_CACHE_DIR
+              value: /tmp/uv-cache
+            - name: UV_LINK_MODE
+              value: copy
           ports:
             - name: http
               containerPort: 8080
@@ -79,6 +85,9 @@ spec:
             - name: music
               mountPath: /songs
               readOnly: true
+            - name: python-constraints
+              mountPath: /etc/nightingale-python
+              readOnly: true
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -86,3 +95,6 @@ spec:
         - name: music
           persistentVolumeClaim:
             claimName: nightingale-music-pvc
+        - name: python-constraints
+          configMap:
+            name: nightingale-python-constraints

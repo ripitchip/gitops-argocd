@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - storage.yaml
+  - python-constraints.yaml
   - app.yaml
   - ingress.yaml
   - baseline-network-policy.yaml
