@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: icons-sync
+  namespace: icons
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: icons-sync
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 52444
+        runAsGroup: 26335
+        fsGroup: 26335
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: git-clone
+          image: alpine/git:2.49.1
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              git clone --depth=1 --branch main https://github.com/selfhst/icons.git /work/repository
+              rm -rf /work/repository/.git
+              cp -a /work/repository/. /data/
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 52444
+            runAsGroup: 26335
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: icons-data
+              mountPath: /data
+            - name: work
+              mountPath: /work
+      volumes:
+        - name: icons-data
+          persistentVolumeClaim:
+            claimName: icons-data-pvc
+        - name: work
+          emptyDir: {}

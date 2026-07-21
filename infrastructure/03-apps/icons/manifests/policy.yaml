@@ -19,3 +19,20 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: icons-sync-egress
+  namespace: icons
+spec:
+  endpointSelector:
+    matchLabels:
+      app: icons-sync
+  egress:
+    - toFQDNs:
+        - matchName: "github.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

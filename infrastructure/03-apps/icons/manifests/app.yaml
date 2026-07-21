@@ -35,6 +35,9 @@ spec:
       containers:
         - name: icons
           image: ghcr.io/selfhst/icons:4.0.3
+          env:
+            - name: ICON_SOURCE
+              value: local
           ports:
             - name: http
               containerPort: 4050
@@ -62,3 +65,11 @@ spec:
             requests:
               cpu: 20m
               memory: 64Mi
+          volumeMounts:
+            - name: icons-data
+              mountPath: /app/icons
+              readOnly: true
+      volumes:
+        - name: icons-data
+          persistentVolumeClaim:
+            claimName: icons-data-pvc
