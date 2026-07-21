@@ -5,7 +5,6 @@ resources:
   - namespace.yaml
   - external-secrets.yaml
   - baseline-network-policy.yaml
-  - oauth2-proxy.yaml
   - deemix-storage.yaml
   - deemix-external-secrets.yaml
   - deemix.yaml
@@ -14,9 +13,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-  - ingress-web.yaml
   - middlewares.yaml
-  - redirect-service.yaml
   - policy.yaml
   - subwave-storage.yaml
   - subwave.yaml

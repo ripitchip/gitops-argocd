@@ -10,13 +10,6 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            app: navidrome-oauth2-proxy
-      toPorts:
-        - ports:
-            - port: "4533"
-              protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
             "k8s:app.kubernetes.io/name": traefik
             "k8s:io.kubernetes.pod.namespace": traefik
       toPorts:
@@ -52,52 +45,6 @@ spec:
             - port: "443"
               protocol: TCP
             - port: "80"
-              protocol: TCP
----
-apiVersion: "cilium.io/v2"
-kind: CiliumNetworkPolicy
-metadata:
-  name: navidrome-oauth2-proxy-isolation
-  namespace: navidrome
-spec:
-  endpointSelector:
-    matchLabels:
-      app: navidrome-oauth2-proxy
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:app.kubernetes.io/name": traefik
-            "k8s:io.kubernetes.pod.namespace": traefik
-      toPorts:
-        - ports:
-            - port: "4180"
-              protocol: TCP
-  egress:
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: ANY
-          rules:
-            dns:
-              - matchPattern: "*"
-    - toEndpoints:
-        - matchLabels:
-            app: navidrome
-      toPorts:
-        - ports:
-            - port: "4533"
-              protocol: TCP
-            - port: "80"
-              protocol: TCP
-    - toEntities:
-        - world
-      toPorts:
-        - ports:
-            - port: "443"
               protocol: TCP
 ---
 apiVersion: "cilium.io/v2"

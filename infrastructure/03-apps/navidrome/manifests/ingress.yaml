@@ -17,17 +17,7 @@ spec:
     - host: music.foobarbaz.fr
       http:
         paths:
-          # Mobile et partage en direct
-          - path: /rest
+          - path: /
             pathType: Prefix
             backend:
               service: { name: navidrome, port: { number: 80 } }
-          - path: /share
-            pathType: Prefix
-            backend:
-              service: { name: navidrome, port: { number: 80 } }
-          # Point d'entrée pour oauth2-proxy (Start, Callback, etc.)
-          - path: /oauth2
-            pathType: Prefix
-            backend:
-              service: { name: navidrome-oauth2-proxy, port: { number: 80 } }
