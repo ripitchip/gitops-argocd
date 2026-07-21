@@ -28,11 +28,9 @@ spec:
         - ports:
             - port: "4533"
               protocol: TCP
-    - toEntities:
-        - world
+    - toFQDNs:
+        - matchName: "johnvansickle.com"
       toPorts:
         - ports:
             - port: "443"
-              protocol: TCP
-            - port: "80"
               protocol: TCP
