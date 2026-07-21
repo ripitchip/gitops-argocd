@@ -28,7 +28,12 @@ spec:
       initContainers:
         - name: fix-permissions
           image: busybox:1.36
-          command: ["sh", "-c", "chown -R 13010:13010 /cloudreve/uploads /cloudreve/data"]
+          command:
+            [
+              "sh",
+              "-c",
+              "chown -R 13010:13010 /cloudreve/uploads /cloudreve/data",
+            ]
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
@@ -51,50 +56,50 @@ spec:
               cpu: 10m
               memory: 64Mi
       containers:
-      - name: cloudreve
-        image: cloudreve.azurecr.io/cloudreve/pro:4.17.0
-        ports:
-        - containerPort: 5212
-        env:
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: cloudreve-secrets
-              key: DB_PASSWORD
-        - name: CR_LICENSE_KEY
-          valueFrom:
-            secretKeyRef:
-              name: cloudreve-secrets
-              key: CR_LICENSE_KEY
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities: { drop: ["ALL"] }
-          runAsNonRoot: true
-          runAsUser: 13010
-        resources:
-          limits:
-            cpu: 500m
-            memory: 512Mi
-          requests:
-            cpu: 100m
-            memory: 256Mi
-        volumeMounts:
-        - name: cloudreve-data
-          mountPath: /cloudreve/uploads
-          subPath: uploads
-        - name: cloudreve-data
-          mountPath: /cloudreve/data
-          subPath: data
-        - name: cloudreve-config
-          mountPath: /cloudreve/data/conf.ini
-          subPath: conf.ini
+        - name: cloudreve
+          image: cloudreve.azurecr.io/cloudreve/pro:4.18.0
+          ports:
+            - containerPort: 5212
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudreve-secrets
+                  key: DB_PASSWORD
+            - name: CR_LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudreve-secrets
+                  key: CR_LICENSE_KEY
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            runAsNonRoot: true
+            runAsUser: 13010
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: cloudreve-data
+              mountPath: /cloudreve/uploads
+              subPath: uploads
+            - name: cloudreve-data
+              mountPath: /cloudreve/data
+              subPath: data
+            - name: cloudreve-config
+              mountPath: /cloudreve/data/conf.ini
+              subPath: conf.ini
       volumes:
-      - name: cloudreve-data
-        persistentVolumeClaim:
-          claimName: cloudreve-data-pvc
-      - name: cloudreve-config
-        secret:
-          secretName: cloudreve-secrets
+        - name: cloudreve-data
+          persistentVolumeClaim:
+            claimName: cloudreve-data-pvc
+        - name: cloudreve-config
+          secret:
+            secretName: cloudreve-secrets
 ---
 apiVersion: v1
 kind: Service
@@ -105,5 +110,5 @@ spec:
   selector:
     app: cloudreve
   ports:
-  - port: 5212
-    targetPort: 5212
+    - port: 5212
+      targetPort: 5212
