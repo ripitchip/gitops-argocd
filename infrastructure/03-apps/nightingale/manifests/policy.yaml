@@ -30,6 +30,13 @@ spec:
               protocol: TCP
     - toFQDNs:
         - matchName: "johnvansickle.com"
+        - matchName: "github.com"
+        - matchName: "api.github.com"
+        - matchName: "release-assets.githubusercontent.com"
+        - matchName: "objects.githubusercontent.com"
+        - matchName: "pypi.org"
+        - matchName: "files.pythonhosted.org"
+        - matchName: "download.pytorch.org"
       toPorts:
         - ports:
             - port: "443"
