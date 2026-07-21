@@ -51,6 +51,17 @@ spec:
               value: /tmp/uv-cache
             - name: UV_LINK_MODE
               value: copy
+            # Nightingale's audio separation and Whisper pipelines are heavily
+            # CPU-bound when CUDA is unavailable. Keep the native libraries on
+            # the same concurrency budget as the container CPU limit.
+            - name: OMP_NUM_THREADS
+              value: "12"
+            - name: MKL_NUM_THREADS
+              value: "12"
+            - name: OPENBLAS_NUM_THREADS
+              value: "12"
+            - name: RAYON_NUM_THREADS
+              value: "12"
           ports:
             - name: http
               containerPort: 8080
@@ -74,11 +85,11 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: 500m
-              memory: 1Gi
-            limits:
               cpu: "4"
-              memory: 16Gi
+              memory: 8Gi
+            limits:
+              cpu: "12"
+              memory: 24Gi
           volumeMounts:
             - name: data
               mountPath: /data
