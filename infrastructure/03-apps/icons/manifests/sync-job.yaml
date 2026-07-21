@@ -29,9 +29,13 @@ spec:
             - -c
             - |
               set -eu
+              echo "[1/3] Cloning icons repository..."
               git clone --depth=1 --branch main https://github.com/selfhst/icons.git /work/repository
+              echo "[2/3] Removing Git metadata..."
               rm -rf /work/repository/.git
+              echo "[3/3] Copying icons to persistent storage..."
               cp -a /work/repository/. /data/
+              echo "Icon synchronization completed successfully."
           securityContext:
             runAsNonRoot: true
             runAsUser: 52444
