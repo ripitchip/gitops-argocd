@@ -6,7 +6,9 @@ metadata:
   labels:
     app: ollama
 spec:
-  replicas: 1
+  # Temporarily stopped while Nightingale performs its initial GPU-accelerated
+  # library analysis. Set back to 1 when the batch is complete.
+  replicas: 0
   selector:
     matchLabels:
       app: ollama
