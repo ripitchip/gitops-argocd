@@ -39,7 +39,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: nightingale
-          image: razzaru/nightingale:0.9.0
+          image: razzaru/nightingale:0.9.0-cuda
           env:
             - name: NIGHTINGALE_BIND
               value: "0.0.0.0:8080"
