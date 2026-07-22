@@ -4,7 +4,7 @@ metadata:
   name: subwave-state-pv
   annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
-  capacity: { storage: 10Gi }
+  capacity: { storage: 20Gi }
   accessModes: [ReadWriteOnce]
   persistentVolumeReclaimPolicy: Retain
   storageClassName: truenas-nfs
@@ -22,5 +22,5 @@ metadata:
 spec:
   storageClassName: truenas-nfs
   accessModes: [ReadWriteOnce]
-  resources: { requests: { storage: 10Gi } }
+  resources: { requests: { storage: 20Gi } }
   volumeName: subwave-state-pv

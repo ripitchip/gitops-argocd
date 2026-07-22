@@ -4,7 +4,7 @@ metadata:
   name: deemix-config-pv
   annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
-  capacity: { storage: 1Gi }
+  capacity: { storage: 5Gi }
   accessModes: [ReadWriteOnce]
   persistentVolumeReclaimPolicy: Retain
   storageClassName: truenas-nfs
@@ -22,5 +22,5 @@ metadata:
 spec:
   storageClassName: truenas-nfs
   accessModes: [ReadWriteOnce]
-  resources: { requests: { storage: 1Gi } }
+  resources: { requests: { storage: 5Gi } }
   volumeName: deemix-config-pv

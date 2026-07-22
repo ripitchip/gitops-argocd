@@ -4,7 +4,7 @@ metadata:
   name: navidrome-data-pv
   annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
-  capacity: { storage: 1Gi }
+  capacity: { storage: 10Gi }
   accessModes: [ReadWriteOnce]
   persistentVolumeReclaimPolicy: Retain
   storageClassName: truenas-nfs
@@ -22,7 +22,7 @@ metadata:
 spec:
   storageClassName: truenas-nfs
   accessModes: [ReadWriteOnce]
-  resources: { requests: { storage: 1Gi } }
+  resources: { requests: { storage: 10Gi } }
   volumeName: navidrome-data-pv
 ---
 apiVersion: v1
@@ -31,7 +31,7 @@ metadata:
   name: navidrome-music-pv
   annotations: { argocd.argoproj.io/sync-wave: "-5" }
 spec:
-  capacity: { storage: 100Gi }
+  capacity: { storage: 1Ti }
   accessModes: [ReadWriteMany]
   persistentVolumeReclaimPolicy: Retain
   storageClassName: truenas-nfs
@@ -49,5 +49,5 @@ metadata:
 spec:
   storageClassName: truenas-nfs
   accessModes: [ReadWriteMany]
-  resources: { requests: { storage: 100Gi } }
+  resources: { requests: { storage: 1Ti } }
   volumeName: navidrome-music-pv
