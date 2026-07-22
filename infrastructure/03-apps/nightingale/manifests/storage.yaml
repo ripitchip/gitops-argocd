@@ -4,7 +4,7 @@ metadata:
   name: nightingale-data-pv
 spec:
   capacity:
-    storage: 50Gi
+    storage: 300Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -27,7 +27,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 50Gi
+      storage: 300Gi
   volumeName: nightingale-data-pv
 ---
 apiVersion: v1
