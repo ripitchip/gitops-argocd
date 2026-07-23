@@ -44,7 +44,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - { name: TZ, value: Europe/Paris }
-            - { name: FABRIC_PROXY_SECRET_FILE, value: /run/secrets/forwarding.secret }
+            - { name: FABRIC_PROXY_SECRET_FILE, value: /crafty/forwarding.secret }
           ports:
             - { name: https, containerPort: 8443, protocol: TCP }
             - { name: famille, containerPort: 25566, protocol: TCP }
@@ -84,7 +84,7 @@ spec:
             - { name: crafty-data, mountPath: /crafty/logs, subPath: logs }
             - { name: crafty-data, mountPath: /crafty/servers, subPath: servers }
             - { name: minecraft-data, mountPath: /crafty/import/current-server, readOnly: true }
-            - { name: forwarding-secret, mountPath: /run/secrets, readOnly: true }
+            - { name: forwarding-secret, mountPath: /crafty/forwarding.secret, subPath: forwarding.secret, readOnly: true }
       volumes:
         - name: crafty-data
           persistentVolumeClaim: { claimName: crafty-data }
