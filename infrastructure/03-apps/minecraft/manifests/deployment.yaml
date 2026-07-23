@@ -87,10 +87,10 @@ spec:
           resources:
             requests:
               cpu: "1"
-              memory: 4Gi
+              memory: 6Gi
             limits:
               cpu: "4"
-              memory: 6Gi
+              memory: 8Gi
           volumeMounts:
             - name: crafty-data
               mountPath: /crafty/backups
