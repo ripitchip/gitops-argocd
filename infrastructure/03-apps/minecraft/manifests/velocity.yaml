@@ -47,7 +47,7 @@ spec:
         seccompProfile: { type: RuntimeDefault }
       containers:
         - name: velocity
-          image: itzg/mc-proxy:java21
+          image: itzg/mc-proxy:java25
           imagePullPolicy: Always
           env:
             - { name: TYPE, value: VELOCITY }
