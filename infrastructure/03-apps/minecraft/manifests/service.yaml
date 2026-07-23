@@ -8,13 +8,20 @@ metadata:
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
-  selector:
-    app: minecraft
+  selector: { app: velocity }
   ports:
-    - name: minecraft
-      port: 25565
-      targetPort: minecraft
-      protocol: TCP
+    - { name: minecraft, port: 25565, targetPort: minecraft, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crafty-servers
+  namespace: minecraft
+spec:
+  selector: { app: minecraft }
+  ports:
+    - { name: famille, port: 25566, targetPort: famille, protocol: TCP }
+    - { name: world, port: 25567, targetPort: world, protocol: TCP }
 ---
 apiVersion: v1
 kind: Service
@@ -24,11 +31,6 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/service.serverstransport: minecraft-crafty-transport@kubernetescrd
 spec:
-  type: ClusterIP
-  selector:
-    app: minecraft
+  selector: { app: minecraft }
   ports:
-    - name: https
-      port: 8443
-      targetPort: https
-      protocol: TCP
+    - { name: https, port: 8443, targetPort: https, protocol: TCP }

@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: velocity-config
+  namespace: minecraft
+data:
+  velocity.toml: |
+    config-version = "2.7"
+    bind = "0.0.0.0:25565"
+    motd = "<gold>Serveurs Minecraft</gold>"
+    show-max-players = 20
+    online-mode = true
+    force-key-authentication = true
+    player-info-forwarding-mode = "modern"
+    forwarding-secret-file = "forwarding.secret"
+
+    [servers]
+    famille = "crafty-servers.minecraft.svc.cluster.local:25566"
+    world = "crafty-servers.minecraft.svc.cluster.local:25567"
+    try = ["famille"]
+
+    [forced-hosts]
+    "famille.minecraft.foobarbaz.fr" = ["famille"]
+    "world.minecraft.foobarbaz.fr" = ["world"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: velocity
+  namespace: minecraft
+  labels:
+    app: velocity
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector:
+    matchLabels: { app: velocity }
+  template:
+    metadata:
+      labels: { app: velocity }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: velocity
+          image: itzg/mc-proxy:java21
+          imagePullPolicy: Always
+          env:
+            - { name: TYPE, value: VELOCITY }
+            - { name: MEMORY, value: 512m }
+            - { name: SKIP_PRIVILEGE_DROP, value: "true" }
+          ports:
+            - { name: minecraft, containerPort: 25565, protocol: TCP }
+          startupProbe:
+            tcpSocket: { port: minecraft }
+            failureThreshold: 30
+            periodSeconds: 5
+          readinessProbe:
+            tcpSocket: { port: minecraft }
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: minecraft }
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities: { drop: [ALL] }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: "1", memory: 768Mi }
+          volumeMounts:
+            - { name: config, mountPath: /config/velocity.toml, subPath: velocity.toml }
+            - { name: forwarding-secret, mountPath: /server/forwarding.secret, subPath: forwarding.secret, readOnly: true }
+            - { name: data, mountPath: /server }
+      volumes:
+        - name: config
+          configMap: { name: velocity-config }
+        - name: forwarding-secret
+          secret: { secretName: velocity-forwarding }
+        - name: data
+          emptyDir: {}

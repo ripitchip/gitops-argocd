@@ -15,23 +15,20 @@ metadata:
   namespace: minecraft
 spec:
   endpointSelector:
-    matchLabels:
-      app: minecraft
+    matchLabels: { app: minecraft }
   ingress:
-    - fromEntities:
-        - world
-        - cluster
+    - fromEndpoints:
+        - matchLabels: { app: velocity }
       toPorts:
         - ports:
-            - port: "25565"
-              protocol: TCP
+            - { port: "25566", protocol: TCP }
+            - { port: "25567", protocol: TCP }
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
       toPorts:
         - ports:
-            - port: "8443"
-              protocol: TCP
+            - { port: "8443", protocol: TCP }
   egress:
     - toEndpoints:
         - matchLabels:
@@ -39,16 +36,46 @@ spec:
             "k8s:k8s-app": kube-dns
       toPorts:
         - ports:
-            - port: "53"
-              protocol: ANY
+            - { port: "53", protocol: ANY }
           rules:
-            dns:
-              - matchPattern: "*"
-    - toEntities:
-        - world
+            dns: [{ matchPattern: "*" }]
+    - toEntities: [world]
       toPorts:
         - ports:
-            - port: "80"
-              protocol: TCP
-            - port: "443"
-              protocol: TCP
+            - { port: "80", protocol: TCP }
+            - { port: "443", protocol: TCP }
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: velocity-access
+  namespace: minecraft
+spec:
+  endpointSelector:
+    matchLabels: { app: velocity }
+  ingress:
+    - fromEntities: [world, cluster]
+      toPorts:
+        - ports:
+            - { port: "25565", protocol: TCP }
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - { port: "53", protocol: ANY }
+          rules:
+            dns: [{ matchPattern: "*" }]
+    - toEndpoints:
+        - matchLabels: { app: minecraft }
+      toPorts:
+        - ports:
+            - { port: "25566", protocol: TCP }
+            - { port: "25567", protocol: TCP }
+    - toEntities: [world]
+      toPorts:
+        - ports:
+            - { port: "80", protocol: TCP }
+            - { port: "443", protocol: TCP }

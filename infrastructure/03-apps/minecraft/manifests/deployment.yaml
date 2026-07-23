@@ -29,37 +29,28 @@ spec:
       initContainers:
         - name: prepare-storage
           image: busybox:1.37.0
-          command:
-            - sh
-            - -ec
-            - mkdir -p /data/backups /data/config /data/import /data/logs /data/servers
+          command: [sh, -ec, "mkdir -p /data/backups /data/config /data/import /data/logs /data/servers"]
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 0
             allowPrivilegeEscalation: false
-            capabilities:
-              drop: [ALL]
+            capabilities: { drop: [ALL] }
           volumeMounts:
-            - name: crafty-data
-              mountPath: /data
+            - { name: crafty-data, mountPath: /data }
       containers:
         - name: crafty
           image: registry.gitlab.com/crafty-controller/crafty-4:4.10.7
           imagePullPolicy: IfNotPresent
           env:
-            - name: TZ
-              value: Europe/Paris
+            - { name: TZ, value: Europe/Paris }
+            - { name: FABRIC_PROXY_SECRET_FILE, value: /run/secrets/forwarding.secret }
           ports:
-            - name: https
-              containerPort: 8443
-              protocol: TCP
-            - name: minecraft
-              containerPort: 25565
-              protocol: TCP
+            - { name: https, containerPort: 8443, protocol: TCP }
+            - { name: famille, containerPort: 25566, protocol: TCP }
+            - { name: world, containerPort: 25567, protocol: TCP }
           startupProbe:
-            tcpSocket:
-              port: https
+            tcpSocket: { port: https }
             failureThreshold: 60
             periodSeconds: 5
           readinessProbe:
@@ -82,38 +73,22 @@ spec:
             runAsUser: 1000
             runAsGroup: 0
             allowPrivilegeEscalation: false
-            capabilities:
-              drop: [ALL]
+            capabilities: { drop: [ALL] }
           resources:
-            requests:
-              cpu: "1"
-              memory: 6Gi
-            limits:
-              cpu: "4"
-              memory: 8Gi
+            requests: { cpu: "1", memory: 6Gi }
+            limits: { cpu: "4", memory: 8Gi }
           volumeMounts:
-            - name: crafty-data
-              mountPath: /crafty/backups
-              subPath: backups
-            - name: crafty-data
-              mountPath: /crafty/app/config
-              subPath: config
-            - name: crafty-data
-              mountPath: /crafty/import
-              subPath: import
-            - name: crafty-data
-              mountPath: /crafty/logs
-              subPath: logs
-            - name: crafty-data
-              mountPath: /crafty/servers
-              subPath: servers
-            - name: minecraft-data
-              mountPath: /crafty/import/current-server
-              readOnly: true
+            - { name: crafty-data, mountPath: /crafty/backups, subPath: backups }
+            - { name: crafty-data, mountPath: /crafty/app/config, subPath: config }
+            - { name: crafty-data, mountPath: /crafty/import, subPath: import }
+            - { name: crafty-data, mountPath: /crafty/logs, subPath: logs }
+            - { name: crafty-data, mountPath: /crafty/servers, subPath: servers }
+            - { name: minecraft-data, mountPath: /crafty/import/current-server, readOnly: true }
+            - { name: forwarding-secret, mountPath: /run/secrets, readOnly: true }
       volumes:
         - name: crafty-data
-          persistentVolumeClaim:
-            claimName: crafty-data
+          persistentVolumeClaim: { claimName: crafty-data }
         - name: minecraft-data
-          persistentVolumeClaim:
-            claimName: minecraft-data
+          persistentVolumeClaim: { claimName: minecraft-data }
+        - name: forwarding-secret
+          secret: { secretName: velocity-forwarding }

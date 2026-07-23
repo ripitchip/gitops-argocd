@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - storage.yaml
   - deployment.yaml
+  - velocity.yaml
   - service.yaml
   - policy.yaml
   - edge-middlewares.yaml
