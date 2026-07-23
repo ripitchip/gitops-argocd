@@ -21,12 +21,14 @@ kind: Service
 metadata:
   name: crafty
   namespace: minecraft
+  annotations:
+    traefik.ingress.kubernetes.io/service.serverstransport: minecraft-crafty-transport@kubernetescrd
 spec:
   type: ClusterIP
   selector:
     app: minecraft
   ports:
-    - name: http
-      port: 8000
-      targetPort: http
+    - name: https
+      port: 8443
+      targetPort: https
       protocol: TCP

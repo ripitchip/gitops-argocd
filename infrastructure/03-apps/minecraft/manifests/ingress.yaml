@@ -23,4 +23,12 @@ spec:
               service:
                 name: crafty
                 port:
-                  number: 8000
+                  number: 8443
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: crafty-transport
+  namespace: minecraft
+spec:
+  insecureSkipVerify: true
