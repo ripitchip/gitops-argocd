@@ -15,3 +15,18 @@ spec:
       port: 25565
       targetPort: minecraft
       protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crafty
+  namespace: minecraft
+spec:
+  type: ClusterIP
+  selector:
+    app: minecraft
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+      protocol: TCP

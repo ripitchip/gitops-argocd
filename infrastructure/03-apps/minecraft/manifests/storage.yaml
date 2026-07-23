@@ -29,3 +29,35 @@ spec:
     requests:
       storage: 50Gi
   volumeName: minecraft-data-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: crafty-data-pv
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/crafty-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: crafty-data
+  namespace: minecraft
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: truenas-nfs
+  resources:
+    requests:
+      storage: 50Gi
+  volumeName: crafty-data-pv

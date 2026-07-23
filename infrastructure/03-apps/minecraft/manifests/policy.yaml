@@ -11,7 +11,7 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: minecraft-access
+  name: crafty-access
   namespace: minecraft
 spec:
   endpointSelector:
@@ -24,6 +24,13 @@ spec:
       toPorts:
         - ports:
             - port: "25565"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+      toPorts:
+        - ports:
+            - port: "8000"
               protocol: TCP
   egress:
     - toEndpoints:
