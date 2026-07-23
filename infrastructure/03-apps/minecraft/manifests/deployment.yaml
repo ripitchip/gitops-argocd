@@ -44,7 +44,6 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - { name: TZ, value: Europe/Paris }
-            - { name: FABRIC_PROXY_SECRET_FILE, value: /crafty/forwarding.secret }
           ports:
             - { name: https, containerPort: 8443, protocol: TCP }
             - { name: famille, containerPort: 25566, protocol: TCP }
