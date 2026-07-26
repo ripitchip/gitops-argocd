@@ -91,7 +91,10 @@ jobs:
           set -euo pipefail
           grep -RhoE 'image:[[:space:]]*"?ghcr.io/ripitchip/[^"[:space:]]+' infrastructure \
             | sed -E 's/^image:[[:space:]]*"?//' \
+            | awk '$0 != "ghcr.io/ripitchip/blog:0.1.0"' \
             | sort -u > /tmp/owned-images.txt
+
+          echo "Skipping legacy unsigned image ghcr.io/ripitchip/blog:0.1.0"
 
           if [ ! -s /tmp/owned-images.txt ]; then
             echo "No owned GHCR images found."
