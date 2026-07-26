@@ -7,14 +7,13 @@ scanners:
   - vuln
   - secret
   - misconfig
-vulnerability:
-  type:
+pkg:
+  types:
     - os
     - library
 misconfiguration:
   scanners:
     - kubernetes
     - dockerfile
-    - secret
 secret:
   config: trivy-secret.yaml

@@ -69,7 +69,7 @@ jobs:
               --exit-code 1 \
               --ignore-unfixed \
               --severity CRITICAL \
-              --vuln-type os,library \
+              --pkg-types os,library \
               --ignorefile .trivyignore \
               "${image}"
             echo "::endgroup::"
