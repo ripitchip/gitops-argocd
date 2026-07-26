@@ -111,7 +111,7 @@ spec:
               }
       containers:
         - name: openldap
-          image: bitnamilegacy/openldap:2.6.10
+          image: jtgasper3/bitnami-openldap:2.6.13
           securityContext:
             runAsUser: 3951
             runAsGroup: 3951

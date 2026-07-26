@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: chrome
-          image: gcr.io/zenika-hub/alpine-chrome:124
+          image: zenika/alpine-chrome:124
           args:
             - --no-sandbox
             - --disable-gpu
