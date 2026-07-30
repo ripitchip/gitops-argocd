@@ -91,6 +91,7 @@ spec:
             - |
               cat << 'EOF' > /tmp/fetch_lyrics.py
               import os
+              import json
               import sqlite3
               import urllib.request
               import urllib.parse
@@ -103,6 +104,11 @@ spec:
               NAVIDROME_DB = os.getenv("NAVIDROME_DB", "/data/navidrome.db")
               NAVIDROME_URL = os.getenv("NAVIDROME_URL", "http://localhost:4533")
               MUSIC_DIR = os.getenv("ND_MUSICFOLDER", "/music")
+              STATE_FILE = os.getenv("LYRICS_STATE_FILE", "/data/lyrics-fetcher-state.json")
+              BATCH_SIZE = int(os.getenv("LYRICS_BATCH_SIZE", "50"))
+              REQUEST_DELAY = float(os.getenv("LYRICS_REQUEST_DELAY_SECONDS", "3"))
+              REQUEST_TIMEOUT = float(os.getenv("LYRICS_REQUEST_TIMEOUT_SECONDS", "20"))
+              RETRY_AFTER = int(os.getenv("LYRICS_RETRY_AFTER_SECONDS", "604800"))
               USERNAME = os.getenv("SUBSONIC_USER")
               PASSWORD = os.getenv("SUBSONIC_PASS")
 
@@ -116,20 +122,46 @@ spec:
                   token = hashlib.md5(token_input.encode('utf-8')).hexdigest()
                   return f"u={username}&t={token}&s={salt}&v=1.16.1&c=lyrics-fetcher"
 
+              def load_state():
+                  try:
+                      with open(STATE_FILE, encoding="utf-8") as state_file:
+                          state = json.load(state_file)
+                          return state if isinstance(state, dict) else {}
+                  except (FileNotFoundError, json.JSONDecodeError, OSError) as e:
+                      print(f"Etat absent ou illisible ({e}); demarrage avec un etat vide.")
+                      return {}
+
+              def save_state(state):
+                  temporary_file = STATE_FILE + ".tmp"
+                  try:
+                      with open(temporary_file, "w", encoding="utf-8") as state_file:
+                          json.dump(state, state_file, separators=(",", ":"))
+                      os.replace(temporary_file, STATE_FILE)
+                  except OSError as e:
+                      print(f"Impossible d'enregistrer l'etat : {e}", file=sys.stderr)
+
+              def wait_for_navidrome(auth_query):
+                  print("Attente du demarrage de Navidrome...")
+                  for _ in range(60):
+                      try:
+                          with urllib.request.urlopen(
+                              f"{NAVIDROME_URL}/rest/ping.view?{auth_query}", timeout=2
+                          ):
+                              print("Navidrome est pret !")
+                              return True
+                      except Exception:
+                          time.sleep(1)
+                  print("Navidrome n'est pas disponible; passage reporte.", file=sys.stderr)
+                  return False
+
               def check_and_fetch():
                   if not os.path.exists(NAVIDROME_DB):
                       print(f"Erreur : La base de donnees {NAVIDROME_DB} est introuvable.", file=sys.stderr)
                       return
 
                   auth_query = get_auth_params(USERNAME, PASSWORD)
-                  print("Attente du demarrage de Navidrome...")
-                  for _ in range(60):
-                      try:
-                          urllib.request.urlopen(f"{NAVIDROME_URL}/rest/ping.view?{auth_query}", timeout=2)
-                          print("Navidrome est pret !")
-                          break
-                      except Exception:
-                          time.sleep(1)
+                  if not wait_for_navidrome(auth_query):
+                      return
 
                   conn = sqlite3.connect(f'file:{NAVIDROME_DB}?mode=ro', uri=True)
                   cursor = conn.cursor()
@@ -142,8 +174,10 @@ spec:
                       conn.close()
                       return
 
-                  print(f"Analyse de {len(tracks)} morceaux...")
-                  requests_sent = 0
+                  conn.close()
+                  state = load_state()
+                  now = int(time.time())
+                  candidates = []
 
                   for path, artist, title in tracks:
                       if not path or not artist or not title:
@@ -151,29 +185,48 @@ spec:
 
                       full_path = os.path.join(MUSIC_DIR, path)
                       base_path, _ = os.path.splitext(full_path)
-                      lrc_path = base_path + ".lrc"
-                      txt_path = base_path + ".txt"
+                      if os.path.exists(base_path + ".lrc") or os.path.exists(base_path + ".txt"):
+                          state.pop(path, None)
+                          continue
 
-                      if not os.path.exists(lrc_path) and not os.path.exists(txt_path):
-                          print(f"-> Paroles manquantes : {artist} - {title}")
-                          params = {'artist': artist, 'title': title}
-                          encoded_params = urllib.parse.urlencode(params)
-                          url = f"{NAVIDROME_URL}/rest/getLyrics.view?{auth_query}&{encoded_params}"
+                      last_attempt = int(state.get(path, 0))
+                      if now - last_attempt >= RETRY_AFTER:
+                          candidates.append((last_attempt, path, artist, title))
 
-                          try:
-                              urllib.request.urlopen(url)
+                  candidates.sort(key=lambda track: (track[0], track[1]))
+                  batch = candidates[:BATCH_SIZE]
+                  print(
+                      f"Analyse de {len(tracks)} morceaux : "
+                      f"{len(candidates)} eligibles, lot de {len(batch)}."
+                  )
+                  requests_sent = 0
+
+                  for index, (_, path, artist, title) in enumerate(batch):
+                      print(f"-> Paroles manquantes : {artist} - {title}")
+                      params = {'artist': artist, 'title': title}
+                      encoded_params = urllib.parse.urlencode(params)
+                      url = f"{NAVIDROME_URL}/rest/getLyrics.view?{auth_query}&{encoded_params}"
+
+                      try:
+                          with urllib.request.urlopen(url, timeout=REQUEST_TIMEOUT):
                               requests_sent += 1
-                          except Exception as e:
-                              print(f"  Erreur lors de l'appel pour '{title}': {e}", file=sys.stderr)
+                      except Exception as e:
+                          print(f"  Erreur lors de l'appel pour '{title}': {e}", file=sys.stderr)
+                      finally:
+                          state[path] = int(time.time())
+                          save_state(state)
+
+                      if index + 1 < len(batch):
+                          time.sleep(REQUEST_DELAY)
 
                   print(f"Termine. {requests_sent} requetes de paroles envoyees.")
-                  conn.close()
 
               if __name__ == "__main__":
                   check_and_fetch()
               EOF
 
               # Exécute le script toutes les heures (3600 secondes)
+              sleep "${LYRICS_INITIAL_DELAY_SECONDS:-120}"
               while true; do
                 python3 /tmp/fetch_lyrics.py
                 sleep 3600
@@ -181,6 +234,16 @@ spec:
           env:
             - name: PYTHONUNBUFFERED
               value: "1"
+            - name: LYRICS_INITIAL_DELAY_SECONDS
+              value: "120"
+            - name: LYRICS_BATCH_SIZE
+              value: "50"
+            - name: LYRICS_REQUEST_DELAY_SECONDS
+              value: "3"
+            - name: LYRICS_REQUEST_TIMEOUT_SECONDS
+              value: "20"
+            - name: LYRICS_RETRY_AFTER_SECONDS
+              value: "604800"
             - name: SUBSONIC_USER
               valueFrom:
                 secretKeyRef:
