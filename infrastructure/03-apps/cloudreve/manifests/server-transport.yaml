@@ -1,0 +1,13 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: upload-transport
+  namespace: cloudreve
+spec:
+  # NFS can take a while to finalize a chunk after Traefik has sent the body.
+  # Keep this higher than the previous ~60s failure/retry window.
+  forwardingTimeouts:
+    dialTimeout: 30s
+    responseHeaderTimeout: 10m
+    idleConnTimeout: 10m
+  maxIdleConnsPerHost: 20

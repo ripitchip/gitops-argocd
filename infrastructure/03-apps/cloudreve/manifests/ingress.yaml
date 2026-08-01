@@ -29,6 +29,35 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: cloudreve-upload
+  namespace: cloudreve
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.priority: "200"
+    traefik.ingress.kubernetes.io/router.middlewares: cloudreve-upload-chain@kubernetescrd
+    traefik.ingress.kubernetes.io/service.serverstransport: cloudreve-upload-transport@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: drive.foobarbaz.fr
+    http:
+      paths:
+      - path: /api/v4/file/upload
+        pathType: Prefix
+        backend:
+          service:
+            name: cloudreve
+            port:
+              number: 5212
+  tls:
+  - hosts:
+    - drive.foobarbaz.fr
+    secretName: cloudreve-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
   name: cloudreve-webdav
   namespace: cloudreve
   annotations:

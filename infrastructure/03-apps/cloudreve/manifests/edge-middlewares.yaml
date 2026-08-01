@@ -36,6 +36,14 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
+metadata: { name: upload-chain, namespace: cloudreve }
+spec:
+  chain:
+    middlewares:
+      - name: security-headers
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
 metadata: { name: webdav-chain, namespace: cloudreve }
 spec:
   chain:

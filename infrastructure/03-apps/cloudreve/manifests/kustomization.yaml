@@ -10,3 +10,4 @@ resources:
   - app.yaml
   - ingress.yaml
   - edge-middlewares.yaml
+  - server-transport.yaml
