@@ -60,7 +60,7 @@ spec:
               memory: 64Mi
       containers:
         - name: server
-          image: ghcr.io/immich-app/immich-server:v3.0.2
+          image: ghcr.io/immich-app/immich-server:v3.1.0
           envFrom:
             - configMapRef: { name: immich-config }
           env:

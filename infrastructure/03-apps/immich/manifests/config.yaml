@@ -5,7 +5,7 @@ metadata:
   namespace: immich
 data:
   # Core
-  IMMICH_VERSION: v3.0.2
+  IMMICH_VERSION: v3.1.0
   NODE_ENV: production
   TZ: Europe/Paris
   
