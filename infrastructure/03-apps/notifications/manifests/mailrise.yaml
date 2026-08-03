@@ -71,6 +71,6 @@ spec:
       volumes:
         - name: mailrise-config-secret
           secret:
-            name: mailrise-config
+            secretName: mailrise-config
         - name: tmp
           emptyDir: {}
