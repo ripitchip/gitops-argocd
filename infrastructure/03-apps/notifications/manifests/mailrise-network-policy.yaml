@@ -1,7 +1,7 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: mailrise-to-ntfy
+  name: mailrise-to-gotify
   namespace: notifications
 spec:
   endpointSelector:
@@ -21,7 +21,7 @@ spec:
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": notifications
-            "k8s:app": ntfy
+            "k8s:app": gotify
       toPorts:
         - ports:
             - port: "80"

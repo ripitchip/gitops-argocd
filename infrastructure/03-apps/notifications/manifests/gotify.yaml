@@ -1,0 +1,141 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gotify-data-pv
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/data/k8s-cluster/pvc-volumes/notifications-gotify-data
+    server: 10.0.60.10
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gotify-data
+  namespace: notifications
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  volumeName: gotify-data-pv
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gotify
+  namespace: notifications
+spec:
+  selector:
+    app: gotify
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gotify
+  namespace: notifications
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: gotify
+  template:
+    metadata:
+      labels:
+        app: gotify
+    spec:
+      securityContext:
+        runAsUser: 11454
+        runAsGroup: 11454
+        fsGroup: 11454
+        runAsNonRoot: true
+      initContainers:
+        - name: init-data
+          image: busybox:1.36
+          command: ["sh", "-c", "chown -R 11454:11454 /app/data && chmod -R 775 /app/data"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      containers:
+        - name: gotify
+          image: gotify/server:2.7.3
+          env:
+            - name: GOTIFY_SERVER_PORT
+              value: "80"
+            - name: GOTIFY_SERVER_SECURECOOKIE
+              value: "true"
+            - name: GOTIFY_REGISTRATION
+              value: "false"
+            - name: GOTIFY_OIDC_ENABLED
+              value: "true"
+            - name: GOTIFY_OIDC_ISSUER
+              value: "https://auth.foobarbaz.fr/realms/foobarbaz"
+            - name: GOTIFY_OIDC_CLIENTID
+              valueFrom:
+                secretKeyRef:
+                  name: gotify-secrets
+                  key: oidc-client-id
+            - name: GOTIFY_OIDC_CLIENTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gotify-secrets
+                  key: oidc-client-secret
+            - name: GOTIFY_OIDC_REDIRECTURL
+              value: "https://ntfy.foobarbaz.fr/auth/oidc/callback"
+            - name: GOTIFY_OIDC_AUTOREGISTER
+              value: "true"
+            - name: GOTIFY_OIDC_USERNAMECLAIM
+              value: preferred_username
+            - name: GOTIFY_OIDC_SCOPES
+              value: "openid,profile,email"
+            - name: GOTIFY_DEFAULTUSER_NAME
+              value: admin
+            - name: GOTIFY_DEFAULTUSER_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: gotify-secrets
+                  key: admin-password
+          securityContext:
+            runAsUser: 11454
+            runAsGroup: 11454
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: gotify-data

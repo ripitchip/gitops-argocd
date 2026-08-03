@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ntfy-protected
+  name: gotify
   namespace: notifications
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
@@ -21,40 +21,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: ntfy-oauth2-proxy
-                port:
-                  number: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: ntfy-public
-  namespace: notifications
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.priority: "100"
-spec:
-  ingressClassName: traefik
-  tls:
-    - hosts:
-        - ntfy.foobarbaz.fr
-      secretName: ntfy-tls
-  rules:
-    - host: ntfy.foobarbaz.fr
-      http:
-        paths:
-          - path: /v1
-            pathType: Prefix
-            backend:
-              service:
-                name: ntfy
-                port:
-                  number: 80
-          - path: /alertes-cluster
-            pathType: Prefix
-            backend:
-              service:
-                name: ntfy
+                name: gotify
                 port:
                   number: 80

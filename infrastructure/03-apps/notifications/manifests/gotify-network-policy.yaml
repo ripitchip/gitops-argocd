@@ -1,20 +1,19 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: ntfy-oauth2-proxy-security
+  name: gotify-security
   namespace: notifications
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: oauth2-proxy
-      app.kubernetes.io/instance: ntfy-oauth2-proxy
+      app: gotify
   ingress:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
       toPorts:
         - ports:
-            - port: "4180"
+            - port: "80"
               protocol: TCP
   egress:
     - toEndpoints:
@@ -28,15 +27,6 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    - toEndpoints:
-        - matchLabels:
-            app: ntfy
-      toPorts:
-        - ports:
-            - port: "80"
-              protocol: TCP
-            - port: "8080"
-              protocol: TCP
     - toEntities:
         - world
       toPorts:

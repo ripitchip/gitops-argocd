@@ -3,11 +3,10 @@ kind: Kustomization
 namespace: notifications
 resources:
   - namespace.yaml
-  - ntfy.yaml
+  - gotify.yaml
+  - gotify-external-secrets.yaml
   - mailrise.yaml
   - mailrise-network-policy.yaml
+  - gotify-network-policy.yaml
   - ingress.yaml
   - baseline-network-policy.yaml
-  - oauth2-proxy/external-secrets.yaml
-  - oauth2-proxy/policy.yaml
-  - oauth2-proxy/app.yaml
