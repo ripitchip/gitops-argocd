@@ -70,7 +70,7 @@ spec:
               mountPath: /tmp
       volumes:
         - name: config
-          configMap:
+          secret:
             name: mailrise-config
         - name: tmp
           emptyDir: {}

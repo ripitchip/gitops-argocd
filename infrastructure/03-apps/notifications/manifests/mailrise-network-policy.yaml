@@ -11,6 +11,8 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": mimir
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": grafana
       toPorts:
         - ports:
             - port: "25"
