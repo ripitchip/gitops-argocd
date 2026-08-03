@@ -62,14 +62,14 @@ spec:
               cpu: 200m
               memory: 256Mi
           volumeMounts:
-            - name: config
+            - name: mailrise-config-secret
               mountPath: /etc/mailrise.conf
               subPath: mailrise.conf
               readOnly: true
             - name: tmp
               mountPath: /tmp
       volumes:
-        - name: config
+        - name: mailrise-config-secret
           secret:
             name: mailrise-config
         - name: tmp
