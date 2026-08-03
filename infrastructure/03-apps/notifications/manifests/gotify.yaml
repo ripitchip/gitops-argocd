@@ -77,7 +77,7 @@ spec:
               mountPath: /app/data
       containers:
         - name: gotify
-          image: gotify/server:2.7.3
+          image: gotify/server:3.0.0
           env:
             - name: GOTIFY_SERVER_PORT
               value: "8080"
