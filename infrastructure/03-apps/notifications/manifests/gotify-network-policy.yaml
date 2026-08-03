@@ -11,6 +11,9 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": notifications
+            "k8s:app": mailrise
       toPorts:
         - ports:
             - port: "8080"
