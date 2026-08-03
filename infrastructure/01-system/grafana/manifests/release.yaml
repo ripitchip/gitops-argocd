@@ -20,6 +20,12 @@ spec:
         grafana.ini:
           server:
             root_url: https://grafana.foobarbaz.fr
+          smtp:
+            enabled: true
+            host: mailrise.notifications.svc.cluster.local:25
+            from_address: grafana@foobarbaz.fr
+            from_name: Grafana
+            startTLS_policy: NoStartTLS
           auth.generic_oauth:
             enabled: true
             name: Keycloak
@@ -63,6 +69,30 @@ spec:
                 url: http://tempo.tempo.svc.cluster.local:3100
                 access: proxy
                 uid: tempo
+
+        alerting:
+          contactpoints.yaml:
+            apiVersion: 1
+            contactPoints:
+              - orgId: 1
+                name: gotify
+                receivers:
+                  - uid: gotify-mailrise
+                    type: email
+                    settings:
+                      addresses: grafana-alerts@mailrise.xyz
+                      singleEmail: true
+          policies.yaml:
+            apiVersion: 1
+            policies:
+              - orgId: 1
+                receiver: gotify
+                group_by:
+                  - alertname
+                  - grafana_folder
+                group_wait: 30s
+                group_interval: 5m
+                repeat_interval: 4h
 
         resources:
           requests:

@@ -77,6 +77,13 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": notifications
+      toPorts:
+        - ports:
+            - port: "25"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
       toPorts:
         - ports:
