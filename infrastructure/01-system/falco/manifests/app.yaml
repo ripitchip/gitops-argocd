@@ -39,6 +39,9 @@ spec:
           - { effect: NoSchedule, key: node-role.kubernetes.io/control-plane }
         falcosidekick:
           enabled: true
+          config:
+            loki:
+              host: "http://loki-gateway.loki.svc.cluster.local"
           podSecurityContext:
             runAsNonRoot: true
             runAsUser: 5639
