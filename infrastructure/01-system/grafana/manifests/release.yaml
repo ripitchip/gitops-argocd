@@ -85,7 +85,7 @@ spec:
         dashboards:
           default:
             falcosidekick:
-              gnetId: 11914
+              gnetId: 17319
               revision: 1
               datasource: Loki
 
