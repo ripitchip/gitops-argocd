@@ -121,10 +121,20 @@ spec:
               condition: spawned_process and container and (k8s.ns.name in (vault, auth, pass, pdf, falco, argocd, external-secrets, cert-manager)) and proc.name in (shell_procs)
               output: "Interactive shell spawned (user=%user.name pod=%k8s.pod.name ns=%k8s.ns.name cmd=%proc.cmdline)"
               priority: NOTICE
-            - rule: Package Management Activity in Pod
-              desc: Detects package manager execution inside a container
-              condition: spawned_process and proc.name in (package_mgmt_binaries) and container.id != "host" and k8s.pod.name != "<NA>"
-              output: "CRITICAL: Package manager execution in POD (user=%user.name pod=%k8s.pod.name cmd=%proc.cmdline)"
+            - rule: Package Installation Activity in Pod
+              desc: Detects actual package installation or upgrade inside a container, excluding harmless architecture checks
+              condition: spawned_process and proc.name in (package_mgmt_binaries) and container.id != "host" and k8s.pod.name != "<NA>" and (proc.cmdline contains " install" or proc.cmdline contains " update" or proc.cmdline contains " upgrade" or proc.cmdline contains " -i " or proc.cmdline contains " add ")
+              output: "CRITICAL: Package installation or upgrade in POD (user=%user.name pod=%k8s.pod.name cmd=%proc.cmdline)"
+              priority: CRITICAL
+            - rule: Sensitive Authentication File Modified in Container
+              desc: Detects writes to local authentication and privilege files from inside a container
+              condition: open_write and container and fd.name in (/etc/passwd, /etc/shadow, /etc/group, /etc/sudoers, /root/.ssh/authorized_keys) and not proc.name in (passwd, useradd, groupadd, chpasswd)
+              output: "CRITICAL: Sensitive authentication file modified in container (user=%user.name pod=%k8s.pod.name file=%fd.name proc=%proc.cmdline)"
+              priority: CRITICAL
+            - rule: Container Access to Docker Socket
+              desc: Detects a container reading or writing the Docker socket, which can enable host-level control
+              condition: (open_read or open_write) and container and fd.name=/var/run/docker.sock
+              output: "CRITICAL: Container accessed Docker socket (user=%user.name pod=%k8s.pod.name proc=%proc.cmdline)"
               priority: CRITICAL
   destination:
     server: "https://kubernetes.default.svc"
