@@ -24,7 +24,7 @@ data:
         name: falco-gotify
         template: |
           {{ define "falco.gotify.subject" -}}
-          {{- if .Alerts.Firing -}}🚨 FALCO CRITICAL — {{ len .Alerts.Firing }} alerte(s){{- else -}}✅ FALCO RÉSOLU — {{ len .Alerts.Resolved }} alerte(s){{- end -}}
+          {{- if .Alerts.Firing -}}🚨 FALCO CRITICAL — {{ len .Alerts.Firing }} | {{ range .Alerts.Firing }}{{ .Labels.alertname }} | {{ .Annotations.summary }} | {{ .Annotations.description }}{{ end }}{{- else -}}✅ FALCO RÉSOLU — {{ len .Alerts.Resolved }} | {{ range .Alerts.Resolved }}{{ .Labels.alertname }} | {{ .Annotations.summary }}{{ end }}{{- end -}}
           {{- end }}
 
           {{ define "falco.gotify.message" -}}
