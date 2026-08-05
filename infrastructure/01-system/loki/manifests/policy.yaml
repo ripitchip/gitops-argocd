@@ -31,6 +31,17 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": falco
+      toPorts:
+        - ports:
+            - port: "3100"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
             "k8s:io.kubernetes.pod.namespace": loki
 
   egress:
