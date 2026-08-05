@@ -156,7 +156,7 @@ data:
                 "type": "loki",
                 "uid": "Loki"
               },
-              "expr": "sum(count_over_time({from=\"falcosidekick\",priority=~\"$priority\"}[$__range]))",
+              "expr": "sum(count_over_time({priority=~\"$priority\"}[$__range]))",
               "hide": false,
               "queryType": "instant",
               "refId": "B"
@@ -223,7 +223,7 @@ data:
                 "type": "loki",
                 "uid": "Loki"
               },
-              "expr": "sum by (source) (count_over_time({from=\"falcosidekick\",priority=~\"$priority\"}[$__range]))",
+              "expr": "sum by (source) (count_over_time({priority=~\"$priority\"}[$__range]))",
               "hide": false,
               "legendFormat": "{{source}}",
               "queryType": "range",
@@ -291,7 +291,7 @@ data:
                 "type": "loki",
                 "uid": "Loki"
               },
-              "expr": "sum by (priority) (count_over_time({from=\"falcosidekick\",priority=~\"$priority\"}[$__range]))",
+              "expr": "sum by (priority) (count_over_time({priority=~\"$priority\"}[$__range]))",
               "hide": false,
               "legendFormat": "{{priority}}",
               "queryType": "range",
@@ -360,7 +360,7 @@ data:
                 "type": "loki",
                 "uid": "Loki"
               },
-              "expr": "sum by (rule) (count_over_time({from=\"falcosidekick\",priority=~\"$priority\"}[$__range]))",
+              "expr": "sum by (rule) (count_over_time({priority=~\"$priority\"}[$__range]))",
               "hide": false,
               "legendFormat": "{{rule}}",
               "queryType": "range",
@@ -461,7 +461,7 @@ data:
                 "type": "loki",
                 "uid": "Loki"
               },
-              "expr": "sum by (priority) (count_over_time({from=\"falcosidekick\",priority=~\"$priority\"}[1m]))",
+              "expr": "sum by (priority) (count_over_time({priority=~\"$priority\"}[1m]))",
               "legendFormat": "{{priority}}",
               "queryType": "range",
               "refId": "A",
@@ -550,7 +550,7 @@ data:
                 "uid": "Loki"
               },
               "editorMode": "code",
-              "expr": "topk($top, sum by (k8spodname) (count_over_time({from=\"falcosidekick\",priority=~\"$priority\",k8snsname=~\"$namespace\",k8spodname=~\"$pod\",k8spodname!=\"\"}[$__range])))",
+              "expr": "topk($top, sum by (k8s_pod_name,k8s_ns_name) (count_over_time({priority=~\"$priority\",k8s_pod_name!=\"\"}[$__range])))",
               "hide": true,
               "queryType": "instant",
               "refId": "A"
@@ -560,7 +560,7 @@ data:
                 "type": "loki",
                 "uid": "Loki"
               },
-              "expr": "topk($top, sum by (k8s_pod,k8s_ns)   (count_over_time({from=\"falcosidekick\",priority=~\"$priority\",priority!=\"Debug\"} | logfmt | __error__ = \"\" | container!=\"host\", container_name=\"\", k8s_pod!=\"<NA>\"[$__range])))",
+              "expr": "topk($top, sum by (k8s_pod_name,k8s_ns_name) (count_over_time({priority=~\"$priority\",priority!=\"Debug\",k8s_pod_name!=\"\"}[$__range])))",
               "hide": false,
               "legendFormat": "",
               "queryType": "instant",
@@ -578,13 +578,13 @@ data:
                 "indexByName": {
                   "Time": 0,
                   "Value #B": 3,
-                  "k8s_ns": 2,
-                  "k8s_pod": 1
+                  "k8s_ns_name": 2,
+                  "k8s_pod_name": 1
                 },
                 "renameByName": {
                   "Value #B": "Rule Violations",
-                  "k8s_ns": "Namespace",
-                  "k8s_pod": "Pod"
+                  "k8s_ns_name": "Namespace",
+                  "k8s_pod_name": "Pod"
                 }
               }
             }
@@ -666,7 +666,7 @@ data:
                 "uid": "Loki"
               },
               "editorMode": "code",
-              "expr": "topk($top, sum by (container_name,container_id) (count_over_time({from=\"falcosidekick\",priority=~\"$priority\",priority!=\"Debug\"} | logfmt | __error__ = \"\" | container!=\"host\", container_name!=\"\"[$__range])))",
+              "expr": "topk($top, sum by (k8s_pod_name,k8s_ns_name) (count_over_time({priority=~\"$priority\",priority!=\"Debug\",k8s_pod_name!=\"\"}[$__range])))",
               "hide": false,
               "legendFormat": "",
               "queryType": "instant",
@@ -684,15 +684,13 @@ data:
                 "indexByName": {
                   "Time": 0,
                   "Value #B": 3,
-                  "container_id": 2,
-                  "container_name": 1
+                  "k8s_ns_name": 2,
+                  "k8s_pod_name": 1
                 },
                 "renameByName": {
                   "Value #B": "Rule Violations",
-                  "container_id": "Container-ID",
-                  "container_name": "Container",
-                  "k8s_ns": "Namespace",
-                  "k8s_pod": "Pod"
+                  "k8s_ns_name": "Namespace",
+                  "k8s_pod_name": "Pod"
                 }
               }
             }
@@ -738,7 +736,7 @@ data:
                     "type": "loki",
                     "uid": "Loki"
                   },
-                  "expr": "{from=\"falcosidekick\",priority=~\"$priority\"} |~ \"(?i)$searchpattern\"\n| line_format `{{ if eq .priority \"Emergency\" }} ❌ {{ else if eq .priority \"Alert\" }} ❌ {{ else if eq .priority \"Critical\" }} ❌ {{ else if eq .priority \"Error\" }} ? {{ else if eq .priority \"Warning\" }} ? {{ else if eq .priority \"Notice\" }} ? {{ else if eq .priority \"Informational\" }} ? {{ else if eq .priority \"Debug\" }} ? {{__line__}} {{else}} ⚪ {{end}} {{__line__}}`",
+                  "expr": "{priority=~\"$priority\"} |~ \"(?i)$searchpattern\"\n| line_format `{{ if eq .priority \"Emergency\" }} ❌ {{ else if eq .priority \"Alert\" }} ❌ {{ else if eq .priority \"Critical\" }} ❌ {{ else if eq .priority \"Error\" }} ? {{ else if eq .priority \"Warning\" }} ? {{ else if eq .priority \"Notice\" }} ? {{ else if eq .priority \"Informational\" }} ? {{ else if eq .priority \"Debug\" }} ? {{__line__}} {{else}} ⚪ {{end}} {{__line__}}`",
                   "queryType": "range",
                   "refId": "A"
                 }
@@ -766,14 +764,14 @@ data:
               "type": "loki",
               "uid": "Loki"
             },
-            "definition": "label_values({from=\"falcosidekick\"},priority)",
+            "definition": "label_values(priority)",
             "hide": 0,
             "includeAll": true,
             "label": "Priority",
             "multi": true,
             "name": "priority",
             "options": [],
-            "query": "label_values({from=\"falcosidekick\"},priority)",
+            "query": "label_values(priority)",
             "refresh": 2,
             "regex": "",
             "skipUrlSync": false,
