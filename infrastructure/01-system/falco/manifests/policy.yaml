@@ -76,6 +76,7 @@ spec:
             - port: "443"
               protocol: TCP
     # 7. Loki Access
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": loki
+    - toServices:
+        - k8sService:
+            serviceName: loki-gateway
+            namespace: loki
