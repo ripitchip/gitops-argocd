@@ -98,6 +98,23 @@ spec:
                     settings:
                       addresses: grafana-alerts@mailrise.xyz
                       singleEmail: true
+                      subject: "🚨 CRITICAL Falco — {{ len .Alerts.Firing }} alerte(s)"
+                      message: |
+                        🚨 ALERTE CRITIQUE FALCO
+
+                        Une activité critique a été détectée dans le cluster Kubernetes.
+
+                        {{ range .Alerts.Firing }}
+                        Règle : {{ .Labels.alertname }}
+                        Sévérité : {{ .Labels.severity }}
+                        Source : {{ .Labels.source }}
+                        Résumé : {{ .Annotations.summary }}
+                        Détail : {{ .Annotations.description }}
+                        Début : {{ .StartsAt }}
+                        {{ end }}
+
+                        Action recommandée : ouvrir Grafana et vérifier l’événement Falco correspondant.
+                        Dashboard : https://grafana.foobarbaz.fr
           policies.yaml:
             apiVersion: 1
             policies:
