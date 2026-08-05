@@ -56,6 +56,7 @@ spec:
                   prometheusType: Mimir
               - name: Loki
                 type: loki
+                uid: Loki
                 url: http://loki-gateway.loki.svc.cluster.local
                 access: proxy
                 jsonData:
@@ -82,12 +83,8 @@ spec:
                 editable: true
                 options:
                   path: /var/lib/grafana/dashboards/default
-        dashboards:
-          default:
-            falcosidekick:
-              gnetId: 17319
-              revision: 1
-              datasource: Loki
+        dashboardsConfigMaps:
+          default: "falco-dashboard-configmap"
 
         alerting:
           contactpoints.yaml:
