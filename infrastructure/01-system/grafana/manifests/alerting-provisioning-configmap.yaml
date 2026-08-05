@@ -28,26 +28,7 @@ data:
           {{- end }}
 
           {{ define "falco.gotify.message" -}}
-          {{- if .Alerts.Firing -}}
-          🚨 FALCO CRITICAL
-
-          {{ range .Alerts.Firing -}}
-          Règle : {{ .Labels.alertname }}
-          Sévérité : {{ .Labels.severity }}
-          Résumé : {{ .Annotations.summary }}
-          Détail : {{ .Annotations.description }}
-          Début : {{ .StartsAt }}
-          {{ end -}}
-          Vérifier : https://grafana.foobarbaz.fr/alerting/list
-          {{- else -}}
-          ✅ FALCO RÉSOLU
-
-          {{ range .Alerts.Resolved -}}
-          Règle : {{ .Labels.alertname }}
-          Résumé : {{ .Annotations.summary }}
-          Résolue : {{ .EndsAt }}
-          {{ end -}}
-          {{- end }}
+          {{- if .Alerts.Firing -}}🚨 FALCO CRITICAL | {{ range .Alerts.Firing -}}Règle: {{ .Labels.alertname }} | Sévérité: {{ .Labels.severity }} | Résumé: {{ .Annotations.summary }} | Détail: {{ .Annotations.description }} | Début: {{ .StartsAt }}{{ end }} | Vérifier: https://grafana.foobarbaz.fr/alerting/list{{- else -}}✅ FALCO RÉSOLU | {{ range .Alerts.Resolved -}}Règle: {{ .Labels.alertname }} | Résumé: {{ .Annotations.summary }} | Résolue: {{ .EndsAt }}{{ end }}{{- end }}
           {{- end }}
   policies.yaml: |
     apiVersion: 1
