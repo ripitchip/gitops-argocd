@@ -5,6 +5,7 @@ resources:
   - baseline-network-policy.yaml
   - policy.yaml
   - release.yaml
+  - alerting-provisioning-configmap.yaml
   - falco-dashboard-configmap.yaml
   - ingress.yaml
   - edge-middlewares.yaml
