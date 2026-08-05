@@ -123,8 +123,8 @@ data:
               <span><strong>Falco</strong><small>Evenements securite</small></span>
             </a>
             <a class="tile" href="https://ntfy.foobarbaz.fr">
-              <span class="icon">N</span>
-              <span><strong>Ntfy</strong><small>Notifications</small></span>
+              <span class="icon">G</span>
+              <span><strong>Gotify</strong><small>Notifications</small></span>
             </a>
             <a class="tile" href="https://ai.foobarbaz.fr">
               <span class="icon">O</span>

@@ -41,7 +41,7 @@ spec:
           enabled: true
           config:
             loki:
-              host: "http://loki-gateway.loki.svc.cluster.local"
+              hostport: "http://loki-gateway.loki.svc.cluster.local"
           podSecurityContext:
             runAsNonRoot: true
             runAsUser: 5639
