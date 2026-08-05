@@ -75,3 +75,11 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
+    # 7. Loki Access
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": loki
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
