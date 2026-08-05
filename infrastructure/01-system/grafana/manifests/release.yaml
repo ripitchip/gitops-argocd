@@ -98,23 +98,44 @@ spec:
                     settings:
                       addresses: grafana-alerts@mailrise.xyz
                       singleEmail: true
-                      subject: "🚨 CRITICAL Falco — {{ len .Alerts.Firing }} alerte(s)"
-                      message: |
-                        🚨 ALERTE CRITIQUE FALCO
+                      subject: '{{ template "falco.gotify.subject" . }}'
+                      message: '{{ template "falco.gotify.message" . }}'
+          templates.yaml:
+            apiVersion: 1
+            templates:
+              - orgId: 1
+                name: falco-gotify
+                template: |
+                  {{ define "falco.gotify.subject" -}}
+                  {{- if .Alerts.Firing -}}🚨 CRITICAL Falco — {{ len .Alerts.Firing }} alerte(s){{- else -}}✅ Falco — {{ len .Alerts.Resolved }} alerte(s) résolue(s){{- end -}}
+                  {{- end }}
 
-                        Une activité critique a été détectée dans le cluster Kubernetes.
+                  {{ define "falco.gotify.message" -}}
+                  {{- if .Alerts.Firing }}🚨 ALERTE CRITIQUE FALCO
 
-                        {{ range .Alerts.Firing }}
-                        Règle : {{ .Labels.alertname }}
-                        Sévérité : {{ .Labels.severity }}
-                        Source : {{ .Labels.source }}
-                        Résumé : {{ .Annotations.summary }}
-                        Détail : {{ .Annotations.description }}
-                        Début : {{ .StartsAt }}
-                        {{ end }}
+                  Une activité critique a été détectée dans le cluster Kubernetes.
 
-                        Action recommandée : ouvrir Grafana et vérifier l’événement Falco correspondant.
-                        Dashboard : https://grafana.foobarbaz.fr
+                  {{ range .Alerts.Firing -}}
+                  Règle : {{ .Labels.alertname }}
+                  Sévérité : {{ .Labels.severity }}
+                  Résumé : {{ .Annotations.summary }}
+                  Détail : {{ .Annotations.description }}
+                  Début : {{ .StartsAt }}
+                  {{ end -}}
+
+                  Action : vérifier l’événement Falco dans Grafana.
+                  https://grafana.foobarbaz.fr
+                  {{- else }}✅ ALERTE FALCO RÉSOLUE
+
+                  L’événement critique ne se produit plus.
+
+                  {{ range .Alerts.Resolved -}}
+                  Règle : {{ .Labels.alertname }}
+                  Résumé : {{ .Annotations.summary }}
+                  Résolue le : {{ .EndsAt }}
+                  {{ end -}}
+                  {{- end }}
+                  {{- end }}
           policies.yaml:
             apiVersion: 1
             policies:
@@ -138,6 +159,8 @@ spec:
                     title: Falco Critical event
                     condition: B
                     for: 0s
+                    noDataState: OK
+                    execErrState: Error
                     annotations:
                       summary: "Alerte Falco Critical"
                       description: "Un ou plusieurs événements Falco Critical ont été détectés dans les 5 dernières minutes."
