@@ -170,6 +170,65 @@ data:
             "type": "loki",
             "uid": "Loki"
           },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 4,
+            "x": 4,
+            "y": 1
+          },
+          "id": 24,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.1.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "Loki"
+              },
+              "expr": "sum(count_over_time({priority=\"Critical\"}[24h]))",
+              "queryType": "instant",
+              "refId": "A"
+            }
+          ],
+          "title": "Criticals aujourd'hui",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -189,8 +248,8 @@ data:
           },
           "gridPos": {
             "h": 9,
-            "w": 6,
-            "x": 4,
+            "w": 5,
+            "x": 8,
             "y": 1
           },
           "id": 12,
@@ -257,8 +316,8 @@ data:
           },
           "gridPos": {
             "h": 9,
-            "w": 6,
-            "x": 10,
+            "w": 5,
+            "x": 13,
             "y": 1
           },
           "id": 9,
@@ -325,8 +384,8 @@ data:
           },
           "gridPos": {
             "h": 9,
-            "w": 8,
-            "x": 16,
+            "w": 6,
+            "x": 18,
             "y": 1
           },
           "id": 13,
