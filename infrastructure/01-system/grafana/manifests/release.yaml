@@ -109,6 +109,65 @@ spec:
                 group_wait: 30s
                 group_interval: 5m
                 repeat_interval: 4h
+          rules.yaml:
+            apiVersion: 1
+            groups:
+              - orgId: 1
+                name: falco-critical-events
+                folder: Security
+                interval: 1m
+                rules:
+                  - uid: falco-critical-mailrise
+                    title: Falco Critical event
+                    condition: B
+                    for: 0s
+                    annotations:
+                      summary: "Alerte Falco Critical"
+                      description: "Un ou plusieurs événements Falco Critical ont été détectés dans les 5 dernières minutes."
+                    labels:
+                      severity: critical
+                      source: falco
+                    data:
+                      - refId: A
+                        relativeTimeRange:
+                          from: 300
+                          to: 0
+                        datasourceUid: Loki
+                        model:
+                          datasource:
+                            type: loki
+                            uid: Loki
+                          editorMode: code
+                          expr: sum(count_over_time({priority="Critical"}[5m]))
+                          queryType: instant
+                          refId: A
+                      - refId: B
+                        relativeTimeRange:
+                          from: 300
+                          to: 0
+                        datasourceUid: __expr__
+                        model:
+                          conditions:
+                            - evaluator:
+                                params:
+                                  - 0
+                                type: gt
+                              operator:
+                                type: and
+                              query:
+                                params:
+                                  - A
+                              reducer:
+                                params: []
+                                type: last
+                              type: query
+                          datasource:
+                            type: __expr__
+                            uid: __expr__
+                          expression: A
+                          reducer: last
+                          refId: B
+                          type: threshold
 
         resources:
           requests:

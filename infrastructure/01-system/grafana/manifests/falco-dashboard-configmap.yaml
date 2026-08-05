@@ -807,6 +807,57 @@ data:
           ],
           "title": "Logs",
           "type": "row"
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 23
+          },
+          "id": 25,
+          "panels": [],
+          "title": "Critical events",
+          "type": "row"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 24
+          },
+          "id": 26,
+          "options": {
+            "deduplication": {
+              "labels": false,
+              "system": false
+            },
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": true,
+            "sortOrder": "Descending",
+            "wrapLines": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "Loki"
+              },
+              "expr": "{priority=\"Critical\"}",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Toutes les alertes Critical",
+          "type": "logs"
         }
       ],
       "schemaVersion": 37,
