@@ -23,6 +23,7 @@ spec:
           json_output: true
           stdout_output: { enabled: true }
           log_level: info
+          rule_matching: all
         resources:
           requests: { cpu: 150m, memory: 512Mi }
           limits: { cpu: 1000m, memory: 1024Mi }
