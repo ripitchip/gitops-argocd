@@ -36,6 +36,10 @@ spec:
           - resources:
               selector:
                 matchLabels:
+                  app.kubernetes.io/part-of: falco-stack
+          - resources:
+              selector:
+                matchLabels:
                   acme.cert-manager.io/http01-solver: "true"
           - resources:
               selector:

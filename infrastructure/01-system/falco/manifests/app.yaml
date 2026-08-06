@@ -15,6 +15,9 @@ spec:
       values: |
         driver:
           kind: modern_ebpf
+        containerSecurityContext:
+          privileged: true
+          runAsNonRoot: false
         falco:
           json_output: true
           stdout_output: { enabled: true }

@@ -27,6 +27,10 @@ spec:
                 - falco
                 - cilium-system
                 - metallb-system
+          - resources:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/part-of: falco-stack
       skipBackgroundRequests: true
       validate:
         allowExistingViolations: true
