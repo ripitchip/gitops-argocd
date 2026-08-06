@@ -15,6 +15,7 @@ spec:
       values: |
         driver:
           kind: modern_ebpf
+        hostPID: true
         containerSecurityContext:
           privileged: true
           runAsNonRoot: false
