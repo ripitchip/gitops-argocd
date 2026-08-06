@@ -34,6 +34,22 @@ spec:
         resources:
           requests: { cpu: 150m, memory: 512Mi }
           limits: { cpu: 1000m, memory: 1024Mi }
+        falcoctl:
+          artifact:
+            install:
+              env:
+                - name: HOME
+                  value: /tmp
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits: { cpu: 200m, memory: 256Mi }
+            follow:
+              env:
+                - name: HOME
+                  value: /tmp
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits: { cpu: 200m, memory: 256Mi }
         tolerations:
           - { effect: NoSchedule, key: node-role.kubernetes.io/master }
           - { effect: NoSchedule, key: node-role.kubernetes.io/control-plane }
