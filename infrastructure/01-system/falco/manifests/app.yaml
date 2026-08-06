@@ -15,19 +15,19 @@ spec:
       values: |
         driver:
           kind: modern_ebpf
+        podSecurityContext:
+          runAsUser: 4821
+          runAsGroup: 4821
+          fsGroup: 4821
+        containerSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 4821
+          runAsGroup: 4821
+          capabilities:
+            drop: [ALL]
+            add: [CAP_SYS_PTRACE, CAP_SYS_RESOURCE, CAP_BPF, CAP_PERFMON]
         falco:
           privileged: false
-          podSecurityContext:
-            runAsUser: 4821
-            runAsGroup: 4821
-            fsGroup: 4821
-          containerSecurityContext:
-            runAsNonRoot: true
-            runAsUser: 4821
-            runAsGroup: 4821
-            capabilities:
-              drop: [ALL]
-              add: [CAP_SYS_PTRACE, CAP_SYS_RESOURCE, CAP_BPF, CAP_PERFMON]
           json_output: true
           stdout_output: { enabled: true }
           log_level: info
