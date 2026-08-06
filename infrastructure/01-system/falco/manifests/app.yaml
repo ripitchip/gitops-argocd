@@ -138,6 +138,11 @@ spec:
               condition: open_write and container and fd.name in (/etc/passwd, /etc/shadow, /etc/group, /etc/sudoers, /root/.ssh/authorized_keys) and not proc.name in (passwd, useradd, groupadd, chpasswd)
               output: "CRITICAL: Sensitive authentication file modified in container (user=%user.name pod=%k8s.pod.name file=%fd.name proc=%proc.cmdline)"
               priority: CRITICAL
+            - rule: Sensitive Shadow File Read in Container
+              desc: Detects a container reading the shadow password file
+              condition: open_read and container and fd.name=/etc/shadow
+              output: "CRITICAL: Container read sensitive shadow file (user=%user.name pod=%k8s.pod.name file=%fd.name proc=%proc.cmdline)"
+              priority: CRITICAL
             - rule: Container Access to Docker Socket
               desc: Detects a container reading or writing the Docker socket, which can enable host-level control
               condition: (open_read or open_write) and container and fd.name=/var/run/docker.sock
