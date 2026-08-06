@@ -15,6 +15,7 @@ data:
             settings:
               addresses: grafana-alerts@mailrise.xyz
               singleEmail: true
+              disableResolveMessage: true
               subject: '{{ template "falco.gotify.subject" . }}'
               message: '{{ template "falco.gotify.message" . }}'
   templates.yaml: |
@@ -24,11 +25,13 @@ data:
         name: falco-gotify
         template: |
           {{ define "falco.gotify.subject" -}}
-          {{- if .Alerts.Firing -}}🚨 FALCO CRITICAL — {{ len .Alerts.Firing }} | {{ range .Alerts.Firing }}{{ .Labels.alertname }} | {{ .Annotations.summary }} | {{ .Annotations.description }}{{ end }}{{- else -}}✅ FALCO RÉSOLU — {{ len .Alerts.Resolved }} | {{ range .Alerts.Resolved }}{{ .Labels.alertname }} | {{ .Annotations.summary }}{{ end }}{{- end -}}
+          {{- if .Alerts.Firing -}}🚨 FALCO CRITICAL — {{ len .Alerts.Firing }} | {{ range .Alerts.Firing }}{{ .Labels.rule }} | {{ .Labels.k8s_ns_name }}/{{ .Labels.k8s_pod_name }}{{ end }}{{- end -}}
           {{- end }}
 
           {{ define "falco.gotify.message" -}}
-          {{- if .Alerts.Firing -}}🚨 FALCO CRITICAL | {{ range .Alerts.Firing -}}Règle: {{ .Labels.alertname }} | Sévérité: {{ .Labels.severity }} | Résumé: {{ .Annotations.summary }} | Détail: {{ .Annotations.description }} | Début: {{ .StartsAt }}{{ end }} | Vérifier: https://grafana.foobarbaz.fr/alerting/list{{- else -}}✅ FALCO RÉSOLU | {{ range .Alerts.Resolved -}}Règle: {{ .Labels.alertname }} | Résumé: {{ .Annotations.summary }} | Résolue: {{ .EndsAt }}{{ end }}{{- end }}
+          {{- if .Alerts.Firing -}}🚨 FALCO CRITICAL
+          {{ range .Alerts.Firing -}}Règle détectée: {{ .Labels.rule }} | Sévérité: {{ .Labels.priority }} | Namespace: {{ .Labels.k8s_ns_name }} | Pod: {{ .Labels.k8s_pod_name }} | Détail: {{ .Annotations.description }} | Début: {{ .StartsAt }}
+          {{- end }}Vérifier: https://grafana.foobarbaz.fr/alerting/list{{- end }}
           {{- end }}
   policies.yaml: |
     apiVersion: 1
@@ -72,7 +75,7 @@ data:
                     type: loki
                     uid: Loki
                   editorMode: code
-                  expr: sum(count_over_time({priority="Critical"}[5m]))
+                  expr: sum by (rule, k8s_pod_name, k8s_ns_name, priority) (count_over_time({priority="Critical"}[5m]))
                   queryType: instant
                   refId: A
               - refId: B
