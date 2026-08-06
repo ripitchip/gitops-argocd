@@ -22,9 +22,6 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": alloy
-    - fromEndpoints:
-        - matchLabels:
             "k8s:io.kubernetes.pod.namespace": falco
   egress:
     # 1. Internal Namespace Traffic

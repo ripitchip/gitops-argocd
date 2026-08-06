@@ -29,6 +29,14 @@ spec:
               // Standard pod scraping (excluding specialized jobs to avoid duplicates)
               discovery.relabel "generic_pods" {
                 targets = discovery.kubernetes.pods.targets
+                // Falco expose Redis sur 6379, qui n'est pas un endpoint HTTP.
+                // Sans cette exclusion, Alloy tente de le scraper et Redis
+                // journalise ces requêtes comme des attaques Cross-Protocol.
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  regex         = "falco"
+                  action        = "drop"
+                }
                 rule {
                   source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
                   regex         = "node-exporter|kube-state-metrics|argocd-server|argocd-application-controller|argocd-repo-server"
