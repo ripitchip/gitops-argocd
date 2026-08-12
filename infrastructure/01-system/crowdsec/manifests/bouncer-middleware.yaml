@@ -11,3 +11,4 @@ spec:
       crowdsecLapiKey: "dec458e3ca2f3922f5d72f10b89b6576"
       crowdsecLapiScheme: "http"
       crowdsecLapiHost: "crowdsec-service.crowdsec.svc.cluster.local:8080"
+      crowdsecLogLevel: "DEBUG"
