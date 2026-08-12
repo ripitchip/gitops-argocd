@@ -24,11 +24,21 @@ spec:
       labels:
         app: security-txt
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: nginxinc/nginx-unprivileged:alpine
         ports:
-        - containerPort: 80
+        - containerPort: 8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
         volumeMounts:
         - name: security-txt-vol
           mountPath: /usr/share/nginx/html/.well-known
@@ -47,7 +57,7 @@ spec:
     app: security-txt
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 8080
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
