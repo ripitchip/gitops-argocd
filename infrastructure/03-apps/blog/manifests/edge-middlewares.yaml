@@ -47,6 +47,8 @@ metadata:
 spec:
   chain:
     middlewares:
+    - name: crowdsec-bouncer
+      namespace: crowdsec
     - name: security-headers
     - name: rate-limit
     - name: compress
