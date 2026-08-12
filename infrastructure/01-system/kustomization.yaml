@@ -4,7 +4,7 @@ resources:
   - vault
   - argocd
   - cert-manager
-  - traefik
+  - traefik/traefik-app-definition.yaml
   - kyverno
   - trivy
   - trivy-adapter
@@ -16,4 +16,3 @@ resources:
   - mimir/mimir-app-definition.yaml
   - tempo/tempo-app-definition.yaml
   - crowdsec/crowdsec-app-definition.yaml
-
