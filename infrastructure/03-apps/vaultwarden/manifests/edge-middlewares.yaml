@@ -12,12 +12,24 @@ spec:
     contentTypeNosniff: true
     browserXssFilter: true
     referrerPolicy: strict-origin-when-cross-origin
-    permissionsPolicy: "camera=(), microphone=(), geolocation=()"
+    permissionsPolicy: camera=(), microphone=(), geolocation=()
+    frameDeny: true
+    contentSecurityPolicy: 'default-src ''self'' ''unsafe-inline'' ''unsafe-eval'';
+      img-src ''self'' data: https:;'
+    customResponseHeaders:
+      Cross-Origin-Opener-Policy: same-origin
+      Cross-Origin-Resource-Policy: same-origin
+      Cross-Origin-Embedder-Policy: require-corp
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
-metadata: { name: login-rate-limit, namespace: pass }
-spec: { rateLimit: { average: 20, burst: 40 } }
+metadata:
+  name: login-rate-limit
+  namespace: pass
+spec:
+  rateLimit:
+    average: 20
+    burst: 40
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -27,5 +39,7 @@ metadata:
 spec:
   chain:
     middlewares:
-      - name: security-headers
-      - name: login-rate-limit
+    - name: crowdsec-bouncer
+      namespace: crowdsec
+    - name: security-headers
+    - name: login-rate-limit

@@ -12,24 +12,43 @@ spec:
     contentTypeNosniff: true
     browserXssFilter: true
     referrerPolicy: strict-origin-when-cross-origin
-    permissionsPolicy: "camera=(), microphone=(), geolocation=()"
+    permissionsPolicy: camera=(), microphone=(), geolocation=()
+    frameDeny: true
+    contentSecurityPolicy: 'default-src ''self'' ''unsafe-inline'' ''unsafe-eval'';
+      img-src ''self'' data: https:;'
+    customResponseHeaders:
+      Cross-Origin-Opener-Policy: same-origin
+      Cross-Origin-Resource-Policy: same-origin
+      Cross-Origin-Embedder-Policy: require-corp
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
-metadata: { name: rate-limit, namespace: kutt }
-spec: { rateLimit: { average: 80, burst: 160 } }
+metadata:
+  name: rate-limit
+  namespace: kutt
+spec:
+  rateLimit:
+    average: 80
+    burst: 160
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
-metadata: { name: compress, namespace: kutt }
-spec: { compress: {} }
+metadata:
+  name: compress
+  namespace: kutt
+spec:
+  compress: {}
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
-metadata: { name: public-chain, namespace: kutt }
+metadata:
+  name: public-chain
+  namespace: kutt
 spec:
   chain:
     middlewares:
-      - name: security-headers
-      - name: rate-limit
-      - name: compress
+    - name: crowdsec-bouncer
+      namespace: crowdsec
+    - name: security-headers
+    - name: rate-limit
+    - name: compress
