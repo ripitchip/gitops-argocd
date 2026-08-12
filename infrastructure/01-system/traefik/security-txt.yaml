@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: security-txt
+  namespace: traefik
+data:
+  security.txt: |
+    Contact: mailto:contact@foobarbaz.fr
+    Expires: 2027-01-01T00:00:00.000Z
+    Preferred-Languages: fr, en
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-txt
+  namespace: traefik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: security-txt
+  template:
+    metadata:
+      labels:
+        app: security-txt
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: security-txt-vol
+          mountPath: /usr/share/nginx/html/.well-known
+      volumes:
+      - name: security-txt-vol
+        configMap:
+          name: security-txt
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: security-txt
+  namespace: traefik
+spec:
+  selector:
+    app: security-txt
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: security-txt
+  namespace: traefik
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+  - match: PathPrefix(`/.well-known/security.txt`)
+    kind: Rule
+    services:
+    - name: security-txt
+      port: 80

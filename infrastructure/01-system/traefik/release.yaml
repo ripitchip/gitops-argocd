@@ -13,6 +13,9 @@ spec:
     targetRevision: 41.0.1
     helm:
       values: |
+        providers:
+          kubernetesCRD:
+            allowCrossNamespace: true
         service:
           type: LoadBalancer
           annotations:
