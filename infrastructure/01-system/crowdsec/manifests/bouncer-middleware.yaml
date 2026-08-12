@@ -7,5 +7,5 @@ spec:
   plugin:
     crowdsec-bouncer:
       Enabled: true
-      CrowdsecLapiUrl: "http://crowdsec-lapi.crowdsec.svc.cluster.local:8080"
+      CrowdsecLapiUrl: "http://crowdsec-service.crowdsec.svc.cluster.local:8080"
       CrowdsecLapiKey: "dec458e3ca2f3922f5d72f10b89b6576"
