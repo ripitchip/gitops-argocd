@@ -30,7 +30,7 @@ spec:
             runAsNonRoot: true
             runAsUser: 29097
             runAsGroup: 29097
-          image: ghcr.io/ripitchip/finance-scrapper-backend:sha-0d20cd6
+          image: ghcr.io/ripitchip/finance-scrapper-backend:sha-60655f3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000

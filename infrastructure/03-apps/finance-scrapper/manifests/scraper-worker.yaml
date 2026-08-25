@@ -30,7 +30,7 @@ spec:
             runAsNonRoot: true
             runAsUser: 29097
             runAsGroup: 29097
-          image: ghcr.io/ripitchip/finance-scrapper-scraper:sha-0d20cd6
+          image: ghcr.io/ripitchip/finance-scrapper-scraper:sha-60655f3
           imagePullPolicy: IfNotPresent
           # We can override the command if needed, but since it's built specifically for the scraper,
           # the entrypoint in the Dockerfile should already run the worker.
