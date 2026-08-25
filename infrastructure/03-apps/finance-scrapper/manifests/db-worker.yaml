@@ -32,7 +32,8 @@ spec:
             runAsGroup: 29097
           image: ghcr.io/ripitchip/finance-scrapper-backend:sha-60655f3
           imagePullPolicy: IfNotPresent
-          # If the backend image defaults to running the API, we might need to specify the command for the db worker.
+          command: ["python"]
+          args: ["-m", "app.db_worker"]
           # We'll set the environment variables first.
           env:
             - name: DATA_DIR
