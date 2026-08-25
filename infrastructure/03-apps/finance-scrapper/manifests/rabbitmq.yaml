@@ -15,9 +15,25 @@ spec:
       labels:
         app: finance-scrapper-rabbitmq
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 29097
+        runAsGroup: 29097
+        fsGroup: 29097
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: rabbitmq
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 29097
+            runAsGroup: 29097
           image: rabbitmq:3-management-alpine
+          imagePullPolicy: IfNotPresent
           env:
             - name: RABBITMQ_DEFAULT_USER
               value: advisor
