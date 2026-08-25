@@ -89,9 +89,12 @@ spec:
               protocol: TCP
     - toFQDNs:
         - matchName: "ssl0.ovh.net"
+        - matchName: "smtp.protonmail.ch"
       toPorts:
         - ports:
             - port: "465"
+              protocol: TCP
+            - port: "587"
               protocol: TCP
     - toEntities:
         - world
