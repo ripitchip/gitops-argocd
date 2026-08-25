@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: finance-scrapper-db-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 5Gi }
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/finance-scrapper-db"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: finance-scrapper-db-pvc
+  namespace: finance-scrapper
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 5Gi } }
+  volumeName: finance-scrapper-db-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: finance-scrapper-data-pv
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  capacity: { storage: 5Gi }
+  accessModes: [ReadWriteMany]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  mountOptions: ["nfsvers=4.1", "hard"]
+  nfs:
+    server: "10.0.60.10"
+    path: "/mnt/data/k8s-cluster/pvc-volumes/finance-scrapper-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: finance-scrapper-data-pvc
+  namespace: finance-scrapper
+  annotations: { argocd.argoproj.io/sync-wave: "-5" }
+spec:
+  storageClassName: truenas-nfs
+  accessModes: [ReadWriteMany]
+  resources: { requests: { storage: 5Gi } }
+  volumeName: finance-scrapper-data-pv

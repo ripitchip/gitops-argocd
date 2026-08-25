@@ -1,0 +1,63 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: finance-scrapper-policy
+  namespace: finance-scrapper
+spec:
+  endpointSelector: {}
+  ingress:
+    # Allow incoming traffic from Traefik to Frontend and Backend
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik
+            "k8s:app.kubernetes.io/name": traefik
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+            - port: "8000"
+              protocol: TCP
+    # Allow monitoring/scraping from Alloy
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy
+    # Allow internal communication within the namespace
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": finance-scrapper
+  egress:
+    # Allow DNS resolution
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    # Allow communication within the namespace (e.g. to DB, RabbitMQ)
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": finance-scrapper
+    # Allow outgoing traffic to Keycloak in the auth namespace (port 8080)
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": auth
+            app: keycloak
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    # Allow outgoing traffic to the internet (Boursorama, Quantalys, external Keycloak if accessed via public DNS)
+    - toEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP

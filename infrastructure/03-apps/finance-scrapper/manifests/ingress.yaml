@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: finance-scrapper
+  namespace: finance-scrapper
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: advisor.foobarbaz.fr
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: finance-scrapper-backend
+                port:
+                  number: 8000
+          - path: /docs
+            pathType: Prefix
+            backend:
+              service:
+                name: finance-scrapper-backend
+                port:
+                  number: 8000
+          - path: /openapi.json
+            pathType: Exact
+            backend:
+              service:
+                name: finance-scrapper-backend
+                port:
+                  number: 8000
+          - path: /oidc
+            pathType: Prefix
+            backend:
+              service:
+                name: finance-scrapper-backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: finance-scrapper-frontend
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - advisor.foobarbaz.fr
+      secretName: finance-scrapper-tls

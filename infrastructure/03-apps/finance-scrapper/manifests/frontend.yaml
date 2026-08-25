@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-scrapper-frontend
+  namespace: finance-scrapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finance-scrapper-frontend
+  template:
+    metadata:
+      labels:
+        app: finance-scrapper-frontend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 29097
+        runAsGroup: 29097
+        fsGroup: 29097
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: frontend
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 29097
+            runAsGroup: 29097
+          image: ghcr.io/ripitchip/finance-scrapper-frontend:sha-0d20cd6
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: finance-scrapper-frontend
+  namespace: finance-scrapper
+spec:
+  selector:
+    app: finance-scrapper-frontend
+  ports:
+    - port: 3000
+      targetPort: 3000

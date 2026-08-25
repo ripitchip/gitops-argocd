@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-scrapper-scraper-worker
+  namespace: finance-scrapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finance-scrapper-scraper-worker
+  template:
+    metadata:
+      labels:
+        app: finance-scrapper-scraper-worker
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 29097
+        runAsGroup: 29097
+        fsGroup: 29097
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: scraper-worker
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 29097
+            runAsGroup: 29097
+          image: ghcr.io/ripitchip/finance-scrapper-scraper:sha-0d20cd6
+          imagePullPolicy: IfNotPresent
+          # We can override the command if needed, but since it's built specifically for the scraper,
+          # the entrypoint in the Dockerfile should already run the worker.
+          env:
+            - name: SCRAPER_HEADLESS
+              value: "true"
+            - name: SCRAPER_TIMEOUT_SECONDS
+              value: "30"
+            - name: SCRAPER_WORKERS
+              value: "2"
+            - name: DATA_DIR
+              value: "/data"
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: finance-scrapper-secrets
+                  key: RABBITMQ_URL
+            - name: email_morningstar
+              valueFrom:
+                secretKeyRef:
+                  name: finance-scrapper-secrets
+                  key: email_morningstar
+            - name: password_morningstar
+              valueFrom:
+                secretKeyRef:
+                  name: finance-scrapper-secrets
+                  key: password_morningstar
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: shared-data
+              mountPath: /data
+      volumes:
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: finance-scrapper-data-pvc

@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-scrapper-backend
+  namespace: finance-scrapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finance-scrapper-backend
+  template:
+    metadata:
+      labels:
+        app: finance-scrapper-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 29097
+        runAsGroup: 29097
+        fsGroup: 29097
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: backend
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 29097
+            runAsGroup: 29097
+          image: ghcr.io/ripitchip/finance-scrapper-backend:sha-0d20cd6
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: finance-scrapper-secrets
+                  key: APP_SECRET_KEY
+            - name: OIDC_ISSUER_URL
+              value: "https://auth.foobarbaz.fr/realms/foobarbaz"
+            - name: OIDC_CLIENT_ID
+              value: "advisor"
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: finance-scrapper-secrets
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_SCOPES
+              value: "openid email profile groups"
+            - name: OIDC_GROUP_PERMISSIONS
+              value: '{"finance-admin":["imports:read","imports:write","imports:download"],"/finance-user":["imports:read","imports:write","imports:download"],"/finance-viewer":["imports:read","imports:download"]}'
+            - name: FRONTEND_URL
+              value: "https://advisor.foobarbaz.fr"
+            - name: ALLOWED_ORIGINS
+              value: "https://advisor.foobarbaz.fr"
+            - name: SESSION_HTTPS_ONLY
+              value: "true"
+            - name: AUTH_REQUIRED
+              value: "true"
+            - name: DATA_DIR
+              value: "/data"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: finance-scrapper-secrets
+                  key: DATABASE_URL
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: finance-scrapper-secrets
+                  key: RABBITMQ_URL
+            - name: RABBITMQ_QUEUE
+              value: "finance-advisor.imports"
+            - name: RABBITMQ_PERSISTENCE_QUEUE
+              value: "finance-advisor.persistence"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: shared-data
+              mountPath: /data
+      volumes:
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: finance-scrapper-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: finance-scrapper-backend
+  namespace: finance-scrapper
+spec:
+  selector:
+    app: finance-scrapper-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
