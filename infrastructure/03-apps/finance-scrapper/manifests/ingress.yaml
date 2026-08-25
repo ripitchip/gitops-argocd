@@ -42,14 +42,14 @@ spec:
                 port:
                   number: 8000
           - path: /login
-            pathType: Exact
+            pathType: Prefix
             backend:
               service:
                 name: finance-scrapper-backend
                 port:
                   number: 8000
           - path: /logout
-            pathType: Exact
+            pathType: Prefix
             backend:
               service:
                 name: finance-scrapper-backend
