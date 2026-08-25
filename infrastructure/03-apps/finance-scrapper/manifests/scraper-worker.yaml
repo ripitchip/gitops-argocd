@@ -40,7 +40,7 @@ spec:
             - name: SCRAPER_TIMEOUT_SECONDS
               value: "30"
             - name: SCRAPER_WORKERS
-              value: "2"
+              value: "10"
             - name: DATA_DIR
               value: "/data"
             - name: DATABASE_URL
@@ -65,11 +65,11 @@ spec:
                   key: password_morningstar
           resources:
             limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
               cpu: "1"
               memory: 1Gi
-            requests:
-              cpu: 100m
-              memory: 256Mi
           volumeMounts:
             - name: shared-data
               mountPath: /data
