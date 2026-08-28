@@ -4,7 +4,7 @@ metadata:
   name: finance-scrapper-db-worker
   namespace: finance-scrapper
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: finance-scrapper-db-worker

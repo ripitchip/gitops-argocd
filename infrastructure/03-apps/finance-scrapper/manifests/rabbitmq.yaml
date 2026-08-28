@@ -4,7 +4,7 @@ metadata:
   name: finance-scrapper-rabbitmq
   namespace: finance-scrapper
 spec:
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
