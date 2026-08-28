@@ -1,0 +1,32 @@
+$TTL 3600
+@    IN SOA dns200.anycast.me. tech.ovh.net. (2086547706 86400 3600 3600000 60)
+        IN NS     ns200.anycast.me.
+        IN NS     dns200.anycast.me.
+        IN A      213.186.33.5
+        
+        ; --- Enregistrements Proton Mail ---
+        IN MX     10 mail.protonmail.ch.
+        IN MX     20 mailsec.protonmail.ch.
+        IN TXT    "protonmail-verification=7d84b55748c9daebc10fc7812829313d981eb0b9"
+        IN TXT    "v=spf1 include:_spf.protonmail.ch ~all"
+        ; -----------------------------------
+        
+        IN TXT    "1|www.tomlab.fr"
+
+_dmarc  IN TXT    "v=DMARC1; p=quarantine"
+
+ftp     IN CNAME  tomlab.fr.
+www     IN A      213.186.33.5
+www     IN TXT    "3|welcome"
+
+
+# --- Résolution du problème d'enregistrement DNS ---
+# La zone DNS ci-dessus est correctement configurée. 
+# Cependant, le nom de domaine (tomlab.fr) utilise actuellement les serveurs :
+# dns11.ovh.net et ns11.ovh.net
+#
+# Pour que la configuration soit prise en compte, il faut aller dans l'espace client OVH,
+# dans Web Cloud > Noms de domaine > tomlab.fr > onglet "Serveurs DNS"
+# (et non "Zone DNS") et modifier les serveurs par ceux d'Anycast :
+# Serveur 1 : ns200.anycast.me
+# Serveur 2 : dns200.anycast.me
