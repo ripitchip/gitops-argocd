@@ -32,6 +32,8 @@ spec:
               value: "/models"
             - name: HOME
               value: "/root"
+            - name: OLLAMA_NUM_CTX
+              value: "8192"
           ports:
             - containerPort: 11434
               name: http
