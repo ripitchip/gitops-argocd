@@ -59,6 +59,14 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": ai
+            "k8s:app": ollama
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
     - toEntities:
         - world
         - cluster
@@ -113,6 +121,14 @@ spec:
       toPorts:
         - ports:
             - port: "6379"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": ai
+            "k8s:app": ollama
+      toPorts:
+        - ports:
+            - port: "11434"
               protocol: TCP
     - toEntities:
         - world

@@ -33,7 +33,9 @@ spec:
             EXCHANGE_RATE_PROVIDER: yahoo_finance
             SECURITIES_PROVIDER: yahoo_finance
             ASSISTANT_TYPE: external
-            EXTERNAL_ASSISTANT_ALLOWED_EMAILS: disabled@sure.local
+            OPENAI_URI_BASE: "http://ollama.ai.svc.cluster.local:11434/v1"
+            OPENAI_ACCESS_TOKEN: "ollama-local"
+            OPENAI_MODEL: "gemma4:e4b-it-q8_0"
           extraEnvVars:
             - name: DATABASE_URL
               valueFrom:

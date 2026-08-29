@@ -91,6 +91,9 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": ai
             "k8s:app": open-webui
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": sure
+            "k8s:app.kubernetes.io/name": sure
       toPorts:
         - ports:
             - port: "11434"
