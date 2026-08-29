@@ -32,10 +32,13 @@ spec:
             WEBAUTHN_ALLOWED_ORIGINS: https://budget.foobarbaz.fr
             EXCHANGE_RATE_PROVIDER: yahoo_finance
             SECURITIES_PROVIDER: yahoo_finance
-            ASSISTANT_TYPE: external
             OPENAI_URI_BASE: "http://ollama.ai.svc.cluster.local:11434/v1"
             OPENAI_ACCESS_TOKEN: "ollama-local"
             OPENAI_MODEL: "gemma4:e4b-it-q8_0"
+            LLM_CONTEXT_WINDOW: "8192"
+            OPENAI_REQUEST_TIMEOUT: "180"
+            ASSISTANT_MAX_TOOL_CALL_ITERATIONS: "2"
+            AI_RESPONSE_TIMEOUT: "720"
           extraEnvVars:
             - name: DATABASE_URL
               valueFrom:
