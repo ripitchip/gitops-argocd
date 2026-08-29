@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: open-webui
-          image: ghcr.io/open-webui/open-webui:v0.10.2
+          image: ghcr.io/open-webui/open-webui:v0.11.1
           env:
             - name: OLLAMA_BASE_URL
               value: "http://ollama.ai.svc.cluster.local:11434"
