@@ -28,8 +28,6 @@ spec:
       labels:
         app: nightingale
     spec:
-      nodeSelector:
-        nvidia.com/gpu.present: "true"
       securityContext:
         runAsNonRoot: true
         runAsUser: 12046
@@ -39,7 +37,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: nightingale
-          image: razzaru/nightingale:0.9.0-cuda
+          image: razzaru/nightingale:0.9.0
           env:
             - name: NIGHTINGALE_BIND
               value: "0.0.0.0:8080"
@@ -89,11 +87,9 @@ spec:
             requests:
               cpu: "4"
               memory: 8Gi
-              nvidia.com/gpu: "1"
             limits:
               cpu: "12"
               memory: 24Gi
-              nvidia.com/gpu: "1"
           volumeMounts:
             - name: data
               mountPath: /data
