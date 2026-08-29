@@ -94,6 +94,9 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": sure
             "k8s:app.kubernetes.io/name": sure
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": navidrome
+            "k8s:app": subwave-backend
       toPorts:
         - ports:
             - port: "11434"

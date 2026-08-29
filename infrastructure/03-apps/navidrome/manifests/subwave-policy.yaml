@@ -43,7 +43,16 @@ spec:
           rules: { dns: [{ matchPattern: "*" }] }
     # 3. API Server
     - toEntities: [kube-apiserver]
-    # 4. External access (LLM APIs, Hugging Face, etc.)
+    # 4. Ollama Local AI
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": ai
+            "k8s:app": ollama
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+    # 5. External access (LLM APIs, Hugging Face, etc.)
     - toEntities: [world]
       toPorts:
         - ports:
