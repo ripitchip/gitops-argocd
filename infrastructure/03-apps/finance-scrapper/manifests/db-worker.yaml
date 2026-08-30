@@ -55,10 +55,10 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 4Gi
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 512Mi
           volumeMounts:
             - name: shared-data
               mountPath: /data
