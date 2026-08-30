@@ -20,7 +20,18 @@ spec:
             name: blog
             port:
               number: 80
+  - host: tomlab.fr
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: blog
+            port:
+              number: 80
   tls:
   - hosts:
     - foobarbaz.fr
+    - tomlab.fr
     secretName: blog-main-tls
