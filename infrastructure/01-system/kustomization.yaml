@@ -16,3 +16,5 @@ resources:
   - mimir/mimir-app-definition.yaml
   - tempo/tempo-app-definition.yaml
   - crowdsec/crowdsec-app-definition.yaml
+  - kube-bench
+

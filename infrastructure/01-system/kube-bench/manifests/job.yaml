@@ -1,0 +1,95 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kube-bench-initial-run
+  namespace: kube-bench
+  labels:
+    app.kubernetes.io/name: kube-bench
+    app.kubernetes.io/component: security-scanner
+    app.kubernetes.io/part-of: kube-bench-stack
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kube-bench
+    spec:
+      hostPID: true
+      serviceAccountName: kube-bench
+      restartPolicy: Never
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: kube-bench
+          image: aquasec/kube-bench:v0.10.3
+          command: ["kube-bench"]
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: var-lib-etcd
+              mountPath: /var/lib/etcd
+              readOnly: true
+            - name: var-lib-kubelet
+              mountPath: /var/lib/kubelet
+              readOnly: true
+            - name: var-lib-kube-scheduler
+              mountPath: /var/lib/kube-scheduler
+              readOnly: true
+            - name: var-lib-kube-controller-manager
+              mountPath: /var/lib/kube-controller-manager
+              readOnly: true
+            - name: etc-systemd
+              mountPath: /etc/systemd
+              readOnly: true
+            - name: lib-systemd
+              mountPath: /lib/systemd/system
+              readOnly: true
+            - name: etc-kubernetes
+              mountPath: /etc/kubernetes
+              readOnly: true
+            - name: etc-cni-netd
+              mountPath: /etc/cni/net.d
+              readOnly: true
+            - name: etc-os-release
+              mountPath: /etc/os-release
+              readOnly: true
+      volumes:
+        - name: var-lib-etcd
+          hostPath:
+            path: /var/lib/etcd
+        - name: var-lib-kubelet
+          hostPath:
+            path: /var/lib/kubelet
+        - name: var-lib-kube-scheduler
+          hostPath:
+            path: /var/lib/kube-scheduler
+        - name: var-lib-kube-controller-manager
+          hostPath:
+            path: /var/lib/kube-controller-manager
+        - name: etc-systemd
+          hostPath:
+            path: /etc/systemd
+        - name: lib-systemd
+          hostPath:
+            path: /lib/systemd/system
+        - name: etc-kubernetes
+          hostPath:
+            path: /etc/kubernetes
+        - name: etc-cni-netd
+          hostPath:
+            path: /etc/cni/net.d
+        - name: etc-os-release
+          hostPath:
+            path: /etc/os-release

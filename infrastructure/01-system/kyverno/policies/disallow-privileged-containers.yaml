@@ -27,6 +27,8 @@ spec:
                 - falco
                 - cilium-system
                 - metallb-system
+                - kube-bench
+
           - resources:
               selector:
                 matchLabels:

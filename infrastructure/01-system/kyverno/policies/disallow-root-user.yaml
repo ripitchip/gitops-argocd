@@ -33,6 +33,8 @@ spec:
                 - crowdsec
                 - metallb-system
                 - karakeep
+                - kube-bench
+
           - resources:
               selector:
                 matchLabels:
