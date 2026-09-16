@@ -23,7 +23,7 @@ spec:
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
-          command: ["opencloud", "server"]
+          command: ["sh", "-c", "if [ ! -f /etc/opencloud/opencloud.yaml ]; then opencloud init; fi && opencloud server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -69,6 +69,19 @@ spec:
               value: "web"
             - name: WEBFINGER_WEB_OIDC_CLIENT_SCOPES
               value: "openid profile email"
+            # JWT & Internal Auth Secrets
+            - name: OC_JWT_SECRET
+              value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
+            - name: JWT_SECRET
+              value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
+            - name: OC_SERVICE_ACCOUNT_SECRET
+              value: "opencloud-service-account-secret-32bytes"
+            - name: SERVICE_ACCOUNT_SECRET
+              value: "opencloud-service-account-secret-32bytes"
+            - name: OC_TRANSFER_SECRET
+              value: "opencloud-transfer-secret-32bytes"
+            - name: OC_MACHINE_AUTH_API_KEY
+              value: "opencloud-machine-auth-api-key-32bytes"
             # Storage & Metadata Backend
             - name: OC_STORAGE_USERS_DRIVER
               value: "ocis"
