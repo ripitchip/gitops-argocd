@@ -69,6 +69,14 @@ spec:
               value: "opencloud-transfer-secret-32bytes"
             - name: OC_MACHINE_AUTH_API_KEY
               value: "opencloud-machine-auth-api-key-32bytes"
+            - name: OC_SYSTEM_USER_ID
+              value: "95465d67-12f2-40e1-9b6d-b80541d6d600"
+            - name: SYSTEM_USER_ID
+              value: "95465d67-12f2-40e1-9b6d-b80541d6d600"
+            - name: OC_SYSTEM_USER_API_KEY
+              value: "system-user-api-key-opencloud-32bytes"
+            - name: SYSTEM_USER_API_KEY
+              value: "system-user-api-key-opencloud-32bytes"
           ports:
             - containerPort: 9200
               name: http
