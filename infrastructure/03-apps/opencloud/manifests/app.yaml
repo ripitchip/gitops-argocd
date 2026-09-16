@@ -33,17 +33,19 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           env:
-            - name: OPENCLOUD_URL
+            - name: OC_URL
               value: "https://drive.tomlab.fr"
+            - name: OC_INSECURE
+              value: "true"
+            - name: PROXY_HTTP_ADDR
+              value: "0.0.0.0:9200"
             - name: PROXY_TLS
               value: "false"
-            - name: OPENCLOUD_INSECURE
-              value: "true"
-            - name: OPENCLOUD_LOG_LEVEL
+            - name: OC_LOG_LEVEL
               value: "info"
-            - name: OPENCLOUD_ADMIN_USER
+            - name: OC_ADMIN_USER
               value: "admin"
-            - name: OPENCLOUD_ADMIN_PASSWORD
+            - name: OC_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: opencloud-secrets
@@ -58,6 +60,16 @@ spec:
           ports:
             - containerPort: 9200
               name: http
+          readinessProbe:
+            tcpSocket:
+              port: 9200
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9200
+            initialDelaySeconds: 10
+            periodSeconds: 20
           volumeMounts:
             - name: data
               mountPath: /var/lib/opencloud
