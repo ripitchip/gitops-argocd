@@ -38,12 +38,12 @@ spec:
               value: "true"
             - name: OC_URL
               value: "https://drive.tomlab.fr"
+            - name: OC_ADMIN_USER
+              value: "admin"
+            - name: OC_ADMIN_PASSWORD
+              value: "admin"
             - name: IDM_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: opencloud-secrets
-                  key: ADMIN_PASSWORD
-                  optional: true
+              value: "admin"
           volumeMounts:
             - name: config
               mountPath: /etc/opencloud
@@ -73,6 +73,24 @@ spec:
               value: "false"
             - name: OC_LOG_LEVEL
               value: "info"
+            - name: OC_ADMIN_USER
+              value: "admin"
+            - name: OC_ADMIN_PASSWORD
+              value: "admin"
+            - name: IDM_ADMIN_PASSWORD
+              value: "admin"
+            - name: OC_STORAGE_USERS_DRIVER
+              value: "ocis"
+            - name: STORAGE_USERS_DRIVER
+              value: "ocis"
+            - name: OC_STORAGE_USERS_OCIS_USER_METADATA_BACKEND
+              value: "sqlite"
+            - name: STORAGE_USERS_OCIS_USER_METADATA_BACKEND
+              value: "sqlite"
+            - name: OC_STORAGE_SYSTEM_DRIVER
+              value: "ocis"
+            - name: STORAGE_SYSTEM_DRIVER
+              value: "ocis"
           ports:
             - containerPort: 9200
               name: http
