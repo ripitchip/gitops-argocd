@@ -144,4 +144,3 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: opencloud-data-pvc
-            subPath: config
