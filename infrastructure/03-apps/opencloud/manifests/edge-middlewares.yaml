@@ -13,12 +13,9 @@ spec:
     browserXssFilter: true
     referrerPolicy: strict-origin-when-cross-origin
     permissionsPolicy: camera=(), microphone=(), geolocation=()
-    frameDeny: true
-    contentSecurityPolicy: 'default-src ''self'' ''unsafe-inline'' ''unsafe-eval''; img-src ''self'' data: https:;'
-    customResponseHeaders:
-      Cross-Origin-Opener-Policy: same-origin
-      Cross-Origin-Resource-Policy: same-origin
-      Cross-Origin-Embedder-Policy: require-corp
+    customFrameHeaders:
+      X-Frame-Options: "SAMEORIGIN"
+    contentSecurityPolicy: 'default-src ''self'' ''unsafe-inline'' ''unsafe-eval''; img-src ''self'' data: https:; connect-src ''self'' https://auth.foobarbaz.fr https://drive.tomlab.fr; frame-src ''self'' https://auth.foobarbaz.fr; frame-ancestors ''self'' https://*.foobarbaz.fr https://*.tomlab.fr;'
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
