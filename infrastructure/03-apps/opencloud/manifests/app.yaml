@@ -23,7 +23,7 @@ spec:
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
-          command: ["sh", "-c", "if [ ! -f /etc/opencloud/opencloud.yaml ]; then opencloud init; fi && opencloud server"]
+          command: ["sh", "-c", "rm -rf /var/lib/opencloud/storage/metadata; if [ ! -f /etc/opencloud/opencloud.yaml ]; then opencloud init; fi && opencloud server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
