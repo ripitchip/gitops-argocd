@@ -20,9 +20,39 @@ spec:
         runAsUser: 62403
         runAsGroup: 62403
         fsGroup: 62403
+      initContainers:
+        - name: init-config
+          image: opencloudeu/opencloud:7.2.4
+          command: ["sh", "-c", "if [ ! -f /etc/opencloud/opencloud.yaml ]; then opencloud init; fi"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 62403
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            - name: OC_INSECURE
+              value: "true"
+            - name: OC_URL
+              value: "https://drive.tomlab.fr"
+            - name: IDM_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: opencloud-secrets
+                  key: ADMIN_PASSWORD
+                  optional: true
+          volumeMounts:
+            - name: config
+              mountPath: /etc/opencloud
+            - name: data
+              mountPath: /var/lib/opencloud
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
+          command: ["opencloud", "server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -43,40 +73,6 @@ spec:
               value: "false"
             - name: OC_LOG_LEVEL
               value: "info"
-            - name: OC_ADMIN_USER
-              value: "admin"
-            - name: OC_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: opencloud-secrets
-                  key: ADMIN_PASSWORD
-                  optional: true
-            - name: IDM_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: opencloud-secrets
-                  key: ADMIN_PASSWORD
-                  optional: true
-            - name: OC_JWT_SECRET
-              value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
-            - name: JWT_SECRET
-              value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
-            - name: OC_SERVICE_ACCOUNT_SECRET
-              value: "opencloud-service-account-secret-32bytes"
-            - name: SERVICE_ACCOUNT_SECRET
-              value: "opencloud-service-account-secret-32bytes"
-            - name: OC_TRANSFER_SECRET
-              value: "opencloud-transfer-secret-32bytes"
-            - name: OC_MACHINE_AUTH_API_KEY
-              value: "opencloud-machine-auth-api-key-32bytes"
-            - name: OC_SYSTEM_USER_ID
-              value: "95465d67-12f2-40e1-9b6d-b80541d6d600"
-            - name: SYSTEM_USER_ID
-              value: "95465d67-12f2-40e1-9b6d-b80541d6d600"
-            - name: OC_SYSTEM_USER_API_KEY
-              value: "system-user-api-key-opencloud-32bytes"
-            - name: SYSTEM_USER_API_KEY
-              value: "system-user-api-key-opencloud-32bytes"
           ports:
             - containerPort: 9200
               name: http
