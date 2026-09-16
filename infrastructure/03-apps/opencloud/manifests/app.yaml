@@ -23,7 +23,7 @@ spec:
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
-          command: ["sh", "-c", "mkdir -p /var/lib/opencloud/config && if [ ! -f /var/lib/opencloud/config/opencloud.yaml ]; then rm -rf /var/lib/opencloud/idm /var/lib/opencloud/idp /var/lib/opencloud/storage/metadata; opencloud init; fi && opencloud server"]
+          command: ["sh", "-c", "mkdir -p /var/lib/opencloud/config && if [ ! -f /var/lib/opencloud/config/opencloud.yaml ]; then rm -rf /var/lib/opencloud/idm /var/lib/opencloud/idp /var/lib/opencloud/search /var/lib/opencloud/storage /var/lib/opencloud/nats; opencloud init; fi && opencloud server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
