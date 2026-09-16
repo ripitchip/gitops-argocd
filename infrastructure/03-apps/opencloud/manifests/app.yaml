@@ -23,7 +23,7 @@ spec:
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
-          command: ["sh", "-c", "if [ ! -f /etc/opencloud/opencloud.yaml ]; then rm -rf /var/lib/opencloud/*; opencloud init; fi && opencloud server"]
+          command: ["sh", "-c", "mkdir -p /var/lib/opencloud/config && if [ ! -f /var/lib/opencloud/config/opencloud.yaml ]; then rm -rf /var/lib/opencloud/idm /var/lib/opencloud/idp /var/lib/opencloud/storage/metadata; opencloud init; fi && opencloud server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -34,6 +34,8 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           env:
+            - name: OC_CONFIG_DIR
+              value: "/var/lib/opencloud/config"
             - name: OC_URL
               value: "https://drive.tomlab.fr"
             - name: OC_INSECURE
@@ -127,9 +129,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/opencloud
-            - name: config
-              mountPath: /etc/opencloud
-              subPath: config
           resources:
             requests:
               cpu: "100m"
@@ -139,8 +138,5 @@ spec:
               memory: "1Gi"
       volumes:
         - name: data
-          persistentVolumeClaim:
-            claimName: opencloud-data-pvc
-        - name: config
           persistentVolumeClaim:
             claimName: opencloud-data-pvc
