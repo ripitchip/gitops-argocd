@@ -91,6 +91,14 @@ spec:
               value: "ocis"
             - name: STORAGE_SYSTEM_DRIVER
               value: "ocis"
+            - name: OC_STORAGE_SYSTEM_OCIS_USER_METADATA_BACKEND
+              value: "sqlite"
+            - name: STORAGE_SYSTEM_OCIS_USER_METADATA_BACKEND
+              value: "sqlite"
+            - name: OC_STORAGE_METADATA_DRIVER
+              value: "sqlite"
+            - name: STORAGE_METADATA_DRIVER
+              value: "sqlite"
           ports:
             - containerPort: 9200
               name: http
