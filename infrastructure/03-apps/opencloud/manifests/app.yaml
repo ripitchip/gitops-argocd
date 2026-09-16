@@ -22,7 +22,7 @@ spec:
         fsGroup: 62403
       containers:
         - name: opencloud
-          image: owncloud/ocis:6.0.0
+          image: opencloudeu/opencloud:7.2.4
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -33,17 +33,17 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           env:
-            - name: OCIS_URL
+            - name: OPENCLOUD_URL
               value: "https://drive.tomlab.fr"
             - name: PROXY_TLS
               value: "false"
-            - name: OCIS_INSECURE
+            - name: OPENCLOUD_INSECURE
               value: "true"
-            - name: OCIS_LOG_LEVEL
+            - name: OPENCLOUD_LOG_LEVEL
               value: "info"
-            - name: OCIS_ADMIN_USER
+            - name: OPENCLOUD_ADMIN_USER
               value: "admin"
-            - name: OCIS_ADMIN_PASSWORD
+            - name: OPENCLOUD_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: opencloud-secrets
@@ -60,9 +60,9 @@ spec:
               name: http
           volumeMounts:
             - name: data
-              mountPath: /var/lib/ocis
+              mountPath: /var/lib/opencloud
             - name: config
-              mountPath: /etc/ocis
+              mountPath: /etc/opencloud
           resources:
             requests:
               cpu: "100m"
