@@ -44,7 +44,7 @@ spec:
               value: "false"
             - name: OC_LOG_LEVEL
               value: "info"
-            # Keycloak External IDP Integration
+            # Keycloak External IDP Integration & CSP
             - name: OC_OIDC_ISSUER
               value: "https://auth.foobarbaz.fr/realms/foobarbaz"
             - name: OC_EXCLUDE_RUN_SERVICES
@@ -69,6 +69,10 @@ spec:
               value: "web"
             - name: WEBFINGER_WEB_OIDC_CLIENT_SCOPES
               value: "openid profile email"
+            - name: PROXY_CSP
+              value: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; connect-src 'self' https://auth.foobarbaz.fr https://drive.tomlab.fr; frame-src 'self' https://auth.foobarbaz.fr; frame-ancestors 'self';"
+            - name: HTTP_CSP
+              value: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; connect-src 'self' https://auth.foobarbaz.fr https://drive.tomlab.fr; frame-src 'self' https://auth.foobarbaz.fr; frame-ancestors 'self';"
             # JWT & Internal Auth Secrets
             - name: OC_JWT_SECRET
               value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
