@@ -138,4 +138,5 @@ spec:
               memory: "1Gi"
       volumes:
         - name: data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: opencloud-data-pvc
