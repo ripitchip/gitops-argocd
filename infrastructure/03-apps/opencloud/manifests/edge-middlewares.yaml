@@ -13,7 +13,7 @@ spec:
     browserXssFilter: true
     referrerPolicy: strict-origin-when-cross-origin
     permissionsPolicy: camera=(), microphone=(), geolocation=()
-    customFrameHeaders:
+    customResponseHeaders:
       X-Frame-Options: "SAMEORIGIN"
     contentSecurityPolicy: 'default-src ''self'' ''unsafe-inline'' ''unsafe-eval''; img-src ''self'' data: https:; connect-src ''self'' https://auth.foobarbaz.fr https://drive.tomlab.fr; frame-src ''self'' https://auth.foobarbaz.fr; frame-ancestors ''self'' https://*.foobarbaz.fr https://*.tomlab.fr;'
 ---
