@@ -20,35 +20,6 @@ spec:
         runAsUser: 62403
         runAsGroup: 62403
         fsGroup: 62403
-      initContainers:
-        - name: init-config
-          image: opencloudeu/opencloud:7.2.4
-          command: ["sh", "-c", "if [ ! -f /etc/opencloud/opencloud.yaml ]; then opencloud init; fi"]
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 62403
-            seccompProfile:
-              type: RuntimeDefault
-          env:
-            - name: OC_INSECURE
-              value: "true"
-            - name: OC_URL
-              value: "https://drive.tomlab.fr"
-            - name: OC_ADMIN_USER
-              value: "admin"
-            - name: OC_ADMIN_PASSWORD
-              value: "admin"
-            - name: IDM_ADMIN_PASSWORD
-              value: "admin"
-          volumeMounts:
-            - name: config
-              mountPath: /etc/opencloud
-            - name: data
-              mountPath: /var/lib/opencloud
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
@@ -73,12 +44,32 @@ spec:
               value: "false"
             - name: OC_LOG_LEVEL
               value: "info"
-            - name: OC_ADMIN_USER
-              value: "admin"
-            - name: OC_ADMIN_PASSWORD
-              value: "admin"
-            - name: IDM_ADMIN_PASSWORD
-              value: "admin"
+            # Keycloak External IDP Integration
+            - name: OC_OIDC_ISSUER
+              value: "https://auth.foobarbaz.fr/realms/foobarbaz"
+            - name: OC_EXCLUDE_RUN_SERVICES
+              value: "idp"
+            - name: PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD
+              value: "jwt"
+            - name: PROXY_OIDC_REWRITE_WELLKNOWN
+              value: "true"
+            - name: PROXY_USER_OIDC_CLAIM
+              value: "preferred_username"
+            - name: PROXY_USER_CS3_CLAIM
+              value: "username"
+            - name: WEB_OPTION_ACCOUNT_EDIT_LINK_HREF
+              value: "https://auth.foobarbaz.fr/realms/foobarbaz/account"
+            - name: PROXY_AUTOPROVISION_ACCOUNTS
+              value: "true"
+            - name: GRAPH_USERNAME_MATCH
+              value: "none"
+            - name: PROXY_ROLE_ASSIGNMENT_DRIVER
+              value: "default"
+            - name: WEBFINGER_WEB_OIDC_CLIENT_ID
+              value: "web"
+            - name: WEBFINGER_WEB_OIDC_CLIENT_SCOPES
+              value: "openid profile email"
+            # Storage & Metadata Backend
             - name: OC_STORAGE_USERS_DRIVER
               value: "ocis"
             - name: STORAGE_USERS_DRIVER

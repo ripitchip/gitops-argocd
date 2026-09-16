@@ -30,6 +30,8 @@ spec:
             "k8s:io.kubernetes.pod.namespace": radicale
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": grafana
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": opencloud
       toPorts:
         - ports:
             - port: "8080"
