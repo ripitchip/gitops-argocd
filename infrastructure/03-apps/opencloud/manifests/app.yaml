@@ -23,7 +23,7 @@ spec:
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
-          command: ["sh", "-c", "rm -rf /var/lib/opencloud/storage/metadata; if [ ! -f /etc/opencloud/opencloud.yaml ]; then opencloud init; fi && opencloud server"]
+          command: ["sh", "-c", "if [ ! -f /etc/opencloud/opencloud.yaml ]; then rm -rf /var/lib/opencloud/*; opencloud init; fi && opencloud server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -60,6 +60,10 @@ spec:
             - name: WEB_OPTION_ACCOUNT_EDIT_LINK_HREF
               value: "https://auth.foobarbaz.fr/realms/foobarbaz/account"
             - name: PROXY_AUTOPROVISION_ACCOUNTS
+              value: "true"
+            - name: GRAPH_ASSIGN_DEFAULT_USER_ROLE
+              value: "true"
+            - name: OC_LDAP_SERVER_WRITE_ENABLED
               value: "true"
             - name: GRAPH_USERNAME_MATCH
               value: "none"
@@ -125,6 +129,7 @@ spec:
               mountPath: /var/lib/opencloud
             - name: config
               mountPath: /etc/opencloud
+              subPath: config
           resources:
             requests:
               cpu: "100m"
@@ -137,4 +142,6 @@ spec:
           persistentVolumeClaim:
             claimName: opencloud-data-pvc
         - name: config
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: opencloud-data-pvc
+            subPath: config
