@@ -57,6 +57,18 @@ spec:
                   name: opencloud-secrets
                   key: ADMIN_PASSWORD
                   optional: true
+            - name: OC_JWT_SECRET
+              value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
+            - name: JWT_SECRET
+              value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
+            - name: OC_SERVICE_ACCOUNT_SECRET
+              value: "opencloud-service-account-secret-32bytes"
+            - name: SERVICE_ACCOUNT_SECRET
+              value: "opencloud-service-account-secret-32bytes"
+            - name: OC_TRANSFER_SECRET
+              value: "opencloud-transfer-secret-32bytes"
+            - name: OC_MACHINE_AUTH_API_KEY
+              value: "opencloud-machine-auth-api-key-32bytes"
           ports:
             - containerPort: 9200
               name: http
