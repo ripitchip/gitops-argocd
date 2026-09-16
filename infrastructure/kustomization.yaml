@@ -29,3 +29,5 @@ resources:
   - 03-apps/sure
   - 03-apps/karakeep-app-definition.yaml
   - 03-apps/finance-scrapper-app-definition.yaml
+  - 03-apps/opencloud
+

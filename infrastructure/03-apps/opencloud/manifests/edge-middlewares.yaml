@@ -1,0 +1,53 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  namespace: opencloud
+spec:
+  headers:
+    stsSeconds: 31536000
+    stsIncludeSubdomains: true
+    stsPreload: true
+    forceSTSHeader: true
+    contentTypeNosniff: true
+    browserXssFilter: true
+    referrerPolicy: strict-origin-when-cross-origin
+    permissionsPolicy: camera=(), microphone=(), geolocation=()
+    frameDeny: true
+    contentSecurityPolicy: 'default-src ''self'' ''unsafe-inline'' ''unsafe-eval''; img-src ''self'' data: https:;'
+    customResponseHeaders:
+      Cross-Origin-Opener-Policy: same-origin
+      Cross-Origin-Resource-Policy: same-origin
+      Cross-Origin-Embedder-Policy: require-corp
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: rate-limit
+  namespace: opencloud
+spec:
+  rateLimit:
+    average: 600
+    burst: 1200
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: compress
+  namespace: opencloud
+spec:
+  compress: {}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: public-chain
+  namespace: opencloud
+spec:
+  chain:
+    middlewares:
+    - name: crowdsec-bouncer
+      namespace: crowdsec
+    - name: security-headers
+    - name: rate-limit
+    - name: compress

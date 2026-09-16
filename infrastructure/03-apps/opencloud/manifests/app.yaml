@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencloud
+  namespace: opencloud
+  labels:
+    app: opencloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opencloud
+  template:
+    metadata:
+      labels:
+        app: opencloud
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 62403
+        runAsGroup: 62403
+        fsGroup: 62403
+      containers:
+        - name: opencloud
+          image: owncloud/ocis:6.0.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 62403
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            - name: OCIS_URL
+              value: "https://drive.tomlab.fr"
+            - name: PROXY_TLS
+              value: "false"
+            - name: OCIS_INSECURE
+              value: "true"
+            - name: OCIS_LOG_LEVEL
+              value: "info"
+            - name: OCIS_ADMIN_USER
+              value: "admin"
+            - name: OCIS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: opencloud-secrets
+                  key: ADMIN_PASSWORD
+                  optional: true
+            - name: IDM_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: opencloud-secrets
+                  key: ADMIN_PASSWORD
+                  optional: true
+          ports:
+            - containerPort: 9200
+              name: http
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/ocis
+            - name: config
+              mountPath: /etc/ocis
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: opencloud-data-pvc
+        - name: config
+          emptyDir: {}
