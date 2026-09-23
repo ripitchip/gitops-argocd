@@ -7,6 +7,8 @@ metadata:
     app: opencloud
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: opencloud
@@ -23,7 +25,7 @@ spec:
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
-          command: ["sh", "-c", "if [ ! -f /var/lib/opencloud/init_done ]; then rm -rf /var/lib/opencloud/*; mkdir -p /var/lib/opencloud/config; OC_CONFIG_DIR=/var/lib/opencloud/config opencloud init; touch /var/lib/opencloud/init_done; fi && rm -rf /var/lib/opencloud/search && OC_CONFIG_DIR=/var/lib/opencloud/config opencloud server"]
+          command: ["sh", "-c", "if [ ! -f /var/lib/opencloud/init_done ]; then rm -rf /var/lib/opencloud/*; mkdir -p /var/lib/opencloud/config; OC_CONFIG_DIR=/var/lib/opencloud/config opencloud init; touch /var/lib/opencloud/init_done; fi && (rm -rf /var/lib/opencloud/search 2>/dev/null || true) && OC_CONFIG_DIR=/var/lib/opencloud/config opencloud server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
