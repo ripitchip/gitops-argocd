@@ -1,7 +1,7 @@
 resources:
   - cilium/release.yaml
   - external-secrets
-  - vault
+  - vault/vault-app-definition.yaml
   - argocd
   - cert-manager
   - traefik/traefik-app-definition.yaml
