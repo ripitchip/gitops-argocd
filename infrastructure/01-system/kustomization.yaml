@@ -6,5 +6,9 @@ resources:
   - argocd
   - cert-manager
   - kyverno
+  - grafana/grafana-app-definition.yaml
+  - alloy/alloy-app-definition.yaml
+  - loki/loki-app-definition.yaml
+  - hubble/app-definition.yaml
 
 

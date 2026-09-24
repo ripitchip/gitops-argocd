@@ -8,4 +8,3 @@ resources:
   - alerting-provisioning-configmap.yaml
   - falco-dashboard-configmap.yaml
   - ingress.yaml
-  - edge-middlewares.yaml

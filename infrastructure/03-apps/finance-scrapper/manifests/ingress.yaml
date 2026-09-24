@@ -4,11 +4,10 @@ metadata:
   name: finance-scrapper
   namespace: finance-scrapper
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
-  ingressClassName: traefik
+  ingressClassName: cilium
   rules:
     - host: advisor.foobarbaz.fr
       http:

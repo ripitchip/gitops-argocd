@@ -8,6 +8,5 @@ resources:
   - storage.yaml
   - ollama.yaml
   - open-webui.yaml
-  - edge-middlewares.yaml
-  - ingress.yaml
+- ingress.yaml
   - policy.yaml

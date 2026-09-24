@@ -11,4 +11,3 @@ resources:
   - redis.yaml
   - app.yaml
   - ingress.yaml
-  - edge-middlewares.yaml

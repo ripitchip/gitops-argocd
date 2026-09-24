@@ -13,8 +13,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-  - middlewares.yaml
-  - policy.yaml
+- policy.yaml
   - subwave-storage.yaml
   - subwave.yaml
   - subwave-entrypoint.yaml

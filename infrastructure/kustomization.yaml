@@ -6,5 +6,13 @@ resources:
   - 02-iam/keycloak-app-definition.yaml
   - 03-apps/blog/blog-app-definition.yaml
   - 03-apps/vaultwarden/vaultwarden-app-definition.yaml
+  - 03-apps/immich/immich-app-definition.yaml
+  - 03-apps/jellyfin-app-definition.yaml
+  - 03-apps/n8n-app-definition.yaml
+  - 03-apps/memos-app-definition.yaml
+  - 03-apps/cloudreve-app-definition.yaml
+  - 03-apps/radicale-app-definition.yaml
+  - 03-apps/pdf/pdf-app-definition.yaml
+  - 03-apps/navidrome/navidrome-app-definition.yaml
 
 

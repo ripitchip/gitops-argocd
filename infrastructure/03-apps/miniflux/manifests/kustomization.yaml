@@ -9,4 +9,3 @@ resources:
   - database.yaml
   - app.yaml
   - ingress.yaml
-  - edge-middlewares.yaml

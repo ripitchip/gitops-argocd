@@ -6,12 +6,10 @@ metadata:
   labels:
     app: opencloud
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: opencloud-public-chain@kubernetescrd
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
-  ingressClassName: traefik
+  ingressClassName: cilium
   rules:
   - host: drive.tomlab.fr
     http:

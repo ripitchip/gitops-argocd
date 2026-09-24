@@ -10,4 +10,3 @@ resources:
   - app.yaml
   - oauth2-proxy.yaml
   - ingress.yaml
-  - edge-middlewares.yaml

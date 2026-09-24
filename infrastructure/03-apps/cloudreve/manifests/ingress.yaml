@@ -4,12 +4,10 @@ metadata:
   name: cloudreve
   namespace: cloudreve
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: cloudreve-public-chain@kubernetescrd
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
-  ingressClassName: traefik
+  ingressClassName: cilium
   rules:
   - host: drive.foobarbaz.fr
     http:
@@ -32,13 +30,8 @@ metadata:
   name: cloudreve-upload
   namespace: cloudreve
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.priority: "200"
-    traefik.ingress.kubernetes.io/router.middlewares: cloudreve-upload-chain@kubernetescrd
-    traefik.ingress.kubernetes.io/service.serverstransport: cloudreve-upload-transport@kubernetescrd
 spec:
-  ingressClassName: traefik
+  ingressClassName: cilium
   rules:
   - host: drive.foobarbaz.fr
     http:
@@ -61,12 +54,8 @@ metadata:
   name: cloudreve-webdav
   namespace: cloudreve
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.priority: "100"
-    traefik.ingress.kubernetes.io/router.middlewares: cloudreve-webdav-chain@kubernetescrd
 spec:
-  ingressClassName: traefik
+  ingressClassName: cilium
   rules:
   - host: drive.foobarbaz.fr
     http:

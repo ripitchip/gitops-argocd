@@ -4,10 +4,10 @@ metadata:
   name: immich-ingress
   namespace: immich
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
-  ingressClassName: traefik
+  ingressClassName: cilium
   tls:
     - hosts:
         - photo.foobarbaz.fr

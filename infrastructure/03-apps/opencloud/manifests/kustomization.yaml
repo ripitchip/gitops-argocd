@@ -8,5 +8,4 @@ resources:
   - baseline-network-policy.yaml
   - policy.yaml
   - storage.yaml
-  - edge-middlewares.yaml
-  - external-secrets.yaml
+- external-secrets.yaml

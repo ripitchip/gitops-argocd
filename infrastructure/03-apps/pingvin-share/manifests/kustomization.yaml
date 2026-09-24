@@ -7,4 +7,3 @@ resources:
   - storage.yaml
   - baseline-network-policy.yaml
   - policy.yaml
-  - edge-middlewares.yaml

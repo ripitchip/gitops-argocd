@@ -8,4 +8,3 @@ resources:
   - policy.yaml
   - external-secrets.yaml
   - oauth2-proxy.yaml
-  - edge-middlewares.yaml

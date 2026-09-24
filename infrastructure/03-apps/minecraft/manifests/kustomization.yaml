@@ -8,5 +8,4 @@ resources:
   - velocity.yaml
   - service.yaml
   - policy.yaml
-  - edge-middlewares.yaml
-  - ingress.yaml
+- ingress.yaml

@@ -5,4 +5,3 @@ resources:
   - baseline-network-policy.yaml
   - policy.yaml
   - release.yaml
-  - bouncer-middleware.yaml
