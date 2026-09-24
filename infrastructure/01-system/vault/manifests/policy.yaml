@@ -15,11 +15,10 @@ spec:
         - ports:
             - port: "8201"
               protocol: TCP
-    - fromEntities:
-        - host
-        - remote-node
-        - ingress
-        - kube-apiserver
+    - fromEndpoints:
+        - {}
+      fromEntities:
+        - all
       toPorts:
         - ports:
             - port: "8200"
