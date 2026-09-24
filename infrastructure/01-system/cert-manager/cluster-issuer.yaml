@@ -9,7 +9,18 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-prod-account-key
     solvers:
-      - http01:
-          ingress:
-            ingressClassName: cilium
-            serviceType: ClusterIP
+      - dns01:
+          webhook:
+            groupName: acme.foobarbaz.fr
+            solverName: ovh
+            config:
+              endpoint: ovh-eu
+              applicationKeySecretRef:
+                name: ovh-credentials
+                key: applicationKey
+              applicationSecretSecretRef:
+                name: ovh-credentials
+                key: applicationSecret
+              consumerKeySecretRef:
+                name: ovh-credentials
+                key: consumerKey

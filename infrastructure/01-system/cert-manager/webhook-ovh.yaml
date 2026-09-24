@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager-webhook-ovh
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  project: default
+  source:
+    chart: cert-manager-webhook-ovh
+    repoURL: https://cert-manager-webhook-ovh.github.io/cert-manager-webhook-ovh/
+    targetRevision: 0.6.0
+    helm:
+      values: |
+        groupName: acme.foobarbaz.fr
+        certManager:
+          namespace: cert-manager
+          serviceAccountName: cert-manager-release
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

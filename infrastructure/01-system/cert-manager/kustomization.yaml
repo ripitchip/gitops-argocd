@@ -1,5 +1,7 @@
 resources:
   - namespace.yaml
   - release.yaml
+  - webhook-ovh.yaml
+  - external-secrets.yaml
   - cluster-issuer.yaml
   - policy.yaml

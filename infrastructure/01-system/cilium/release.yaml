@@ -48,9 +48,6 @@ spec:
             mode: shared
             l2:
               enabled: true
-          service:
-            annotations:
-              io.cilium/lb-ipam-ips: "10.0.50.200"
 
         prometheus:
           enabled: true
