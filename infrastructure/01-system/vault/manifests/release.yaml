@@ -65,7 +65,7 @@ spec:
                   - "vault.foobarbaz.fr"
             annotations:
               cert-manager.io/cluster-issuer: "letsencrypt-prod"
-              io.cilium/lb-ipam-ips: "10.0.50.200"
+              ingress.cilium.io/loadbalancer-mode: "shared"
         injector:
           resources:
             requests:
