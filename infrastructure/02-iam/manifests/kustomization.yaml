@@ -8,7 +8,6 @@ resources:
   - external-secrets.yaml
   - storage.yaml
   - app.yaml
-  - edge-middlewares.yaml
 
 labels:
   - pairs:

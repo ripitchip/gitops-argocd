@@ -297,12 +297,10 @@ metadata:
   namespace: auth
   annotations:
     argocd.argoproj.io/sync-wave: "15"
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: auth-public-chain@kubernetescrd
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
-  ingressClassName: traefik
+  ingressClassName: cilium
   tls: [{ hosts: ["auth.foobarbaz.fr"], secretName: keycloak-cert-tls }]
   rules:
     - host: "auth.foobarbaz.fr"
