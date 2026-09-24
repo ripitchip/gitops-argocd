@@ -15,7 +15,18 @@ spec:
         - ports:
             - port: "8201"
               protocol: TCP
+    - fromEntities:
+        - host
+        - remote-node
+        - ingress
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
         - matchLabels:
