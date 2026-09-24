@@ -217,8 +217,6 @@ kind: Service
 metadata:
   name: subwave-backend
   namespace: navidrome
-  annotations:
-    traefik.ingress.kubernetes.io/service.serverstransport: navidrome-subwave-transport@kubernetescrd
 spec:
   selector:
     app: subwave-backend
@@ -229,14 +227,6 @@ spec:
     - name: icecast
       port: 7702
       targetPort: 7702
----
-apiVersion: traefik.io/v1alpha1
-kind: ServersTransport
-metadata:
-  name: subwave-transport
-  namespace: navidrome
-spec:
-  disableHTTP2: true
 ---
 apiVersion: v1
 kind: Service
