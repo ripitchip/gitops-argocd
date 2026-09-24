@@ -16,6 +16,13 @@ spec:
     - host: radio.foobarbaz.fr
       http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: subwave-backend
+                port:
+                  number: 7701
           - path: /stream.mp3
             pathType: Prefix
             backend:
@@ -37,29 +44,3 @@ spec:
                 name: subwave-web
                 port:
                   number: 7700
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: subwave-api
-  namespace: navidrome
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    ingress.cilium.io/loadbalancer-mode: "shared"
-spec:
-  ingressClassName: cilium
-  tls:
-    - hosts:
-        - radio.foobarbaz.fr
-      secretName: subwave-tls
-  rules:
-    - host: radio.foobarbaz.fr
-      http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: subwave-backend
-                port:
-                  number: 7701
