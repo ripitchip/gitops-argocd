@@ -9,8 +9,8 @@ spec:
   project: default
   source:
     chart: cert-manager-webhook-ovh
-    repoURL: https://cert-manager-webhook-ovh.github.io/cert-manager-webhook-ovh/
-    targetRevision: 0.6.0
+    repoURL: https://aureq.github.io/cert-manager-webhook-ovh/
+    targetRevision: 0.9.17
     helm:
       values: |
         groupName: acme.foobarbaz.fr
