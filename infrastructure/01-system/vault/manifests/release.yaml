@@ -56,7 +56,7 @@ spec:
               }
           ingress:
             enabled: true
-            ingressClassName: "traefik"
+            ingressClassName: "cilium"
             hosts:
               - host: "vault.foobarbaz.fr"
             tls:

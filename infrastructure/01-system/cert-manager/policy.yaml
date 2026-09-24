@@ -40,10 +40,9 @@ spec:
       toPorts:
         - ports:
             - port: "53"
-              protocol: ANY
-          rules:
-            dns:
-              - matchPattern: "*"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
     # 3. K8S API
     - toEntities:
         - kube-apiserver
