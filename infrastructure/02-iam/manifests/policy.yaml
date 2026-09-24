@@ -10,8 +10,21 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
-    # 2. External Traffic via Traefik
+    # 2. External Traffic via Ingress (Cilium Envoy)
+    - fromEntities:
+        - host
+        - remote-node
+        - ingress
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+            - port: "8089"
+              protocol: TCP
     - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
       toPorts:
