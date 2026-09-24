@@ -22,6 +22,6 @@ spec:
               applicationSecretRef:
                 name: ovh-credentials
                 key: applicationSecret
-              applicationConsumerKeyRef:
+              consumerKeyRef:
                 name: ovh-credentials
                 key: consumerKey
