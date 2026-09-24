@@ -11,8 +11,4 @@ spec:
     solvers:
       - http01:
           ingress:
-            ingressClassName: cilium
-            ingressTemplate:
-              metadata:
-                annotations:
-                  io.cilium/lb-ipam-ips: "10.0.50.200"
+            mode: editInPlace
