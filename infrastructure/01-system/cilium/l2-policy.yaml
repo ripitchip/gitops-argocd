@@ -1,11 +1,27 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumLoadBalancerIPPool
 metadata:
-  name: external-pool
+  name: ingress-pool
   namespace: kube-system
 spec:
   blocks:
     - cidr: "10.0.50.200/32"
+  serviceSelector:
+    matchExpressions:
+      - key: cilium.io/ingress
+        operator: In
+        values:
+          - "true"
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: apps-pool
+  namespace: kube-system
+spec:
+  blocks:
+    - start: "10.0.50.201"
+      stop: "10.0.50.210"
 ---
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumL2AnnouncementPolicy

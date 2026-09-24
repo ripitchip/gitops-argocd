@@ -36,6 +36,8 @@ spec:
               - SYS_RESOURCE
 
 
+        kubeProxyReplacement: true
+
         l2announcements:
           enabled: true
 
