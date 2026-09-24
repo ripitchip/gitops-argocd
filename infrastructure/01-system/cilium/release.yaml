@@ -42,6 +42,12 @@ spec:
         ingressController:
           enabled: true
           default: true
+          loadBalancer:
+            l2:
+              enabled: true
+          service:
+            annotations:
+              io.cilium/lb-ipam-ips: "10.0.50.200"
 
         prometheus:
           enabled: true
