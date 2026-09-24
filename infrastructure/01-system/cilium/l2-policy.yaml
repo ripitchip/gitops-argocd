@@ -30,3 +30,6 @@ metadata:
   namespace: kube-system
 spec:
   loadBalancerIPs: true
+  interfaces:
+    - "^eth.*"
+    - "^en.*"

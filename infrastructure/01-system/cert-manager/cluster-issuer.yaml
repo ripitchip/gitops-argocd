@@ -12,3 +12,6 @@ spec:
       - http01:
           ingress:
             ingressClassName: cilium
+            metadata:
+              annotations:
+                io.cilium/lb-ipam-ips: "10.0.50.200"
