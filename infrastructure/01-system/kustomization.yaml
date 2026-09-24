@@ -1,5 +1,6 @@
 resources:
   - cilium/release.yaml
+  - cilium/l2-policy.yaml
   - external-secrets
   - vault/vault-app-definition.yaml
   - argocd
