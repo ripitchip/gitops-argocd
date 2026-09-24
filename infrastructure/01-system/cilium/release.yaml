@@ -44,10 +44,7 @@ spec:
         ingressController:
           enabled: true
           default: true
-          loadBalancer:
-            mode: shared
-            l2:
-              enabled: true
+          loadbalancerMode: shared
 
         prometheus:
           enabled: true
