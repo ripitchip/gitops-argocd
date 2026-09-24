@@ -8,10 +8,8 @@ spec:
     matchLabels:
       app: navidrome
   ingress:
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:app.kubernetes.io/name": traefik
-            "k8s:io.kubernetes.pod.namespace": traefik
+    - fromEntities:
+        - ingress
       toPorts:
         - ports:
             - port: "4533"
@@ -106,10 +104,8 @@ spec:
     matchLabels:
       app: deemix-oauth2-proxy
   ingress:
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:app.kubernetes.io/name": traefik
-            "k8s:io.kubernetes.pod.namespace": traefik
+    - fromEntities:
+        - ingress
       toPorts:
         - ports:
             - port: "4180"

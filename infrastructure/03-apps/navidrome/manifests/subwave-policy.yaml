@@ -13,8 +13,8 @@ spec:
           - subwave-web
   ingress:
     # 1. Traefik to web and backend
-    - fromEndpoints:
-        - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
+    - fromEntities:
+        - ingress
       toPorts:
         - ports: 
             - port: "7700"
