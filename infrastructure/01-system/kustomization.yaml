@@ -6,15 +6,5 @@ resources:
   - argocd
   - cert-manager
   - kyverno
-  - trivy
-  - trivy-adapter
-  - hubble/app-definition.yaml
-  - policy-reporter/policy-reporter-app-definition.yaml
-  - grafana/grafana-app-definition.yaml
-  - loki/loki-app-definition.yaml
-  - alloy/alloy-app-definition.yaml
-  - mimir/mimir-app-definition.yaml
-  - tempo/tempo-app-definition.yaml
-  - crowdsec/crowdsec-app-definition.yaml
-  - kube-bench
+
 
