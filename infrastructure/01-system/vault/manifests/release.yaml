@@ -65,7 +65,7 @@ spec:
                   - "vault.foobarbaz.fr"
             annotations:
               cert-manager.io/cluster-issuer: "letsencrypt-prod"
-              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              io.cilium/lb-ipam-ips: "10.0.50.200"
         injector:
           resources:
             requests:
