@@ -4,11 +4,9 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
-  ingressClassName: traefik
+  ingressClassName: cilium
   rules:
     - host: argocd.foobarbaz.fr
       http:
@@ -24,11 +22,3 @@ spec:
     - hosts:
         - argocd.foobarbaz.fr
       secretName: argocd-server-tls
----
-apiVersion: traefik.io/v1alpha1
-kind: ServersTransport
-metadata:
-  name: argocd-server-transport
-  namespace: argocd
-spec:
-  insecureSkipVerify: true

@@ -39,6 +39,10 @@ spec:
         l2announcements:
           enabled: true
 
+        ingressController:
+          enabled: true
+          default: true
+
         prometheus:
           enabled: true
           port: 9962
