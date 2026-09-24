@@ -36,6 +36,9 @@ spec:
               - SYS_RESOURCE
 
 
+        l2announcements:
+          enabled: true
+
         prometheus:
           enabled: true
           port: 9962

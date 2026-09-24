@@ -24,6 +24,7 @@ spec:
         service:
           type: LoadBalancer
           annotations:
+            io.cilium/lb-ipam-ips: "10.0.50.200"
             metallb.io/loadBalancerIPs: "10.0.50.200"
         deployment:
           podSecurityContext:
