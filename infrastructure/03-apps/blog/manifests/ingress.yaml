@@ -4,6 +4,7 @@ metadata:
   name: blog
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
   ingressClassName: cilium
   rules:

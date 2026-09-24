@@ -19,7 +19,18 @@ spec:
                 name: argo-cd-argocd-server
                 port:
                   number: 80
+    - host: argocd.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argo-cd-argocd-server
+                port:
+                  number: 80
   tls:
     - hosts:
         - argocd.foobarbaz.fr
+        - argocd.tomlab.fr
       secretName: argocd-server-tls
