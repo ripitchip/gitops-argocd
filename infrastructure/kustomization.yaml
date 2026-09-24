@@ -5,5 +5,6 @@ resources:
   - 01-system
   - 02-iam/keycloak-app-definition.yaml
   - 03-apps/blog/blog-app-definition.yaml
+  - 03-apps/vaultwarden/vaultwarden-app-definition.yaml
 
 
