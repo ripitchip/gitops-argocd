@@ -8,6 +8,12 @@ spec:
     matchLabels:
       app: cloudreve
   ingress:
+  - fromEntities:
+    - ingress
+    toPorts:
+    - ports:
+      - port: "5212"
+        protocol: TCP
   - fromEndpoints:
     - matchLabels:
         "k8s:io.kubernetes.pod.namespace": traefik
