@@ -8,66 +8,18 @@ metadata:
     ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
   ingressClassName: cilium
-  rules:
-  - host: drive.foobarbaz.fr
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: cloudreve
-            port:
-              number: 5212
   tls:
-  - hosts:
-    - drive.foobarbaz.fr
-    secretName: cloudreve-tls
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: cloudreve-upload
-  namespace: cloudreve
-  annotations:
-spec:
-  ingressClassName: cilium
+    - hosts:
+        - drive.foobarbaz.fr
+      secretName: cloudreve-tls
   rules:
-  - host: drive.foobarbaz.fr
-    http:
-      paths:
-      - path: /api/v4/file/upload
-        pathType: Prefix
-        backend:
-          service:
-            name: cloudreve
-            port:
-              number: 5212
-  tls:
-  - hosts:
-    - drive.foobarbaz.fr
-    secretName: cloudreve-tls
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: cloudreve-webdav
-  namespace: cloudreve
-  annotations:
-spec:
-  ingressClassName: cilium
-  rules:
-  - host: drive.foobarbaz.fr
-    http:
-      paths:
-      - path: /dav
-        pathType: Prefix
-        backend:
-          service:
-            name: cloudreve
-            port:
-              number: 5212
-  tls:
-  - hosts:
-    - drive.foobarbaz.fr
-    secretName: cloudreve-tls
+    - host: drive.foobarbaz.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cloudreve
+                port:
+                  number: 5212
