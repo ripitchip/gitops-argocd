@@ -58,10 +58,12 @@ spec:
             enabled: true
             ingressClassName: "cilium"
             hosts:
+              - host: "vault.tomlab.fr"
               - host: "vault.foobarbaz.fr"
             tls:
               - secretName: vault-tls-cert
                 hosts:
+                  - "vault.tomlab.fr"
                   - "vault.foobarbaz.fr"
             annotations:
               cert-manager.io/cluster-issuer: "letsencrypt-prod"

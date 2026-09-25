@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-autounseal
+  namespace: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault-autounseal
+  template:
+    metadata:
+      labels:
+        app: vault-autounseal
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: autounseal
+          image: curlimages/curl:8.5.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+          command:
+            - sh
+            - -c
+            - |
+              echo "Demarrage du watcher Vault Auto-Unseal..."
+              while true; do
+                STATUS=$(curl -s -o /tmp/health.json -w "%{http_code}" http://vault.vault.svc.cluster.local:8200/v1/sys/health || true)
+                if [ "$STATUS" = "503" ] || grep -q '"sealed":true' /tmp/health.json 2>/dev/null; then
+                  echo "[$(date)] Vault est verrouille (Sealed). Tentative d'unseal automatique..."
+                  for key in "$KEY1" "$KEY2" "$KEY3"; do
+                    if [ -n "$key" ]; then
+                      curl -s -X POST http://vault.vault.svc.cluster.local:8200/v1/sys/unseal \
+                        -H "Content-Type: application/json" \
+                        -d "{\"key\": \"$key\"}" > /dev/null
+                    fi
+                  done
+                fi
+                sleep 10
+              done
+          env:
+            - name: KEY1
+              valueFrom:
+                secretKeyRef:
+                  name: vault-unseal-keys
+                  key: key1
+                  optional: true
+            - name: KEY2
+              valueFrom:
+                secretKeyRef:
+                  name: vault-unseal-keys
+                  key: key2
+                  optional: true
+            - name: KEY3
+              valueFrom:
+                secretKeyRef:
+                  name: vault-unseal-keys
+                  key: key3
+                  optional: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
