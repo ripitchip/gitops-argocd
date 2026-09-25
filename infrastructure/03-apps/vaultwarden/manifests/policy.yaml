@@ -9,9 +9,7 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": pass
-    - fromEndpoints:
-        - {}
-      fromEntities:
+    - fromEntities:
         - all
       toPorts:
         - ports:
@@ -20,10 +18,14 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+
   egress:
+    # Trafic interne au namespace
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": pass
+
+    # DNS (indispensable pour toFQDNs)
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
@@ -35,6 +37,8 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
+
+    # HashiCorp Vault
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": vault
@@ -42,6 +46,12 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+
+    # API Kubernetes
+    - toEntities:
+        - kube-apiserver
+
+    # SMTP ProtonMail
     - toFQDNs:
         - matchName: "smtp.protonmail.ch"
         - matchPattern: "*.protonmail.ch"
@@ -51,4 +61,3 @@ spec:
               protocol: TCP
             - port: "465"
               protocol: TCP
-
