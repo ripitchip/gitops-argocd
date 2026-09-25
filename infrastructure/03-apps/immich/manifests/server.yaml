@@ -39,14 +39,19 @@ spec:
           type: RuntimeDefault
       containers:
         - name: server
-          image: ghcr.io/immich-app/immich-server:v3.1.0
+          image: ghcr.io/immich-app/immich-server:v3.2.2
           envFrom:
             - configMapRef: { name: immich-config }
           env:
             - name: DB_PASSWORD
-              valueFrom: { secretKeyRef: { name: immich-secrets, key: DB_PASSWORD } }
+              valueFrom:
+                { secretKeyRef: { name: immich-secrets, key: DB_PASSWORD } }
             - name: IMMICH_OAUTH_CLIENT_SECRET
-              valueFrom: { secretKeyRef: { name: immich-secrets, key: OIDC_CLIENT_SECRET } }
+              valueFrom:
+                {
+                  secretKeyRef:
+                    { name: immich-secrets, key: OIDC_CLIENT_SECRET },
+                }
           ports:
             - containerPort: 2283
           volumeMounts:
