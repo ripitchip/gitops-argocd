@@ -4,5 +4,4 @@ resources:
   - webhook-ovh.yaml
   - external-secrets.yaml
   - cluster-issuer.yaml
-  - rbac.yaml
   - policy.yaml
