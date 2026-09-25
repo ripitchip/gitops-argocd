@@ -8,18 +8,29 @@ metadata:
     ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
   ingressClassName: cilium
-  rules:
-  - host: hubble.foobarbaz.fr
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: hubble-oauth2-proxy
-            port:
-              number: 80
   tls:
-  - hosts:
-    - hubble.foobarbaz.fr
-    secretName: hubble-ui-tls
+    - hosts:
+        - hubble.tomlab.fr
+        - hubble.foobarbaz.fr
+      secretName: hubble-ui-tls
+  rules:
+    - host: hubble.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hubble-oauth2-proxy
+                port:
+                  number: 80
+    - host: hubble.foobarbaz.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hubble-oauth2-proxy
+                port:
+                  number: 80
