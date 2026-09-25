@@ -8,18 +8,29 @@ metadata:
     ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
   ingressClassName: cilium
-  rules:
-  - host: grafana.foobarbaz.fr
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: grafana
-            port:
-              number: 80
   tls:
-  - hosts:
-    - grafana.foobarbaz.fr
-    secretName: grafana-tls
+    - hosts:
+        - grafana.foobarbaz.fr
+        - grafana.tomlab.fr
+      secretName: grafana-tls
+  rules:
+    - host: grafana.foobarbaz.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
+    - host: grafana.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
