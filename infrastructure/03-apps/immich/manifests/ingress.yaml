@@ -10,9 +10,20 @@ spec:
   ingressClassName: cilium
   tls:
     - hosts:
+        - photo.tomlab.fr
         - photo.foobarbaz.fr
       secretName: photo-tls
   rules:
+    - host: photo.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: immich-server
+                port:
+                  number: 2283
     - host: photo.foobarbaz.fr
       http:
         paths:

@@ -8,6 +8,12 @@ spec:
     matchLabels:
       app: immich-server
   ingress:
+    - fromEntities:
+        - all
+      toPorts:
+        - ports:
+            - port: "2283"
+              protocol: TCP
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
