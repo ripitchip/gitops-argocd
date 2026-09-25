@@ -11,9 +11,7 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
     # 2. External Traffic via Ingress (Cilium Envoy)
-    - fromEndpoints:
-        - {}
-      fromEntities:
+    - fromEntities:
         - all
       toPorts:
         - ports:
