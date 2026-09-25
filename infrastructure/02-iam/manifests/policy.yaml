@@ -19,7 +19,7 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-            - port: "8089"
+            - port: "9000"
               protocol: TCP
     # 3. OIDC Clients (ArgoCD, Cloudreve, Radicale, Grafana, etc.)
     - fromEndpoints:

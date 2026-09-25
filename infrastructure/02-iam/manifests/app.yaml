@@ -201,7 +201,7 @@ spec:
               subPath: providers-data
         - name: prepare-lib
           image: quay.io/keycloak/keycloak:26.6.1
-          command: ["sh", "-c", "cp -rp /opt/keycloak/lib/quarkus/* /mnt/lib/"]
+          command: ["sh", "-c", "cp -rp /opt/keycloak/lib/quarkus/* /mnt/lib/ && chown -R 4648:4648 /mnt/lib"]
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
@@ -301,8 +301,19 @@ metadata:
     ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
   ingressClassName: cilium
-  tls: [{ hosts: ["auth.foobarbaz.fr"], secretName: keycloak-cert-tls }]
+  tls:
+    - hosts:
+        - auth.tomlab.fr
+        - auth.foobarbaz.fr
+      secretName: keycloak-cert-tls
   rules:
+    - host: "auth.tomlab.fr"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: keycloak, port: { number: 8080 } }
     - host: "auth.foobarbaz.fr"
       http:
         paths:
