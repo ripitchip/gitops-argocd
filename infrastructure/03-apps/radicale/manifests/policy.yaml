@@ -6,7 +6,13 @@ metadata:
 spec:
   endpointSelector: {}
   ingress:
-    # 1. Traefik to Radicale and ACME Solver
+    # 1. Cilium Ingress & Traefik to Radicale
+    - fromEntities:
+        - ingress
+      toPorts:
+        - ports:
+            - port: "5232"
+              protocol: TCP
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
       toPorts:

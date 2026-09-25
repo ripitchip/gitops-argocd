@@ -9,9 +9,21 @@ metadata:
 spec:
   ingressClassName: cilium
   tls:
-    - hosts: [cal.foobarbaz.fr]
+    - hosts:
+        - cal.tomlab.fr
+        - cal.foobarbaz.fr
       secretName: radicale-tls
   rules:
+    - host: cal.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: radicale
+                port:
+                  number: 80
     - host: cal.foobarbaz.fr
       http:
         paths:
@@ -22,3 +34,4 @@ spec:
                 name: radicale
                 port:
                   number: 80
+
