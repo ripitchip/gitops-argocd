@@ -54,7 +54,7 @@ data:
               <span class="icon">K</span>
               <span><strong>Kutt</strong><small>Liens courts</small></span>
             </a>
-            <a class="tile" href="https://cal.foobarbaz.fr">
+            <a class="tile" href="https://cal.tomlab.fr">
               <span class="icon">C</span>
               <span><strong>Radicale</strong><small>Calendriers et contacts</small></span>
             </a>
@@ -69,7 +69,7 @@ data:
             <div class="grid compact">
               <a class="tile" href="https://tv.foobarbaz.fr"><span class="icon">J</span><span><strong>Jellyfin</strong><small>Films et series</small></span></a>
               <a class="tile" href="https://requests.foobarbaz.fr"><span class="icon">R</span><span><strong>Requests</strong><small>Demandes media</small></span></a>
-              <a class="tile" href="https://music.foobarbaz.fr"><span class="icon">N</span><span><strong>Navidrome</strong><small>Musique</small></span></a>
+              <a class="tile" href="https://music.tomlab.fr"><span class="icon">N</span><span><strong>Navidrome</strong><small>Musique</small></span></a>
               <a class="tile" href="https://radio.foobarbaz.fr"><span class="icon">R</span><span><strong>Radio</strong><small>Subwave</small></span></a>
             </div>
           </section>
@@ -110,7 +110,7 @@ data:
               <span class="icon">A</span>
               <span><strong>Keycloak</strong><small>Identite et acces</small></span>
             </a>
-            <a class="tile" href="https://hubble.foobarbaz.fr">
+            <a class="tile" href="https://hubble.tomlab.fr">
               <span class="icon">H</span>
               <span><strong>Hubble</strong><small>Reseau Cilium</small></span>
             </a>
