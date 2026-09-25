@@ -42,13 +42,13 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
-    - toEntities:
-        - kube-apiserver
     - toFQDNs:
         - matchName: "smtp.protonmail.ch"
+        - matchPattern: "*.protonmail.ch"
       toPorts:
         - ports:
             - port: "587"
               protocol: TCP
             - port: "465"
               protocol: TCP
+
