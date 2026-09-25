@@ -10,9 +10,17 @@ spec:
   ingressClassName: cilium
   tls:
     - hosts:
+        - music.tomlab.fr
         - music.foobarbaz.fr
       secretName: navidrome-tls
   rules:
+    - host: music.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: navidrome, port: { number: 80 } }
     - host: music.foobarbaz.fr
       http:
         paths:
