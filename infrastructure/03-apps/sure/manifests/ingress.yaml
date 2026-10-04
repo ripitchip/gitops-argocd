@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sure
+  namespace: sure
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
+spec:
+  ingressClassName: cilium
+  tls:
+    - hosts:
+        - budget.foobarbaz.fr
+      secretName: sure-tls
+  rules:
+    - host: budget.foobarbaz.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sure-web
+                port:
+                  number: 3000

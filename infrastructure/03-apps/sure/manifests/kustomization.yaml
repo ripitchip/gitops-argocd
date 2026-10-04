@@ -8,3 +8,4 @@ resources:
   - database.yaml
   - redis.yaml
   - policy.yaml
+  - ingress.yaml

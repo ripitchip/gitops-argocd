@@ -86,21 +86,7 @@ spec:
           enabled: false
 
         ingress:
-          enabled: true
-          className: traefik
-          annotations:
-            traefik.ingress.kubernetes.io/router.entrypoints: websecure
-            traefik.ingress.kubernetes.io/router.tls: "true"
-            cert-manager.io/cluster-issuer: letsencrypt-prod
-          hosts:
-            - host: budget.foobarbaz.fr
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls:
-            - hosts:
-                - budget.foobarbaz.fr
-              secretName: sure-tls
+          enabled: false
 
         web:
           replicas: 1
