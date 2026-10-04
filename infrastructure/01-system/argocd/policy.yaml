@@ -6,8 +6,12 @@ metadata:
   namespace: argocd
 spec:
   endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: argocd-repo-server
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - argocd-repo-server
+          - argo-cd-argocd-repo-server
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -38,6 +42,8 @@ spec:
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: argocd-redis
+        - matchLabels:
+            app.kubernetes.io/name: argo-cd-argocd-redis
       toPorts:
         - ports:
             - port: "6379"
@@ -61,6 +67,10 @@ spec:
           - argocd-applicationset-controller
           - argocd-dex-server
           - argocd-notifications-controller
+          - argo-cd-argocd-application-controller
+          - argo-cd-argocd-server
+          - argo-cd-argocd-applicationset-controller
+          - argo-cd-argocd-notifications-controller
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -85,6 +95,15 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: argocd-redis
+        - matchLabels:
+            app.kubernetes.io/name: argo-cd-argocd-redis
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
     - toFQDNs:
         - matchName: "auth.foobarbaz.fr"
     - toEntities:
@@ -111,8 +130,12 @@ metadata:
   namespace: argocd
 spec:
   endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: argocd-redis
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - argocd-redis
+          - argo-cd-argocd-redis
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -124,3 +147,4 @@ spec:
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": argocd
+
