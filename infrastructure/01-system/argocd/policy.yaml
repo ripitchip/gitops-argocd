@@ -1,74 +1,16 @@
-# --- POLICY 1: REPO SERVER (The only one allowed to talk to Git) ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: argocd-repo-server-egress
+  name: argocd-policy
   namespace: argocd
 spec:
-  endpointSelector:
-    matchExpressions:
-      - key: app.kubernetes.io/name
-        operator: In
-        values:
-          - argocd-repo-server
-          - argo-cd-argocd-repo-server
+  endpointSelector: {}
   ingress:
     - fromEndpoints:
         - {}
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": alloy
-  egress:
-    - toEntities:
-        - kube-apiserver
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: ANY
-          rules:
-            dns:
-              - matchPattern: "*"
-    - toEntities:
-        - world
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
-    - toEndpoints:
-        - {}
-
----
-# --- POLICY 2: CORE COMPONENTS (Server, Controllers) ---
-apiVersion: "cilium.io/v2"
-kind: CiliumNetworkPolicy
-metadata:
-  name: argocd-core-egress
-  namespace: argocd
-spec:
-  endpointSelector:
-    matchExpressions:
-      - key: app.kubernetes.io/name
-        operator: In
-        values:
-          - argocd-application-controller
-          - argocd-server
-          - argocd-applicationset-controller
-          - argocd-dex-server
-          - argocd-notifications-controller
-          - argo-cd-argocd-application-controller
-          - argo-cd-argocd-server
-          - argo-cd-argocd-applicationset-controller
-          - argo-cd-argocd-notifications-controller
-  ingress:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
-    - fromEndpoints:
-        - {}
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
@@ -95,6 +37,8 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
+            - port: "80"
+              protocol: TCP
     - toEndpoints:
         - {}
     - toEndpoints:
@@ -102,31 +46,3 @@ spec:
             "k8s:io.kubernetes.pod.namespace": auth
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": external-secrets
-
----
-# --- POLICY 3: REDIS ISOLATION ---
-apiVersion: "cilium.io/v2"
-kind: CiliumNetworkPolicy
-metadata:
-  name: argocd-redis-security
-  namespace: argocd
-spec:
-  endpointSelector:
-    matchExpressions:
-      - key: app.kubernetes.io/name
-        operator: In
-        values:
-          - argocd-redis
-          - argo-cd-argocd-redis
-          - redis
-  ingress:
-    - fromEndpoints:
-        - {}
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": alloy
-  egress:
-    - toEndpoints:
-        - {}
-
-
