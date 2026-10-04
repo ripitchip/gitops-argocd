@@ -14,8 +14,7 @@ spec:
           - argo-cd-argocd-repo-server
   ingress:
     - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": argocd
+        - {}
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
@@ -40,14 +39,7 @@ spec:
             - port: "443"
               protocol: TCP
     - toEndpoints:
-        - matchLabels:
-            app.kubernetes.io/name: argocd-redis
-        - matchLabels:
-            app.kubernetes.io/name: argo-cd-argocd-redis
-      toPorts:
-        - ports:
-            - port: "6379"
-              protocol: TCP
+        - {}
 
 ---
 # --- POLICY 2: CORE COMPONENTS (Server, Controllers) ---
@@ -76,8 +68,7 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
     - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": argocd
+        - {}
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
@@ -95,15 +86,6 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    - toEndpoints:
-        - matchLabels:
-            app.kubernetes.io/name: argocd-redis
-        - matchLabels:
-            app.kubernetes.io/name: argo-cd-argocd-redis
-      toPorts:
-        - ports:
-            - port: "6379"
-              protocol: TCP
     - toFQDNs:
         - matchName: "auth.foobarbaz.fr"
     - toEntities:
@@ -114,12 +96,12 @@ spec:
             - port: "443"
               protocol: TCP
     - toEndpoints:
+        - {}
+    - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": external-secrets
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": argocd
 
 ---
 # --- POLICY 3: REDIS ISOLATION ---
@@ -136,15 +118,15 @@ spec:
         values:
           - argocd-redis
           - argo-cd-argocd-redis
+          - redis
   ingress:
     - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": argocd
+        - {}
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
   egress:
     - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": argocd
+        - {}
+
 
