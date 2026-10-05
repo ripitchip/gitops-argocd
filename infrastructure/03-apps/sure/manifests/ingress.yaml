@@ -11,9 +11,20 @@ spec:
   tls:
     - hosts:
         - budget.foobarbaz.fr
+        - budget.tomlab.fr
       secretName: sure-tls
   rules:
     - host: budget.foobarbaz.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sure
+                port:
+                  number: 80
+    - host: budget.tomlab.fr
       http:
         paths:
           - path: /
