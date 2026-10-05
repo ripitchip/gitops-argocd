@@ -26,10 +26,10 @@ spec:
             ONBOARDING_STATE: "open"
             AI_DEBUG_MODE: "false"
           extraEnv:
-            APP_DOMAIN: budget.foobarbaz.fr
+            APP_DOMAIN: budget.tomlab.fr
             RAILS_ASSUME_SSL: "true"
-            WEBAUTHN_RP_ID: foobarbaz.fr
-            WEBAUTHN_ALLOWED_ORIGINS: https://budget.foobarbaz.fr
+            WEBAUTHN_RP_ID: tomlab.fr
+            WEBAUTHN_ALLOWED_ORIGINS: https://budget.tomlab.fr,https://budget.foobarbaz.fr
             EXCHANGE_RATE_PROVIDER: yahoo_finance
             SECURITIES_PROVIDER: yahoo_finance
             OPENAI_URI_BASE: "http://ollama.ai.svc.cluster.local:11434/v1"
