@@ -15,7 +15,7 @@ spec:
       releaseName: sure
       values: |
         image:
-          tag: 0.7.3
+          tag: 0.7.5
 
         rails:
           existingSecret: sure-secrets

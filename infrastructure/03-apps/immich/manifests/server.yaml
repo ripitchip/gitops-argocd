@@ -39,7 +39,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: server
-          image: ghcr.io/immich-app/immich-server:v3.2.2
+          image: ghcr.io/immich-app/immich-server:v3.2.4
           envFrom:
             - configMapRef: { name: immich-config }
           env:
