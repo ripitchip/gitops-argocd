@@ -17,6 +17,15 @@ spec:
           enabled: true
           namespace: vault
         server:
+          readinessProbe:
+            enabled: true
+            path: "/v1/sys/health?standbyok=true&sealedok=true"
+            timeoutSeconds: 5
+          livenessProbe:
+            enabled: true
+            path: "/v1/sys/health?standbyok=true"
+            timeoutSeconds: 5
+            initialDelaySeconds: 60
           resources:
             requests:
               memory: 256Mi

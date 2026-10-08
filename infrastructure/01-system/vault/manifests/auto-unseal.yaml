@@ -35,12 +35,12 @@ spec:
             - |
               echo "Demarrage du watcher Vault Auto-Unseal..."
               while true; do
-                STATUS=$(curl -s -o /tmp/health.json -w "%{http_code}" http://vault.vault.svc.cluster.local:8200/v1/sys/health || true)
+                STATUS=$(curl -s -o /tmp/health.json -w "%{http_code}" http://vault-0.vault-internal.vault.svc.cluster.local:8200/v1/sys/health || true)
                 if [ "$STATUS" = "503" ] || grep -q '"sealed":true' /tmp/health.json 2>/dev/null; then
                   echo "[$(date)] Vault est verrouille (Sealed). Tentative d'unseal automatique..."
                   for key in "$KEY1" "$KEY2" "$KEY3"; do
                     if [ -n "$key" ]; then
-                      curl -s -X POST http://vault.vault.svc.cluster.local:8200/v1/sys/unseal \
+                      curl -s -X POST http://vault-0.vault-internal.vault.svc.cluster.local:8200/v1/sys/unseal \
                         -H "Content-Type: application/json" \
                         -d "{\"key\": \"$key\"}" > /dev/null
                     fi
