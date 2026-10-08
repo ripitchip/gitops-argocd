@@ -6,4 +6,3 @@ resources:
   - storage.yaml
   - release.yaml
   - policy.yaml
-  - auto-unseal.yaml
