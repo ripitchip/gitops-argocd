@@ -23,7 +23,7 @@ spec:
             timeoutSeconds: 5
           livenessProbe:
             enabled: true
-            path: "/v1/sys/health?standbyok=true"
+            path: "/v1/sys/health?standbyok=true&sealedok=true"
             timeoutSeconds: 5
             initialDelaySeconds: 60
           resources:
@@ -31,8 +31,8 @@ spec:
               memory: 256Mi
               cpu: 250m
             limits:
-              memory: 256Mi
-              cpu: 250m
+              memory: 512Mi
+              cpu: 500m
           statefulSet:
             securityContext:
               pod:
