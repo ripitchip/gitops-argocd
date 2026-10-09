@@ -8,6 +8,11 @@ metadata:
     ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
   ingressClassName: cilium
+  tls:
+    - hosts:
+        - pdf.foobarbaz.fr
+        - pdf.tomlab.fr
+      secretName: bentopdf-tls
   rules:
     - host: pdf.foobarbaz.fr
       http:
@@ -19,7 +24,13 @@ spec:
                 name: bentopdf
                 port:
                   number: 80
-  tls:
-    - hosts:
-        - pdf.foobarbaz.fr
-      secretName: bentopdf-tls
+    - host: pdf.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bentopdf
+                port:
+                  number: 80

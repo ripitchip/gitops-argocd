@@ -8,14 +8,18 @@ spec:
     matchLabels:
       app: bentopdf
   ingress:
+    # 1. Internal Namespace Traffic
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik
-            "app.kubernetes.io/name": traefik
+            "k8s:io.kubernetes.pod.namespace": pdf
+    # 2. External Traffic via Ingress (Cilium Envoy)
+    - fromEntities:
+        - all
       toPorts:
         - ports:
             - port: "8080"
               protocol: TCP
+    # 3. Monitoring (Alloy)
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
