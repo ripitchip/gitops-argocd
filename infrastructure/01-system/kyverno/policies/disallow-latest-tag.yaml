@@ -17,6 +17,11 @@ spec:
           - resources:
               kinds:
                 - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - gpu-operator
       skipBackgroundRequests: true
       validate:
         allowExistingViolations: true
