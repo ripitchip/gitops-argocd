@@ -10,7 +10,8 @@ metadata:
 spec:
   ingressClassName: cilium
   tls:
-    - hosts: [link.foobarbaz.fr]
+    - hosts:
+        - link.foobarbaz.fr
       secretName: karakeep-tls
   rules:
     - host: link.foobarbaz.fr
