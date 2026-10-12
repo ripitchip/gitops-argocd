@@ -10,4 +10,4 @@ resources:
   - storage.yaml
   - policy.yaml
   - baseline-network-policy.yaml
-- meilisearch.yaml
+  - meilisearch.yaml
