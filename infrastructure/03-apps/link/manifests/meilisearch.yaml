@@ -20,7 +20,15 @@ spec:
       initContainers:
         - name: fix-permissions
           image: busybox:1.36
-          command: ["sh", "-c", "chown -R 25917:25917 /meili_data"]
+          command:
+            - "sh"
+            - "-c"
+            - |
+              if [ -f /meili_data/data.ms/VERSION ] && ! grep -q "1.49" /meili_data/data.ms/VERSION; then
+                echo "Incompatible Meilisearch DB version found. Resetting data.ms for v1.49..."
+                rm -rf /meili_data/data.ms
+              fi
+              chown -R 25917:25917 /meili_data
           securityContext:
             runAsUser: 0
             runAsNonRoot: false

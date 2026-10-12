@@ -8,10 +8,8 @@ spec:
     matchLabels:
       app: karakeep
   ingress:
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik
-            "k8s:app.kubernetes.io/name": traefik
+    - fromEntities:
+        - all
       toPorts:
         - ports:
             - port: "3000"
