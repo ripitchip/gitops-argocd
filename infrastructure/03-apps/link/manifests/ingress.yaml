@@ -9,11 +9,17 @@ metadata:
     ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
   ingressClassName: cilium
-  tls:
-    - hosts:
-        - link.foobarbaz.fr
-      secretName: karakeep-tls
   rules:
+    - host: link.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: karakeep
+                port:
+                  number: 80
     - host: link.foobarbaz.fr
       http:
         paths:
@@ -24,3 +30,8 @@ spec:
                 name: karakeep
                 port:
                   number: 80
+  tls:
+    - hosts:
+        - link.tomlab.fr
+        - link.foobarbaz.fr
+      secretName: karakeep-tls
