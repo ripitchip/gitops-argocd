@@ -4,6 +4,7 @@ resources:
   - namespace.yaml
   - storage.yaml
   - csp.yaml
+  - role-mapping.yaml
   - external-secrets.yaml
   - app.yaml
   - service.yaml

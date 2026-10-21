@@ -26,7 +26,14 @@ spec:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
           command: ["/bin/sh", "-c"]
-          args: ["opencloud init || true; exec opencloud server"]
+          args:
+            - |
+              opencloud init || true
+              CONF=/etc/opencloud/opencloud.yaml
+              if [ -f "$CONF" ] && ! grep -q '^role_assignment:' "$CONF"; then
+                cat /etc/opencloud-role-mapping/role_assignment.yaml >> "$CONF"
+              fi
+              exec opencloud server
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -69,9 +76,11 @@ spec:
               value: "true"
             - name: GRAPH_USERNAME_MATCH
               value: "none"
-            # tout utilisateur Keycloak reçoit le rôle "User"
+            # rôle attribué selon le groupe Keycloak (claim "groups"), voir role-mapping.yaml
             - name: PROXY_ROLE_ASSIGNMENT_DRIVER
-              value: "default"
+              value: "oidc"
+            - name: PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM
+              value: "groups"
             - name: GRAPH_ASSIGN_DEFAULT_USER_ROLE
               value: "true"
             - name: WEB_OPTION_ACCOUNT_EDIT_LINK_HREF
@@ -108,6 +117,9 @@ spec:
             - name: csp
               mountPath: /etc/opencloud-csp
               readOnly: true
+            - name: role-mapping
+              mountPath: /etc/opencloud-role-mapping
+              readOnly: true
           resources:
             limits:
               cpu: "1"
@@ -122,3 +134,6 @@ spec:
         - name: csp
           configMap:
             name: opencloud-csp
+        - name: role-mapping
+          configMap:
+            name: opencloud-role-mapping
