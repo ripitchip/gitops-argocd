@@ -27,6 +27,11 @@ spec:
           image: opencloudeu/opencloud:7.2.4
           command: ["/bin/sh", "-c"]
           args: ["opencloud init || true"]
+          env:
+            # sans ça, "opencloud init" demande une réponse interactive sur stdin
+            # (qui n'existe pas dans un pod) et boucle indéfiniment sur le prompt
+            - name: OC_INSECURE
+              value: "false"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
