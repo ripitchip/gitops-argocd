@@ -19,130 +19,106 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 62403
-        runAsGroup: 62403
-        fsGroup: 62403
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
-          command: ["sh", "-c", "if [ ! -f /var/lib/opencloud/init_done ]; then rm -rf /var/lib/opencloud/*; mkdir -p /var/lib/opencloud/config; OC_CONFIG_DIR=/var/lib/opencloud/config opencloud init; touch /var/lib/opencloud/init_done; fi && (rm -rf /var/lib/opencloud/search 2>/dev/null || true) && OC_CONFIG_DIR=/var/lib/opencloud/config opencloud server"]
+          command: ["/bin/sh", "-c"]
+          args: ["opencloud init || true; exec opencloud server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
-              drop:
-                - ALL
+              drop: ["ALL"]
             runAsNonRoot: true
-            runAsUser: 62403
+            runAsUser: 1000
             seccompProfile:
               type: RuntimeDefault
           env:
-            - name: OC_CONFIG_DIR
-              value: "/var/lib/opencloud/config"
             - name: OC_URL
-              value: "https://drive.tomlab.fr"
-            - name: OC_INSECURE
-              value: "true"
+              value: "https://cloud.tomlab.fr"
+            # TLS terminé par l'ingress Cilium
+            - name: PROXY_TLS
+              value: "false"
             - name: PROXY_HTTP_ADDR
               value: "0.0.0.0:9200"
-            - name: PROXY_TLS
+            - name: OC_INSECURE
               value: "false"
             - name: OC_LOG_LEVEL
               value: "info"
-            # Keycloak External IDP Integration & CSP
+            # NFS : pas d'inotify/xattrs fiables, donc pas de driver posix
+            - name: STORAGE_USERS_DRIVER
+              value: "decomposed"
+            # --- OIDC : Keycloak externe (client public "web" dans le realm) ---
             - name: OC_OIDC_ISSUER
               value: "https://auth.foobarbaz.fr/realms/foobarbaz"
+            # l'IDP intégré est remplacé par Keycloak, l'IDM (LDAP interne) reste
             - name: OC_EXCLUDE_RUN_SERVICES
               value: "idp"
-            - name: PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD
-              value: "jwt"
             - name: PROXY_OIDC_REWRITE_WELLKNOWN
               value: "true"
             - name: PROXY_USER_OIDC_CLAIM
               value: "preferred_username"
             - name: PROXY_USER_CS3_CLAIM
               value: "username"
-            - name: WEB_OPTION_ACCOUNT_EDIT_LINK_HREF
-              value: "https://auth.foobarbaz.fr/realms/foobarbaz/account"
+            # les comptes sont créés dans l'IDM à la première connexion
             - name: PROXY_AUTOPROVISION_ACCOUNTS
-              value: "true"
-            - name: GRAPH_ASSIGN_DEFAULT_USER_ROLE
               value: "true"
             - name: OC_LDAP_SERVER_WRITE_ENABLED
               value: "true"
             - name: GRAPH_USERNAME_MATCH
               value: "none"
+            # tout utilisateur Keycloak reçoit le rôle "User"
             - name: PROXY_ROLE_ASSIGNMENT_DRIVER
               value: "default"
-            - name: WEBFINGER_WEB_OIDC_CLIENT_ID
-              value: "web"
-            - name: WEBFINGER_WEB_OIDC_CLIENT_SCOPES
-              value: "openid profile email"
-            - name: PROXY_CSP
-              value: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; connect-src 'self' https://auth.foobarbaz.fr https://drive.tomlab.fr; frame-src 'self' https://auth.foobarbaz.fr; frame-ancestors 'self';"
-            - name: HTTP_CSP
-              value: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; connect-src 'self' https://auth.foobarbaz.fr https://drive.tomlab.fr; frame-src 'self' https://auth.foobarbaz.fr; frame-ancestors 'self';"
-            # JWT & Internal Auth Secrets
-            - name: OC_JWT_SECRET
-              value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
-            - name: JWT_SECRET
-              value: "a-super-secret-jwt-key-for-opencloud-authentication-32bytes"
-            - name: OC_SERVICE_ACCOUNT_SECRET
-              value: "opencloud-service-account-secret-32bytes"
-            - name: SERVICE_ACCOUNT_SECRET
-              value: "opencloud-service-account-secret-32bytes"
-            - name: OC_TRANSFER_SECRET
-              value: "opencloud-transfer-secret-32bytes"
-            - name: OC_MACHINE_AUTH_API_KEY
-              value: "opencloud-machine-auth-api-key-32bytes"
-            # Storage & Metadata Backend
-            - name: OC_SETTINGS_STORE_TYPE
-              value: "filesystem"
-            - name: SETTINGS_STORE_TYPE
-              value: "filesystem"
-            - name: OC_STORAGE_USERS_DRIVER
-              value: "ocis"
-            - name: STORAGE_USERS_DRIVER
-              value: "ocis"
-            - name: OC_STORAGE_USERS_OCIS_USER_METADATA_BACKEND
-              value: "sqlite"
-            - name: STORAGE_USERS_OCIS_USER_METADATA_BACKEND
-              value: "sqlite"
-            - name: OC_STORAGE_SYSTEM_DRIVER
-              value: "ocis"
-            - name: STORAGE_SYSTEM_DRIVER
-              value: "ocis"
-            - name: OC_STORAGE_SYSTEM_OCIS_USER_METADATA_BACKEND
-              value: "sqlite"
-            - name: STORAGE_SYSTEM_OCIS_USER_METADATA_BACKEND
-              value: "sqlite"
-            - name: OC_STORAGE_METADATA_DRIVER
-              value: "sqlite"
-            - name: STORAGE_METADATA_DRIVER
-              value: "sqlite"
+            - name: GRAPH_ASSIGN_DEFAULT_USER_ROLE
+              value: "true"
+            - name: WEB_OPTION_ACCOUNT_EDIT_LINK_HREF
+              value: "https://auth.foobarbaz.fr/realms/foobarbaz/account"
+            # le navigateur doit pouvoir joindre Keycloak (connect-src / frame-src)
+            - name: PROXY_CSP_CONFIG_FILE_LOCATION
+              value: "/etc/opencloud-csp/csp.yaml"
+            - name: IDM_CREATE_DEMO_USERS
+              value: "false"
+            - name: IDM_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: opencloud-secrets
+                  key: IDM_ADMIN_PASSWORD
           ports:
             - containerPort: 9200
               name: http
-          readinessProbe:
+          startupProbe:
             tcpSocket:
-              port: 9200
-            initialDelaySeconds: 5
-            periodSeconds: 10
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
           livenessProbe:
             tcpSocket:
-              port: 9200
-            initialDelaySeconds: 10
+              port: http
             periodSeconds: 20
           volumeMounts:
             - name: data
+              mountPath: /etc/opencloud
+              subPath: config
+            - name: data
               mountPath: /var/lib/opencloud
+              subPath: data
+            - name: csp
+              mountPath: /etc/opencloud-csp
+              readOnly: true
           resources:
-            requests:
-              cpu: "100m"
-              memory: "256Mi"
             limits:
-              cpu: "1000m"
-              memory: "1Gi"
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: opencloud-data-pvc
+        - name: csp
+          configMap:
+            name: opencloud-csp

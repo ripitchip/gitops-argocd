@@ -10,18 +10,17 @@ metadata:
     ingress.cilium.io/loadbalancer-mode: "shared"
 spec:
   ingressClassName: cilium
-  rules:
-  - host: drive.tomlab.fr
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: opencloud
-            port:
-              number: 80
   tls:
-  - hosts:
-    - drive.tomlab.fr
-    secretName: opencloud-tls
+    - hosts: [cloud.tomlab.fr]
+      secretName: opencloud-tls
+  rules:
+    - host: cloud.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: opencloud
+                port:
+                  number: 80

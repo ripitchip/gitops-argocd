@@ -8,9 +8,8 @@ spec:
     matchLabels:
       app: opencloud
   ingress:
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik
+    - fromEntities:
+        - all
       toPorts:
         - ports:
             - port: "9200"
@@ -22,12 +21,18 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
   egress:
+    # Rappel d'OpenCloud sur sa propre URL publique via la LB Cilium (OIDC discovery) :
+    # Envoy applique la politique d'egress de ce pod sur le backend final,
+    # donc le namespace lui-même doit aussi être autorisé, pas seulement l'entité ingress.
+    - toEntities:
+        - ingress
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": opencloud
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": auth
+            app: keycloak
       toPorts:
         - ports:
             - port: "8080"
@@ -46,10 +51,7 @@ spec:
     - toEntities:
         - world
         - cluster
-        - host
       toPorts:
         - ports:
             - port: "443"
-              protocol: TCP
-            - port: "80"
               protocol: TCP
