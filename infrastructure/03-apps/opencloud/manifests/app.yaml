@@ -22,18 +22,61 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
-      containers:
-        - name: opencloud
+      initContainers:
+        - name: init-config
           image: opencloudeu/opencloud:7.2.4
+          command: ["/bin/sh", "-c"]
+          args: ["opencloud init || true"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: data
+              mountPath: /etc/opencloud
+              subPath: config
+            - name: data
+              mountPath: /var/lib/opencloud
+              subPath: data
+        # `opencloud init` écrit un seul fichier /etc/opencloud/opencloud.yaml avec une clé
+        # top-level par service (proxy:, graph:, idm:, ...). role-mapping.yaml doit donc être
+        # mergé dans la clé "proxy:" existante, pas juste concaténé (sinon clé dupliquée/ignorée).
+        - name: merge-role-mapping
+          image: mikefarah/yq:4.44.3
           command: ["/bin/sh", "-c"]
           args:
             - |
-              opencloud init || true
-              CONF=/etc/opencloud/opencloud.yaml
-              if [ -f "$CONF" ] && ! grep -q '^role_assignment:' "$CONF"; then
-                cat /etc/opencloud-role-mapping/role_assignment.yaml >> "$CONF"
-              fi
-              exec opencloud server
+              set -e
+              yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' \
+                /etc/opencloud/opencloud.yaml /etc/opencloud-role-mapping/role_assignment.yaml \
+                > /tmp/merged.yaml
+              cat /tmp/merged.yaml > /etc/opencloud/opencloud.yaml
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: data
+              mountPath: /etc/opencloud
+              subPath: config
+            - name: role-mapping
+              mountPath: /etc/opencloud-role-mapping
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        - name: opencloud
+          image: opencloudeu/opencloud:7.2.4
+          command: ["opencloud"]
+          args: ["server"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -117,9 +160,6 @@ spec:
             - name: csp
               mountPath: /etc/opencloud-csp
               readOnly: true
-            - name: role-mapping
-              mountPath: /etc/opencloud-role-mapping
-              readOnly: true
           resources:
             limits:
               cpu: "1"
@@ -137,3 +177,5 @@ spec:
         - name: role-mapping
           configMap:
             name: opencloud-role-mapping
+        - name: tmp
+          emptyDir: {}

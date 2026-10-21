@@ -1,8 +1,10 @@
 # Mapping groupes Keycloak -> rôles OpenCloud, consommé par le driver
 # PROXY_ROLE_ASSIGNMENT_DRIVER=oidc. "role_mapping" ne peut être défini
 # qu'en fichier de config (pas de variable d'env possible), donc ce snippet
-# est injecté/mergé dans /etc/opencloud/opencloud.yaml au démarrage du pod
-# (voir app.yaml) plutôt que de remplacer tout le fichier généré par
+# est mergé (via yq, voir les initContainers dans app.yaml) dans
+# /etc/opencloud/opencloud.yaml au démarrage du pod, sous la clé "proxy:"
+# déjà présente dans ce fichier (chaque service a sa config nichée sous sa
+# propre clé top-level), plutôt que de remplacer tout le fichier généré par
 # `opencloud init` (qui contient aussi des secrets générés automatiquement).
 #
 # Les deux formes (avec/sans "/") couvrent le cas où le mapper Keycloak
@@ -14,14 +16,15 @@ metadata:
   namespace: opencloud
 data:
   role_assignment.yaml: |
-    role_assignment:
-      oidc_role_mapper:
-        role_mapping:
-          - role_name: admin
-            claim_value: opencloud-admin
-          - role_name: admin
-            claim_value: "/opencloud-admin"
-          - role_name: user
-            claim_value: user
-          - role_name: user
-            claim_value: "/user"
+    proxy:
+      role_assignment:
+        oidc_role_mapper:
+          role_mapping:
+            - role_name: admin
+              claim_value: opencloud-admin
+            - role_name: admin
+              claim_value: "/opencloud-admin"
+            - role_name: user
+              claim_value: user
+            - role_name: user
+              claim_value: "/user"
