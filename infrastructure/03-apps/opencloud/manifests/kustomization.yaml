@@ -3,8 +3,11 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - storage.yaml
+  - radicale-storage.yaml
   - csp.yaml
   - role-mapping.yaml
+  - calendar-proxy.yaml
+  - radicale.yaml
   - external-secrets.yaml
   - app.yaml
   - service.yaml

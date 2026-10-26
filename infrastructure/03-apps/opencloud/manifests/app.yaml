@@ -77,6 +77,35 @@ spec:
               readOnly: true
             - name: tmp
               mountPath: /tmp
+        # Idem que merge-role-mapping ci-dessus : ajoute les routes caldav/carddav
+        # (voir calendar-proxy.yaml) sous la clé "proxy:" déjà présente.
+        - name: merge-calendar-proxy
+          image: mikefarah/yq:4.44.3
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' \
+                /etc/opencloud/opencloud.yaml /etc/opencloud-calendar-proxy/caldav_routes.yaml \
+                > /tmp/merged.yaml
+              cat /tmp/merged.yaml > /etc/opencloud/opencloud.yaml
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: data
+              mountPath: /etc/opencloud
+              subPath: config
+            - name: calendar-proxy
+              mountPath: /etc/opencloud-calendar-proxy
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
@@ -182,5 +211,8 @@ spec:
         - name: role-mapping
           configMap:
             name: opencloud-role-mapping
+        - name: calendar-proxy
+          configMap:
+            name: opencloud-calendar-proxy
         - name: tmp
           emptyDir: {}

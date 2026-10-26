@@ -55,3 +55,27 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
+---
+# Radicale (calendrier/contacts, voir radicale.yaml) : auth par confiance de
+# l'en-tête X-Remote-User posé par le proxy OpenCloud, donc ne doit jamais être
+# atteignable autrement que depuis le pod opencloud lui-même.
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: opencloud-radicale-isolation
+  namespace: opencloud
+spec:
+  endpointSelector:
+    matchLabels:
+      app: opencloud-radicale
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: opencloud
+      toPorts:
+        - ports:
+            - port: "5232"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": alloy

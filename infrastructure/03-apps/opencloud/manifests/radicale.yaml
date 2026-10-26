@@ -1,0 +1,119 @@
+# Serveur CalDAV/CardDAV dédié à OpenCloud (intégration officielle opencloud-eu),
+# proxifié en /caldav et /carddav par le proxy OpenCloud (voir proxy-config.yaml).
+# Non exposé directement : auth "http_x_remote_user", donc il fait confiance à
+# l'en-tête X-Remote-User posé par le proxy OpenCloud déjà authentifié (OIDC).
+# Doit rester inaccessible depuis l'extérieur du pod opencloud (voir policy.yaml).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opencloud-radicale-config
+  namespace: opencloud
+data:
+  config: |
+    [server]
+    hosts = 0.0.0.0:5232
+
+    [auth]
+    type = http_x_remote_user
+
+    [rights]
+    type = owner_only
+
+    [storage]
+    filesystem_folder = /var/lib/radicale/collections
+    predefined_collections = {
+        "def-addressbook": {
+           "D:displayname": "Personal Address Book",
+           "tag": "VADDRESSBOOK"
+        },
+        "def-calendar": {
+           "C:supported-calendar-component-set": "VEVENT,VJOURNAL,VTODO",
+           "D:displayname": "Personal Calendar",
+           "tag": "VCALENDAR"
+        }
+      }
+
+    [web]
+    type = none
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencloud-radicale
+  namespace: opencloud
+  labels:
+    app: opencloud-radicale
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: opencloud-radicale
+  template:
+    metadata:
+      labels:
+        app: opencloud-radicale
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: radicale
+          image: opencloudeu/radicale:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          ports:
+            - containerPort: 5232
+              name: http
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 20
+          volumeMounts:
+            - name: config
+              mountPath: /etc/radicale/config
+              subPath: config
+              readOnly: true
+            - name: data
+              mountPath: /var/lib/radicale
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+      volumes:
+        - name: config
+          configMap:
+            name: opencloud-radicale-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: opencloud-radicale-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opencloud-radicale
+  namespace: opencloud
+spec:
+  selector:
+    app: opencloud-radicale
+  ports:
+    - protocol: TCP
+      port: 5232
+      targetPort: 5232
