@@ -8,11 +8,18 @@ spec:
     matchLabels:
       app: memos
   ingress:
-    # 1. Traefik to Memos
+    # 1. Cilium Ingress to Memos
+    - fromEntities:
+        - ingress
+      toPorts:
+        - ports:
+            - port: "5230"
+              protocol: TCP
+    # 1b. Traefik to Memos (legacy)
     - fromEndpoints:
         - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
       toPorts:
-        - ports: 
+        - ports:
             - port: "5230"
               protocol: TCP
     # 2. Local Namespace Traffic
