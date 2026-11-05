@@ -25,3 +25,4 @@ resources:
   - 03-apps/kutt-app-definition.yaml
   - 03-apps/minecraft/minecraft-app-definition.yaml
   - 03-apps/miniflux-app-definition.yaml
+  - 03-apps/nightingale-app-definition.yaml
