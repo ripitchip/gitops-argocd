@@ -94,6 +94,12 @@ spec:
       app.kubernetes.io/name: oauth2-proxy
       app.kubernetes.io/instance: n8n-oauth2-proxy
   ingress:
+    - fromEntities:
+        - ingress
+      toPorts:
+        - ports:
+            - port: "4180"
+              protocol: TCP
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
