@@ -8,6 +8,12 @@ spec:
     matchLabels:
       app: kutt
   ingress:
+    - fromEntities:
+        - ingress
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik

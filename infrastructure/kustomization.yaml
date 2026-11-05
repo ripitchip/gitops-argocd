@@ -22,3 +22,4 @@ resources:
   - 03-apps/book/book-app-definition.yaml
   - 03-apps/icons-app-definition.yaml
   - 03-apps/jellyseerr-app-definition.yaml
+  - 03-apps/kutt-app-definition.yaml
