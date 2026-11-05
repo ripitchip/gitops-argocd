@@ -29,3 +29,4 @@ resources:
   - 03-apps/notifications/notifications-app-definition.yaml
   - 03-apps/pingvin-share/pingvin-share-app-definition.yaml
   - 03-apps/poll/poll-app-definition.yaml
+  - 03-apps/startpage-app-definition.yaml
