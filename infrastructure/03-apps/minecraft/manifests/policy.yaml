@@ -23,6 +23,11 @@ spec:
         - ports:
             - { port: "25566", protocol: TCP }
             - { port: "25567", protocol: TCP }
+    - fromEntities:
+        - ingress
+      toPorts:
+        - ports:
+            - { port: "8443", protocol: TCP }
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": traefik
