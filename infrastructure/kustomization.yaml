@@ -27,3 +27,4 @@ resources:
   - 03-apps/miniflux-app-definition.yaml
   - 03-apps/nightingale-app-definition.yaml
   - 03-apps/notifications/notifications-app-definition.yaml
+  - 03-apps/pingvin-share/pingvin-share-app-definition.yaml
