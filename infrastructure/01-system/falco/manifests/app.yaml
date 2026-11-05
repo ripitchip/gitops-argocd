@@ -109,11 +109,10 @@ spec:
                   memory: 1Gi
             ingress:
               enabled: true
-              ingressClassName: traefik
+              ingressClassName: cilium
               annotations:
                 cert-manager.io/cluster-issuer: letsencrypt-prod
-                traefik.ingress.kubernetes.io/router.entrypoints: websecure
-                traefik.ingress.kubernetes.io/router.tls: "true"
+                ingress.cilium.io/loadbalancer-mode: "shared"
               hosts:
                 - host: falco.foobarbaz.fr
                   paths: [{ path: /, pathType: Prefix }]
