@@ -18,3 +18,4 @@ resources:
   - 03-apps/sure
   - 03-apps/finance-scrapper-app-definition.yaml
   - 03-apps/opencloud
+  - 03-apps/ai/ai-app-definition.yaml
