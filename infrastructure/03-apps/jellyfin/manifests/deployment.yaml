@@ -45,9 +45,58 @@ spec:
             requests:
               cpu: 10m
               memory: 64Mi
+        - name: install-sso-plugin
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              PLUGIN_DIR=/config/plugins/SSO-Auth_4.0.0.4
+              if [ -f "$PLUGIN_DIR/meta.json" ]; then
+                echo "SSO-Auth plugin already installed, skipping"
+                exit 0
+              fi
+              mkdir -p "$PLUGIN_DIR"
+              wget -O /tmp/sso-auth.zip https://github.com/9p4/jellyfin-plugin-sso/releases/download/v4.0.0.4/sso-authentication_4.0.0.4.zip
+              unzip -o /tmp/sso-auth.zip -d "$PLUGIN_DIR"
+              rm -f /tmp/sso-auth.zip
+              cat > "$PLUGIN_DIR/meta.json" <<'EOF'
+              {
+                "category": "Authentication",
+                "guid": "505ce9d1-d916-42fa-86ca-673ef241d7df",
+                "name": "SSO-Auth",
+                "description": "SSO Authentication via OpenID Connect / SAML",
+                "overview": "Allows users to authenticate via an external OIDC provider (Keycloak)",
+                "owner": "9p4",
+                "version": "4.0.0.4",
+                "targetAbi": "10.11.0.0",
+                "framework": "net9.0",
+                "timestamp": "2026-03-20T03:13:34Z",
+                "assemblies": ["SSO-Auth.dll"]
+              }
+              EOF
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 18096
+            runAsGroup: 18096
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
       containers:
         - name: jellyfin
-          image: jellyfin/jellyfin:10.9.6
+          image: jellyfin/jellyfin:10.11.0
           ports:
             - containerPort: 8096
               name: http

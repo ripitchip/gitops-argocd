@@ -1,0 +1,94 @@
+# Pousse la config OIDC (Keycloak) dans le plugin SSO-Auth via son API REST
+# (POST /SSO/OID/Add/<provider>), car ce plugin n'expose pas de config via
+# variables d'env/fichier simple : cf. son README "There is NO admin
+# configuration! You must use the API to configure the program!".
+# sync-wave plus élevé que le Deployment pour partir seulement une fois
+# jellyfin Healthy (ArgoCD attend la wave précédente avant de lancer celle-ci).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jellyfin-sso-config
+  namespace: jellyfin
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: jellyfin-sso-config
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: OnFailure
+      containers:
+        - name: configure-sso
+          image: curlimages/curl:8.5.0
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: JELLYFIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jellyfin-secrets
+                  key: JELLYFIN_API_KEY
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jellyfin-secrets
+                  key: OIDC_CLIENT_SECRET
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+
+              echo "Waiting for the SSO-Auth plugin to be loaded..."
+              i=0
+              until curl -sf "http://jellyfin.jellyfin.svc.cluster.local/SSO/OID/GetNames" > /dev/null; do
+                i=$((i + 1))
+                if [ "$i" -ge 60 ]; then
+                  echo "Timed out waiting for the SSO-Auth plugin" >&2
+                  exit 1
+                fi
+                sleep 5
+              done
+
+              cat > /tmp/payload.json <<EOF
+              {
+                "oidEndpoint": "https://auth.foobarbaz.fr/realms/foobarbaz",
+                "oidClientId": "jellyfin",
+                "oidSecret": "${OIDC_CLIENT_SECRET}",
+                "enabled": true,
+                "enableAuthorization": true,
+                "enableAllFolders": true,
+                "enabledFolders": [],
+                "adminRoles": ["jellyfin-admin"],
+                "roles": ["jellyfin-user"],
+                "enableFolderRoles": false,
+                "folderRoleMapping": [],
+                "roleClaim": "realm_access.roles",
+                "oidScopes": ["openid", "profile", "email"],
+                "defaultUsernameClaim": "preferred_username"
+              }
+              EOF
+
+              echo "Registering the keycloak OIDC provider in SSO-Auth..."
+              curl -sf -X POST \
+                -H "Content-Type: application/json" \
+                --data @/tmp/payload.json \
+                "http://jellyfin.jellyfin.svc.cluster.local/SSO/OID/Add/keycloak?api_key=${JELLYFIN_API_KEY}"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi

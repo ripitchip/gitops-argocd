@@ -31,6 +31,8 @@ spec:
             "k8s:io.kubernetes.pod.namespace": grafana
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": opencloud
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": jellyfin
       toPorts:
         - ports:
             - port: "8080"
