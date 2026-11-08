@@ -72,7 +72,8 @@ spec:
                 "folderRoleMapping": [],
                 "roleClaim": "realm_access.roles",
                 "oidScopes": ["openid", "profile", "email"],
-                "defaultUsernameClaim": "preferred_username"
+                "defaultUsernameClaim": "preferred_username",
+                "disablePushedAuthorization": true
               }
               EOF
 
