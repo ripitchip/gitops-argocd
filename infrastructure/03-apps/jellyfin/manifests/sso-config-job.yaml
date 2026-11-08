@@ -70,7 +70,7 @@ spec:
                 "roles": ["user"],
                 "enableFolderRoles": false,
                 "folderRoleMapping": [],
-                "roleClaim": "realm_access.roles",
+                "roleClaim": "groups",
                 "oidScopes": ["openid", "profile", "email"],
                 "defaultUsernameClaim": "preferred_username",
                 "disablePushedAuthorization": true
