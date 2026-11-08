@@ -67,7 +67,7 @@ spec:
                 "enableAllFolders": true,
                 "enabledFolders": [],
                 "adminRoles": ["jellyfin-admin"],
-                "roles": ["jellyfin-user"],
+                "roles": ["user"],
                 "enableFolderRoles": false,
                 "folderRoleMapping": [],
                 "roleClaim": "realm_access.roles",
