@@ -29,6 +29,8 @@ spec:
           image: curlimages/curl:8.5.0
           securityContext:
             runAsNonRoot: true
+            runAsUser: 40202
+            runAsGroup: 40202
             allowPrivilegeEscalation: false
             capabilities:
               drop:
