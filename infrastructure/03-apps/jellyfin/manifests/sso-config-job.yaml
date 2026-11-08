@@ -81,6 +81,20 @@ spec:
                 -H "Content-Type: application/json" \
                 --data @/tmp/payload.json \
                 "http://jellyfin.jellyfin.svc.cluster.local/SSO/OID/Add/keycloak?api_key=${JELLYFIN_API_KEY}"
+
+              cat > /tmp/branding.json <<'EOF'
+              {
+                "loginDisclaimer": "<form action='https://tv.tomlab.fr/sso/OID/start/keycloak'><button class='raised block emby-button button-submit'>Sign in with Keycloak</button></form>",
+                "customCss": "a.raised.emby-button { padding: 0.9em 1em; color: inherit !important; } .disclaimerContainer { display: block; }",
+                "splashscreenEnabled": false
+              }
+              EOF
+
+              echo "Adding the SSO login button to the Jellyfin branding config..."
+              curl -sf -X POST \
+                -H "Content-Type: application/json" \
+                --data @/tmp/branding.json \
+                "http://jellyfin.jellyfin.svc.cluster.local/System/Configuration/Branding?api_key=${JELLYFIN_API_KEY}"
           resources:
             requests:
               cpu: 10m
