@@ -1,9 +1,3 @@
-# Pousse la config OIDC (Keycloak) dans le plugin SSO-Auth via son API REST
-# (POST /SSO/OID/Add/<provider>), car ce plugin n'expose pas de config via
-# variables d'env/fichier simple : cf. son README "There is NO admin
-# configuration! You must use the API to configure the program!".
-# sync-wave plus élevé que le Deployment pour partir seulement une fois
-# jellyfin Healthy (ArgoCD attend la wave précédente avant de lancer celle-ci).
 apiVersion: batch/v1
 kind: Job
 metadata:
