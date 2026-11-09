@@ -100,14 +100,23 @@ spec:
               needs_initialize = not public_settings.get("initialized")
 
               print("Logging in to Jellyfin (first login becomes the Jellyseerr admin)...")
-              call("POST", "/auth/jellyfin", {
-                  "username": ADMIN_USER,
-                  "password": ADMIN_PASS,
-                  "hostname": JELLYFIN_HOST,
-                  "port": JELLYFIN_PORT,
-                  "useSsl": False,
-                  "urlBase": "",
-              })
+              try:
+                  call("POST", "/auth/jellyfin", {
+                      "username": ADMIN_USER,
+                      "password": ADMIN_PASS,
+                      "hostname": JELLYFIN_HOST,
+                      "port": JELLYFIN_PORT,
+                      "useSsl": False,
+                      "urlBase": "",
+                  })
+              except urllib.error.HTTPError as e:
+                  if e.code != 500:
+                      raise
+                  print("Jellyfin server already registered, logging in with credentials only...")
+                  call("POST", "/auth/jellyfin", {
+                      "username": ADMIN_USER,
+                      "password": ADMIN_PASS,
+                  })
 
               jellyfin_settings = call("GET", "/settings/jellyfin")
               if jellyfin_settings.get("hostname") and not needs_initialize:
