@@ -141,12 +141,18 @@ spec:
               })
 
               print("Syncing Jellyfin libraries...")
-              libraries = call("POST", "/settings/jellyfin/library/sync")
-
-              for library in libraries:
-                  library_id = library.get("id")
-                  print(f"Enabling library '{library.get('name')}' ({library_id})...")
-                  call("PUT", f"/settings/jellyfin/library/{library_id}", {"enabled": True})
+              try:
+                  libraries = call("POST", "/settings/jellyfin/library/sync")
+                  for library in libraries:
+                      library_id = library.get("id")
+                      print(f"Enabling library '{library.get('name')}' ({library_id})...")
+                      call("PUT", f"/settings/jellyfin/library/{library_id}", {"enabled": True})
+              except urllib.error.HTTPError as e:
+                  if e.code == 404:
+                      print("Library sync endpoint not available on this Jellyseerr version; "
+                            "enable libraries manually in Jellyseerr > Settings > Jellyfin.")
+                  else:
+                      raise
 
               if needs_initialize:
                   print("Marking Jellyseerr as initialized...")
