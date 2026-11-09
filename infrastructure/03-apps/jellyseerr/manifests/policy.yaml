@@ -5,8 +5,12 @@ metadata:
   namespace: jellyseerr
 spec:
   endpointSelector:
-    matchLabels:
-      app: jellyseerr
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - jellyseerr
+          - jellyseerr-jellyfin-config
   ingress:
     - fromEntities:
         - ingress
@@ -46,6 +50,14 @@ spec:
             - port: "80"
               protocol: TCP
             - port: "8096"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": sonarr
+            "k8s:app": sonarr
+      toPorts:
+        - ports:
+            - port: "8989"
               protocol: TCP
     - toEntities:
         - world
