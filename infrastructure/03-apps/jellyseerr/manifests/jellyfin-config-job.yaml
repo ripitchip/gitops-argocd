@@ -58,7 +58,9 @@ spec:
               import urllib.request
 
               BASE = "http://jellyseerr.jellyseerr.svc.cluster.local/api/v1"
-              JELLYFIN_INTERNAL_URL = "http://jellyfin.jellyfin.svc.cluster.local"
+              JELLYFIN_HOST = "jellyfin.jellyfin.svc.cluster.local"
+              JELLYFIN_PORT = 80
+              JELLYFIN_INTERNAL_URL = f"http://{JELLYFIN_HOST}:{JELLYFIN_PORT}"
               JELLYFIN_EXTERNAL_URL = "https://tv.tomlab.fr"
 
               ADMIN_USER = os.environ["JELLYFIN_ADMIN_USERNAME"]
@@ -95,7 +97,10 @@ spec:
               call("POST", "/auth/jellyfin", {
                   "username": ADMIN_USER,
                   "password": ADMIN_PASS,
-                  "hostname": JELLYFIN_INTERNAL_URL,
+                  "hostname": JELLYFIN_HOST,
+                  "port": JELLYFIN_PORT,
+                  "useSsl": False,
+                  "urlBase": "",
               })
 
               jellyfin_settings = call("GET", "/settings/jellyfin")
