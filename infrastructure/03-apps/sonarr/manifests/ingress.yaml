@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sonarr
+  namespace: sonarr
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
+spec:
+  ingressClassName: cilium
+  rules:
+    - host: sonarr.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sonarr-oauth2-proxy
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - sonarr.tomlab.fr
+      secretName: sonarr-tls
