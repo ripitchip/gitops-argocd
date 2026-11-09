@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: cilium
   rules:
-    - host: vod.foobarbaz.fr
+    - host: vod.tomlab.fr
       http:
         paths:
           - path: /
@@ -21,5 +21,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - vod.foobarbaz.fr
+        - vod.tomlab.fr
       secretName: vod-tls
