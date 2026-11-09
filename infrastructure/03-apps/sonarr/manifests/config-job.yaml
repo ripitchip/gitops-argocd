@@ -1,0 +1,137 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sonarr-config
+  namespace: sonarr
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: sonarr-config
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 30551
+        runAsGroup: 30551
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: OnFailure
+      containers:
+        - name: configure-sonarr
+          image: python:3.12-alpine
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 30551
+            runAsGroup: 30551
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: SONARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sonarr-config-secrets
+                  key: SONARR_API_KEY
+            - name: QBITTORRENT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sonarr-config-secrets
+                  key: QBITTORRENT_USERNAME
+            - name: QBITTORRENT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sonarr-config-secrets
+                  key: QBITTORRENT_PASSWORD
+          command:
+            - sh
+            - -c
+            - |
+              cat << 'EOF' > /tmp/configure_sonarr.py
+              import json
+              import os
+              import sys
+              import time
+              import urllib.error
+              import urllib.request
+
+              BASE = "http://sonarr.sonarr.svc.cluster.local/api/v3"
+              API_KEY = os.environ["SONARR_API_KEY"]
+              QBIT_USER = os.environ["QBITTORRENT_USERNAME"]
+              QBIT_PASS = os.environ["QBITTORRENT_PASSWORD"]
+              ROOT_FOLDER = "/series"
+              DOWNLOAD_CLIENT_NAME = "qBittorrent"
+
+              def call(method, path, body=None):
+                  data = None
+                  if method != "GET":
+                      data = json.dumps(body).encode() if body is not None else b""
+                  request = urllib.request.Request(BASE + path, data=data, method=method)
+                  request.add_header("Content-Type", "application/json")
+                  request.add_header("X-Api-Key", API_KEY)
+                  with urllib.request.urlopen(request, timeout=15) as response:
+                      raw = response.read()
+                      return json.loads(raw) if raw else {}
+
+              print("Waiting for Sonarr to be ready...")
+              for _ in range(60):
+                  try:
+                      call("GET", "/system/status")
+                      break
+                  except (urllib.error.URLError, urllib.error.HTTPError):
+                      time.sleep(5)
+              else:
+                  print("Timed out waiting for Sonarr", file=sys.stderr)
+                  sys.exit(1)
+
+              print("Checking root folders...")
+              root_folders = call("GET", "/rootfolder")
+              if not any(rf.get("path") == ROOT_FOLDER for rf in root_folders):
+                  print(f"Adding root folder {ROOT_FOLDER}...")
+                  call("POST", "/rootfolder", {"path": ROOT_FOLDER})
+              else:
+                  print("Root folder already present.")
+
+              print("Checking download clients...")
+              download_clients = call("GET", "/downloadclient")
+              if not any(dc.get("name") == DOWNLOAD_CLIENT_NAME for dc in download_clients):
+                  print(f"Adding download client {DOWNLOAD_CLIENT_NAME}...")
+                  call("POST", "/downloadclient", {
+                      "enable": True,
+                      "protocol": "torrent",
+                      "priority": 1,
+                      "removeCompletedDownloads": True,
+                      "removeFailedDownloads": True,
+                      "name": DOWNLOAD_CLIENT_NAME,
+                      "implementation": "QBittorrent",
+                      "implementationName": "qBittorrent",
+                      "configContract": "QBittorrentSettings",
+                      "fields": [
+                          {"name": "host", "value": "qbittorrent.qbittorrent.svc.cluster.local"},
+                          {"name": "port", "value": 80},
+                          {"name": "useSsl", "value": False},
+                          {"name": "username", "value": QBIT_USER},
+                          {"name": "password", "value": QBIT_PASS},
+                          {"name": "tvCategory", "value": "tv-sonarr"},
+                      ],
+                      "tags": [],
+                  })
+              else:
+                  print("Download client already present.")
+
+              print("Done.")
+              EOF
+              python3 /tmp/configure_sonarr.py
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
