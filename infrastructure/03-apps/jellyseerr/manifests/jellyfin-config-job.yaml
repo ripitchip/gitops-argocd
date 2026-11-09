@@ -32,6 +32,8 @@ spec:
               drop:
                 - ALL
           env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
             - name: JELLYFIN_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:

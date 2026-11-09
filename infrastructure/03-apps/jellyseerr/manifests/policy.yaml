@@ -29,7 +29,23 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": jellyseerr
+            "k8s:app": jellyseerr-jellyfin-config
+      toPorts:
+        - ports:
+            - port: "5055"
+              protocol: TCP
   egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": jellyseerr
+            "k8s:app": jellyseerr
+      toPorts:
+        - ports:
+            - port: "5055"
+              protocol: TCP
     - toEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": kube-system
