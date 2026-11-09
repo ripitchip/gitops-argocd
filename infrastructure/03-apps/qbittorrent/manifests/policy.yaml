@@ -41,12 +41,8 @@ spec:
               - matchPattern: "*"
     - toEntities:
         - world
-      toPorts:
-        - ports:
-            - port: "51820"
-              protocol: UDP
-            - port: "443"
-              protocol: TCP
+      # No VPN tunnel: real torrent peer connections use arbitrary ports, so
+      # this can't be narrowed to a fixed port list like the gluetun setup.
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy

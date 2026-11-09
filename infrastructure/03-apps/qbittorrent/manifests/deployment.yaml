@@ -48,61 +48,6 @@ spec:
               cpu: 10m
               memory: 64Mi
       containers:
-        - name: gluetun
-          image: qmcgaw/gluetun:v3.41.1
-          env:
-            - name: VPN_SERVICE_PROVIDER
-              value: "protonvpn"
-            - name: VPN_TYPE
-              value: "wireguard"
-            - name: SERVER_COUNTRIES
-              value: "Switzerland"
-            - name: DOT
-              value: "off"
-            - name: FIREWALL_INPUT_PORTS
-              value: "8080"
-            - name: TZ
-              value: Europe/Paris
-            - name: WIREGUARD_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-vpn-creds
-                  key: WIREGUARD_PRIVATE_KEY
-            - name: WIREGUARD_ADDRESSES
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-vpn-creds
-                  key: WIREGUARD_ADDRESSES
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-              add:
-                - NET_ADMIN
-                - CHOWN
-          startupProbe:
-            tcpSocket:
-              port: 8000
-            periodSeconds: 5
-            failureThreshold: 60
-          livenessProbe:
-            tcpSocket:
-              port: 8000
-            periodSeconds: 15
-          volumeMounts:
-            - name: tun-device
-              mountPath: /dev/net/tun
-          resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: "1"
-              memory: 256Mi
         - name: qbittorrent
           image: 11notes/qbittorrent:5.3.0
           env:
@@ -155,10 +100,6 @@ spec:
         - name: downloads
           persistentVolumeClaim:
             claimName: qbittorrent-downloads-pvc
-        - name: tun-device
-          hostPath:
-            path: /dev/net/tun
-            type: CharDevice
 ---
 apiVersion: v1
 kind: Service
