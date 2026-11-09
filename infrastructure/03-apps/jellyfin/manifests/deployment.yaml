@@ -106,6 +106,8 @@ spec:
                   z.extractall(PLUGIN_DIR)
               os.remove(TMP_ZIP)
               print("Extracted:", os.listdir(PLUGIN_DIR))
+              with open(os.path.join(PLUGIN_DIR, "meta.json")) as f:
+                  print("meta.json:", f.read())
               EOF
               python3 /tmp/install_ldap_plugin.py
           securityContext:
