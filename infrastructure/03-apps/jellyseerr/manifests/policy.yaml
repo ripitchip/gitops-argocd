@@ -11,6 +11,7 @@ spec:
         values:
           - jellyseerr
           - jellyseerr-jellyfin-config
+          - jellyseerr-sonarr-link
   ingress:
     - fromEntities:
         - ingress
@@ -33,6 +34,14 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": jellyseerr
             "k8s:app": jellyseerr-jellyfin-config
+      toPorts:
+        - ports:
+            - port: "5055"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": jellyseerr
+            "k8s:app": jellyseerr-sonarr-link
       toPorts:
         - ports:
             - port: "5055"

@@ -9,3 +9,4 @@ resources:
   - app.yaml
   - ingress.yaml
   - jellyfin-config-job.yaml
+  - sonarr-link-job.yaml

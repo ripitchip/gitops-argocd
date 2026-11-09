@@ -1,0 +1,147 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jellyseerr-sonarr-link
+  namespace: jellyseerr
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: jellyseerr-sonarr-link
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 30552
+        runAsGroup: 30552
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: OnFailure
+      containers:
+        - name: link-sonarr
+          image: python:3.12-alpine
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 30552
+            runAsGroup: 30552
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: JELLYFIN_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: jellyseerr-secrets
+                  key: JELLYFIN_ADMIN_USERNAME
+            - name: JELLYFIN_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jellyseerr-secrets
+                  key: JELLYFIN_ADMIN_PASSWORD
+            - name: SONARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jellyseerr-secrets
+                  key: SONARR_API_KEY
+          command:
+            - sh
+            - -c
+            - |
+              cat << 'EOF' > /tmp/link_sonarr.py
+              import json
+              import os
+              import sys
+              import time
+              import http.cookiejar
+              import urllib.error
+              import urllib.request
+
+              BASE = "http://jellyseerr.jellyseerr.svc.cluster.local/api/v1"
+              SONARR_HOST = "sonarr.sonarr.svc.cluster.local"
+              SONARR_PORT = 80
+              SONARR_ROOT_FOLDER = "/series"
+
+              ADMIN_USER = os.environ["JELLYFIN_ADMIN_USERNAME"]
+              ADMIN_PASS = os.environ["JELLYFIN_ADMIN_PASSWORD"]
+              SONARR_API_KEY = os.environ["SONARR_API_KEY"]
+
+              jar = http.cookiejar.CookieJar()
+              opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+
+              def call(method, path, body=None):
+                  data = None
+                  if method != "GET":
+                      data = json.dumps(body).encode() if body is not None else b""
+                  request = urllib.request.Request(BASE + path, data=data, method=method)
+                  request.add_header("Content-Type", "application/json")
+                  with opener.open(request, timeout=15) as response:
+                      raw = response.read()
+                      return json.loads(raw) if raw else {}
+
+              print("Waiting for Jellyseerr to be ready...")
+              for _ in range(60):
+                  try:
+                      call("GET", "/settings/public")
+                      break
+                  except (urllib.error.URLError, urllib.error.HTTPError):
+                      time.sleep(5)
+              else:
+                  print("Timed out waiting for Jellyseerr", file=sys.stderr)
+                  sys.exit(1)
+
+              existing = call("GET", "/settings/sonarr")
+              if existing:
+                  print("A Sonarr service is already linked, nothing to do.")
+                  sys.exit(0)
+
+              print("Logging in...")
+              call("POST", "/auth/jellyfin", {
+                  "username": ADMIN_USER,
+                  "password": ADMIN_PASS,
+              })
+
+              print("Testing the Sonarr connection and discovering quality profiles...")
+              test_result = call("POST", "/settings/sonarr/test", {
+                  "hostname": SONARR_HOST,
+                  "port": SONARR_PORT,
+                  "apiKey": SONARR_API_KEY,
+                  "useSsl": False,
+              })
+              profiles = test_result.get("profiles") or []
+              if not profiles:
+                  print("Sonarr returned no quality profiles; create at least one in Sonarr first.", file=sys.stderr)
+                  sys.exit(1)
+              profile = profiles[0]
+              print(f"Using quality profile '{profile['name']}' ({profile['id']})")
+
+              print("Linking Sonarr to Jellyseerr...")
+              call("POST", "/settings/sonarr", {
+                  "name": "Sonarr",
+                  "hostname": SONARR_HOST,
+                  "port": SONARR_PORT,
+                  "apiKey": SONARR_API_KEY,
+                  "useSsl": False,
+                  "activeProfileId": profile["id"],
+                  "activeProfileName": profile["name"],
+                  "activeDirectory": SONARR_ROOT_FOLDER,
+                  "is4k": False,
+                  "enableSeasonFolders": True,
+                  "isDefault": True,
+              })
+
+              print("Done.")
+              EOF
+              python3 /tmp/link_sonarr.py
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
