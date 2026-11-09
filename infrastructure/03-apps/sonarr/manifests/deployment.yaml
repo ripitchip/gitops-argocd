@@ -55,6 +55,8 @@ spec:
           env:
             - name: TZ
               value: Europe/Paris
+            - name: TMPDIR
+              value: /tmp
           ports:
             - containerPort: 8989
               name: http
@@ -86,6 +88,8 @@ spec:
               mountPath: /downloads
             - name: series
               mountPath: /series
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: 100m
@@ -103,6 +107,8 @@ spec:
         - name: series
           persistentVolumeClaim:
             claimName: sonarr-series-pvc
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

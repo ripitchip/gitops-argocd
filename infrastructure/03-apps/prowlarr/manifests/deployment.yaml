@@ -51,6 +51,8 @@ spec:
           env:
             - name: TZ
               value: Europe/Paris
+            - name: TMPDIR
+              value: /tmp
           ports:
             - containerPort: 9696
               name: http
@@ -78,6 +80,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /prowlarr/etc
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: 100m
@@ -89,6 +93,8 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: prowlarr-config-pvc
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
