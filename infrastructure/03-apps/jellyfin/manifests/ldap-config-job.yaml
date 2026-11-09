@@ -1,0 +1,110 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jellyfin-ldap-config
+  namespace: jellyfin
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: jellyfin-ldap-config
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: OnFailure
+      containers:
+        - name: configure-ldap
+          image: curlimages/curl:8.5.0
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 40203
+            runAsGroup: 40203
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: JELLYFIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jellyfin-secrets
+                  key: JELLYFIN_API_KEY
+            - name: LDAP_BIND_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jellyfin-secrets
+                  key: LDAP_BIND_PASSWORD
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+
+              PLUGIN_ID="958aad66-3784-4d2a-b89a-a7b6fab6e25c"
+              BASE="http://jellyfin.jellyfin.svc.cluster.local/Plugins/${PLUGIN_ID}/Configuration"
+
+              echo "Waiting for the LDAP-Auth plugin to be loaded..."
+              i=0
+              until curl -sf "${BASE}?api_key=${JELLYFIN_API_KEY}" > /dev/null; do
+                i=$((i + 1))
+                if [ "$i" -ge 60 ]; then
+                  echo "Timed out waiting for the LDAP-Auth plugin" >&2
+                  exit 1
+                fi
+                sleep 5
+              done
+
+              cat > /tmp/payload.json <<EOF
+              {
+                "LdapServer": "openldap.auth.svc.cluster.local",
+                "LdapPort": 389,
+                "UseSsl": false,
+                "UseStartTls": false,
+                "SkipSslVerify": false,
+                "LdapRootCaPath": "",
+                "LdapClientCertPath": "",
+                "LdapClientKeyPath": "",
+                "LdapBindUser": "cn=admin,dc=home,dc=local",
+                "LdapBindPassword": "${LDAP_BIND_PASSWORD}",
+                "LdapBaseDn": "ou=users,dc=home,dc=local",
+                "LdapSearchFilter": "(objectClass=inetOrgPerson)",
+                "LdapSearchAttributes": "uid",
+                "LdapUidAttribute": "uid",
+                "LdapUsernameAttribute": "uid",
+                "LdapPasswordAttribute": "",
+                "LdapAdminBaseDn": "",
+                "LdapAdminFilter": "_disabled_",
+                "EnableLdapAdminFilterMemberUid": false,
+                "CreateUsersFromLdap": true,
+                "AllowPassChange": false,
+                "PasswordResetUrl": "",
+                "EnableAllFolders": true,
+                "EnabledFolders": [],
+                "EnableLdapProfileImageSync": false,
+                "RemoveImagesNotInLdap": false,
+                "LdapProfileImageAttribute": "jpegphoto",
+                "LdapProfileImageFormat": "Default"
+              }
+              EOF
+
+              echo "Configuring the LDAP-Auth plugin..."
+              curl -sf -X POST \
+                -H "Content-Type: application/json" \
+                --data @/tmp/payload.json \
+                "${BASE}?api_key=${JELLYFIN_API_KEY}"
+
+              echo "Done. Jellyfin needs a one-time restart for the LDAP provider to become active:"
+              echo "  kubectl rollout restart deployment/jellyfin -n jellyfin"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi

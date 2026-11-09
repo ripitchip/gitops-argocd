@@ -76,6 +76,37 @@ spec:
             requests:
               cpu: 10m
               memory: 64Mi
+        - name: install-ldap-plugin
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              PLUGIN_DIR=/config/plugins/LDAP-Auth_24.0.0.0
+              rm -rf "$PLUGIN_DIR"
+              mkdir -p "$PLUGIN_DIR"
+              wget -O /tmp/ldap-auth.zip https://repo.jellyfin.org/releases/plugin/ldap-authentication/ldap-authentication_24.0.0.0.zip
+              unzip -o /tmp/ldap-auth.zip -d "$PLUGIN_DIR"
+              rm -f /tmp/ldap-auth.zip
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 18096
+            runAsGroup: 18096
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
       containers:
         - name: jellyfin
           image: jellyfin/jellyfin:10.11.0

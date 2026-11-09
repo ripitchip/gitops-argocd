@@ -11,6 +11,7 @@ spec:
       values:
       - jellyfin
       - jellyfin-sso-config
+      - jellyfin-ldap-config
   ingress:
   - fromEntities:
     - ingress
@@ -46,6 +47,14 @@ spec:
     - matchLabels:
         "k8s:io.kubernetes.pod.namespace": jellyfin
         "k8s:app": jellyfin-sso-config
+    toPorts:
+    - ports:
+      - port: "8096"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        "k8s:io.kubernetes.pod.namespace": jellyfin
+        "k8s:app": jellyfin-ldap-config
     toPorts:
     - ports:
       - port: "8096"

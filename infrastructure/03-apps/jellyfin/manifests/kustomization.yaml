@@ -9,4 +9,5 @@ resources:
   - media-directories-job.yaml
   - deployment.yaml
   - sso-config-job.yaml
+  - ldap-config-job.yaml
   - ingress.yaml
