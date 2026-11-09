@@ -89,9 +89,7 @@ spec:
                   print("Timed out waiting for Jellyseerr", file=sys.stderr)
                   sys.exit(1)
 
-              if public_settings.get("initialized"):
-                  print("Jellyseerr already initialized, skipping Jellyfin auto-config.")
-                  sys.exit(0)
+              needs_initialize = not public_settings.get("initialized")
 
               print("Logging in to Jellyfin (first login becomes the Jellyseerr admin)...")
               call("POST", "/auth/jellyfin", {
@@ -99,6 +97,11 @@ spec:
                   "password": ADMIN_PASS,
                   "hostname": JELLYFIN_INTERNAL_URL,
               })
+
+              jellyfin_settings = call("GET", "/settings/jellyfin")
+              if jellyfin_settings.get("hostname") and not needs_initialize:
+                  print("Jellyfin connection already configured, nothing to do.")
+                  sys.exit(0)
 
               print("Setting the Jellyfin server connection settings...")
               call("POST", "/settings/jellyfin", {
@@ -116,8 +119,9 @@ spec:
                   print(f"Enabling library '{library.get('name')}' ({library_id})...")
                   call("PUT", f"/settings/jellyfin/library/{library_id}", {"enabled": True})
 
-              print("Marking Jellyseerr as initialized...")
-              call("POST", "/settings/initialize")
+              if needs_initialize:
+                  print("Marking Jellyseerr as initialized...")
+                  call("POST", "/settings/initialize")
 
               print("Done.")
               EOF
