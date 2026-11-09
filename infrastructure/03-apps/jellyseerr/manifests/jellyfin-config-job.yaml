@@ -81,9 +81,14 @@ spec:
                       data = json.dumps(body).encode() if body is not None else b""
                   request = urllib.request.Request(BASE + path, data=data, method=method)
                   request.add_header("Content-Type", "application/json")
-                  with opener.open(request, timeout=15) as response:
-                      raw = response.read()
-                      return json.loads(raw) if raw else {}
+                  try:
+                      with opener.open(request, timeout=15) as response:
+                          raw = response.read()
+                          return json.loads(raw) if raw else {}
+                  except urllib.error.HTTPError as e:
+                      body = e.read().decode(errors="replace")
+                      print(f"HTTP {e.code} on {method} {path}: {body}", file=sys.stderr)
+                      raise
 
               print("Waiting for Jellyseerr to be ready...")
               public_settings = None
