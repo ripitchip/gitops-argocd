@@ -22,6 +22,10 @@ resources:
   - 03-apps/book/book-app-definition.yaml
   - 03-apps/icons-app-definition.yaml
   - 03-apps/jellyseerr-app-definition.yaml
+  - 03-apps/prowlarr-app-definition.yaml
+  - 03-apps/qbittorrent-app-definition.yaml
+  - 03-apps/sonarr-app-definition.yaml
+  - 03-apps/buildarr-app-definition.yaml
   - 03-apps/kutt-app-definition.yaml
   - 03-apps/minecraft/minecraft-app-definition.yaml
   - 03-apps/miniflux-app-definition.yaml
