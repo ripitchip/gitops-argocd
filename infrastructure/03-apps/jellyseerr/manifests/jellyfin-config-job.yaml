@@ -44,6 +44,11 @@ spec:
                 secretKeyRef:
                   name: jellyseerr-secrets
                   key: JELLYFIN_ADMIN_PASSWORD
+            - name: JELLYFIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jellyseerr-secrets
+                  key: JELLYFIN_API_KEY
           command:
             - sh
             - -c
@@ -65,6 +70,7 @@ spec:
 
               ADMIN_USER = os.environ["JELLYFIN_ADMIN_USERNAME"]
               ADMIN_PASS = os.environ["JELLYFIN_ADMIN_PASSWORD"]
+              API_KEY = os.environ["JELLYFIN_API_KEY"]
 
               jar = http.cookiejar.CookieJar()
               opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
@@ -110,7 +116,11 @@ spec:
 
               print("Setting the Jellyfin server connection settings...")
               call("POST", "/settings/jellyfin", {
-                  "hostname": JELLYFIN_INTERNAL_URL,
+                  "ip": JELLYFIN_HOST,
+                  "port": JELLYFIN_PORT,
+                  "useSsl": False,
+                  "urlBase": "",
+                  "apiKey": API_KEY,
                   "externalHostname": JELLYFIN_EXTERNAL_URL,
                   "adminUser": ADMIN_USER,
                   "adminPass": ADMIN_PASS,
