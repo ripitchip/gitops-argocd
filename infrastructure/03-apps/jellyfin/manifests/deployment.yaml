@@ -89,9 +89,9 @@ spec:
               import urllib.request
               import zipfile
 
-              PLUGIN_DIR = "/config/plugins/LDAP-Auth_24.0.0.0"
+              PLUGIN_DIR = "/config/plugins/LDAP-Auth_21.0.0.0"
               OLD_PLUGIN_DIR = "/config/plugins/LDAP Authentication_19.0.0.0"
-              URL = "https://repo.jellyfin.org/releases/plugin/ldap-authentication/ldap-authentication_24.0.0.0.zip"
+              URL = "https://repo.jellyfin.org/releases/plugin/ldap-authentication/ldap-authentication_21.0.0.0.zip"
               TMP_ZIP = "/tmp/ldap-auth.zip"
 
               shutil.rmtree(OLD_PLUGIN_DIR, ignore_errors=True)
