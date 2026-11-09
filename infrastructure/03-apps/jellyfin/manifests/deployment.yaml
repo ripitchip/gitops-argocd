@@ -83,18 +83,31 @@ spec:
             - -c
             - |
               set -eu
-              python3 -c "
-              import urllib.request, zipfile, os, shutil
-              plugin_dir = '/config/plugins/LDAP-Auth_24.0.0.0'
-              shutil.rmtree(plugin_dir, ignore_errors=True)
-              os.makedirs(plugin_dir, exist_ok=True)
-              url = 'https://repo.jellyfin.org/releases/plugin/ldap-authentication/ldap-authentication_24.0.0.0.zip'
-              tmp_zip = '/tmp/ldap-auth.zip'
-              urllib.request.urlretrieve(url, tmp_zip)
-              with zipfile.ZipFile(tmp_zip) as z:
-                  z.extractall(plugin_dir)
-              os.remove(tmp_zip)
-              "
+              cat << 'EOF' > /tmp/install_ldap_plugin.py
+              import os
+              import shutil
+              import urllib.request
+              import zipfile
+
+              PLUGIN_DIR = "/config/plugins/LDAP-Auth_24.0.0.0"
+              OLD_PLUGIN_DIR = "/config/plugins/LDAP Authentication_19.0.0.0"
+              URL = "https://repo.jellyfin.org/releases/plugin/ldap-authentication/ldap-authentication_24.0.0.0.zip"
+              TMP_ZIP = "/tmp/ldap-auth.zip"
+
+              shutil.rmtree(OLD_PLUGIN_DIR, ignore_errors=True)
+              shutil.rmtree(PLUGIN_DIR, ignore_errors=True)
+              os.makedirs(PLUGIN_DIR, exist_ok=True)
+
+              print(f"Downloading {URL} ...")
+              urllib.request.urlretrieve(URL, TMP_ZIP)
+              print(f"Downloaded {os.path.getsize(TMP_ZIP)} bytes")
+
+              with zipfile.ZipFile(TMP_ZIP) as z:
+                  z.extractall(PLUGIN_DIR)
+              os.remove(TMP_ZIP)
+              print("Extracted:", os.listdir(PLUGIN_DIR))
+              EOF
+              python3 /tmp/install_ldap_plugin.py
           securityContext:
             runAsNonRoot: true
             runAsUser: 18096
