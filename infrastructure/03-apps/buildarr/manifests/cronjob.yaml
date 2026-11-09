@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: buildarr
+  namespace: buildarr
+spec:
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 300
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: buildarr
+        spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10500
+            runAsGroup: 10500
+            seccompProfile:
+              type: RuntimeDefault
+          restartPolicy: OnFailure
+          containers:
+            - name: buildarr
+              image: callum027/buildarr:0.7.8
+              command: ["buildarr", "run", "/config/buildarr.yml"]
+              env:
+                - name: HOME
+                  value: /tmp
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: 10500
+                runAsGroup: 10500
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - name: config
+                  mountPath: /config
+                  readOnly: true
+                - name: secrets
+                  mountPath: /secrets
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+          volumes:
+            - name: config
+              configMap:
+                name: buildarr-config
+            - name: secrets
+              secret:
+                secretName: buildarr-config-secrets
+            - name: tmp
+              emptyDir: {}

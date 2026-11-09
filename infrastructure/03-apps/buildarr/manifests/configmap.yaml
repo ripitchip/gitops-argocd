@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: buildarr-config
+  namespace: buildarr
+data:
+  buildarr.yml: |
+    ---
+    includes:
+      - /secrets/buildarr-secrets.yml
+
+    prowlarr:
+      hostname: "prowlarr.prowlarr.svc.cluster.local"
+      port: 80
+      protocol: "http"
+      settings:
+        apps:
+          applications:
+            delete_unmanaged: false
+            definitions:
+              "Sonarr":
+                type: "sonarr"
+                prowlarr_url: "http://prowlarr.prowlarr.svc.cluster.local:80"
+                base_url: "http://sonarr.sonarr.svc.cluster.local:80"
+                sync_level: "full-sync"

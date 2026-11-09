@@ -5,8 +5,12 @@ metadata:
   namespace: sonarr
 spec:
   endpointSelector:
-    matchLabels:
-      app: sonarr
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - sonarr
+          - sonarr-config
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -28,6 +32,14 @@ spec:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": prowlarr
             "k8s:app": prowlarr
+      toPorts:
+        - ports:
+            - port: "8989"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": sonarr
+            "k8s:app": sonarr-config
       toPorts:
         - ports:
             - port: "8989"
@@ -62,6 +74,14 @@ spec:
       toPorts:
         - ports:
             - port: "9696"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": sonarr
+            "k8s:app": sonarr
+      toPorts:
+        - ports:
+            - port: "8989"
               protocol: TCP
     - toEntities:
         - world

@@ -19,6 +19,14 @@ spec:
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": buildarr
+            "k8s:app": buildarr
+      toPorts:
+        - ports:
+            - port: "9696"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
