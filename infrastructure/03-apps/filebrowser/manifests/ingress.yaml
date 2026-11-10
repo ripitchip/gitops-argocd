@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: filebrowser
+  namespace: filebrowser
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
+spec:
+  ingressClassName: cilium
+  rules:
+    - host: files.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: filebrowser-oauth2-proxy
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - files.tomlab.fr
+      secretName: filebrowser-tls

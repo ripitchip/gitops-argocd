@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: filebrowser
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/ripitchip/gitops-argocd.git"
+    targetRevision: HEAD
+    path: infrastructure/03-apps/filebrowser/manifests
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: filebrowser
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

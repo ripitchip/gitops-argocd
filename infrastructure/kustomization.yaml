@@ -8,6 +8,7 @@ resources:
   - 03-apps/vaultwarden/vaultwarden-app-definition.yaml
   - 03-apps/immich/immich-app-definition.yaml
   - 03-apps/jellyfin-app-definition.yaml
+  - 03-apps/filebrowser-app-definition.yaml
   - 03-apps/n8n-app-definition.yaml
   - 03-apps/memos-app-definition.yaml
   - 03-apps/cloudreve-app-definition.yaml
