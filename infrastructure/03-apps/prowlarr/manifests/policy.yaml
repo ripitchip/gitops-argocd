@@ -27,6 +27,14 @@ spec:
         - ports:
             - port: "9696"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": sonarr
+            "k8s:app": sonarr
+      toPorts:
+        - ports:
+            - port: "9696"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
