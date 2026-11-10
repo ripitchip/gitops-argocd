@@ -4,8 +4,8 @@ metadata:
   name: icons-sync
   namespace: icons
   annotations:
-    argocd.argoproj.io/sync-wave: "-4"
-    argocd.argoproj.io/sync-options: Force=true,Replace=true
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded,HookFailed
 spec:
   backoffLimit: 3
   ttlSecondsAfterFinished: 86400

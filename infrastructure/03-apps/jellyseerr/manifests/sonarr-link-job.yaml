@@ -4,7 +4,9 @@ metadata:
   name: jellyseerr-sonarr-link
   namespace: jellyseerr
   annotations:
-    argocd.argoproj.io/sync-wave: "20"
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-weight: "1"
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded,HookFailed
 spec:
   ttlSecondsAfterFinished: 300
   backoffLimit: 6

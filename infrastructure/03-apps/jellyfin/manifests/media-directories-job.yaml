@@ -4,7 +4,8 @@ metadata:
   name: jellyfin-media-directories
   namespace: jellyfin
   annotations:
-    argocd.argoproj.io/sync-wave: "-4"
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded,HookFailed
 spec:
   ttlSecondsAfterFinished: 86400
   template:
