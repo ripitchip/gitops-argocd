@@ -1,0 +1,81 @@
+# Natel : éditeur web de contacts CardDAV, utilisé ici pour éditer les
+# contacts stockés dans le Radicale intégré à OpenCloud (celui-ci n'a pas
+# d'éditeur de contacts natif). Se connecte via l'URL publique d'OpenCloud,
+# qui fait la découverte CardDAV (.well-known/carddav) et route en interne
+# vers Radicale en posant X-Remote-User après authentification (voir
+# calendar-proxy.yaml et radicale.yaml dans infrastructure/03-apps/opencloud).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: natel
+  namespace: natel
+  labels:
+    app: natel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: natel
+  template:
+    metadata:
+      labels:
+        app: natel
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: natel
+          image: ghcr.io/kewindousse/natel:0.5.1
+          env:
+            - name: CARDDAV_URL
+              value: "http://opencloud.opencloud.svc.cluster.local"
+            - name: NATEL_TRUSTED_PROXIES
+              value: "private_ranges"
+            - name: NATEL_HTTPS_ONLY_COOKIE
+              value: "true"
+            - name: NATEL_UPDATE_CHECKS
+              value: "false"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          ports:
+            - containerPort: 8080
+              name: http
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 20
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: natel
+  namespace: natel
+spec:
+  selector:
+    app: natel
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

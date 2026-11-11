@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: natel-ingress
+  namespace: natel
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    ingress.cilium.io/loadbalancer-mode: "shared"
+spec:
+  ingressClassName: cilium
+  tls:
+    - hosts:
+        - contacts.tomlab.fr
+      secretName: natel-tls
+  rules:
+    - host: contacts.tomlab.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: natel
+                port:
+                  number: 80

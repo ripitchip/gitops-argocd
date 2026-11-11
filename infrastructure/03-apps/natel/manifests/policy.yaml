@@ -1,0 +1,38 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: natel-policy
+  namespace: natel
+spec:
+  endpointSelector:
+    matchLabels:
+      app: natel
+  ingress:
+    - fromEntities:
+        - ingress
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": traefik }
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": alloy }
+  egress:
+    # DNS
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            "k8s:k8s-app": kube-dns
+      toPorts:
+        - ports: [{ port: "53", protocol: ANY }]
+          rules: { dns: [{ matchPattern: "*" }] }
+    # OpenCloud (découverte CardDAV + proxy vers Radicale, voir deployment.yaml)
+    - toEndpoints:
+        - matchLabels: { "k8s:io.kubernetes.pod.namespace": opencloud, app: opencloud }
+      toPorts:
+        - ports: [{ port: "9200", protocol: TCP }]
