@@ -24,7 +24,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: init-config
-          image: opencloudeu/opencloud:7.2.4
+          image: opencloudeu/opencloud:7.2.5
           command: ["/bin/sh", "-c"]
           args: ["opencloud init || true"]
           env:
@@ -136,7 +136,7 @@ spec:
               subPath: data
       containers:
         - name: opencloud
-          image: opencloudeu/opencloud:7.2.4
+          image: opencloudeu/opencloud:7.2.5
           command: ["opencloud"]
           args: ["server"]
           securityContext:
