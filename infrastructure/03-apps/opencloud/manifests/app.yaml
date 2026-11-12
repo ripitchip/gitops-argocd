@@ -150,6 +150,35 @@ spec:
             - name: data
               mountPath: /var/lib/opencloud
               subPath: data
+        # https://github.com/opencloud-eu/web-extensions v2.2.0 (official, same org as OpenCloud
+        # itself), sha256-verified. CSP already allows embed.diagrams.net (frame-src, above).
+        - name: install-draw-io
+          image: python:3.13-alpine
+          command: ["python3", "-c"]
+          args:
+            - |
+              import hashlib, io, os, shutil, urllib.request, zipfile
+              url = "https://github.com/opencloud-eu/web-extensions/releases/download/draw-io-v2.2.0/draw-io-2.2.0.zip"
+              expected_sha256 = "49c3aa32aa517f2a90f249b5470b38dc18b7d006841c442f64335d660b551d0c"
+              data = urllib.request.urlopen(url).read()
+              digest = hashlib.sha256(data).hexdigest()
+              assert digest == expected_sha256, f"sha256 mismatch: got {digest}"
+              target = "/var/lib/opencloud/web/assets/apps"
+              shutil.rmtree(f"{target}/draw-io", ignore_errors=True)
+              os.makedirs(target, exist_ok=True)
+              zipfile.ZipFile(io.BytesIO(data)).extractall(target)
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/opencloud
+              subPath: data
       containers:
         - name: opencloud
           image: opencloudeu/opencloud-rolling:9.1.0
