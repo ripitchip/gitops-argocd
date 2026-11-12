@@ -77,18 +77,28 @@ spec:
               readOnly: true
             - name: tmp
               mountPath: /tmp
-        # Idem que merge-role-mapping ci-dessus : ajoute les routes caldav/carddav
-        # (voir calendar-proxy.yaml) sous la clé "proxy:" déjà présente.
+        # Idem que merge-role-mapping ci-dessus : ajoute les routes caldav/carddav/calshare
+        # (voir calendar-proxy.yaml) sous la clé "proxy:" déjà présente. __CALSHARE_SECRET__
+        # est substitué avant le merge : la vraie valeur ne vit que dans le Secret
+        # opencloud-secrets (Vault, clé CALSHARE_PROXY_SECRET), jamais dans le ConfigMap (repo public).
         - name: merge-calendar-proxy
           image: mikefarah/yq:4.44.3
           command: ["/bin/sh", "-c"]
           args:
             - |
               set -e
+              sed "s/__CALSHARE_SECRET__/$CALSHARE_SECRET/g" \
+                /etc/opencloud-calendar-proxy/caldav_routes.yaml > /tmp/caldav_routes.yaml
               yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' \
-                /etc/opencloud/opencloud.yaml /etc/opencloud-calendar-proxy/caldav_routes.yaml \
+                /etc/opencloud/opencloud.yaml /tmp/caldav_routes.yaml \
                 > /tmp/merged.yaml
               cat /tmp/merged.yaml > /etc/opencloud/opencloud.yaml
+          env:
+            - name: CALSHARE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: opencloud-secrets
+                  key: CALSHARE_PROXY_SECRET
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -106,20 +116,26 @@ spec:
               readOnly: true
             - name: tmp
               mountPath: /tmp
-        # https://github.com/mschneider82/opencloud-web-calendar v0.0.7, sha256-verified,
-        # dropped into $OC_DATA_DIR/web/assets/apps (see opencloud-web-config for registration).
-        - name: install-web-calendar
+        # https://github.com/paulmascarilla/opencloud-calendar-share v0.5.0, sha256-verified,
+        # dropped into $OC_DATA_DIR/web/assets/apps (auto-discovered, no config.json entry).
+        # Remplace l'extension mschneider82/opencloud-web-calendar (jamais fonctionnelle sur
+        # OpenCloud >= 6.2 : AMD, pas un remote Module Federation) ; celle-ci en est un (voir
+        # manifest.json: entrypoint js/remoteEntry-*.mjs).
+        - name: install-calendar-webapp
           image: python:3.13-alpine
           command: ["python3", "-c"]
           args:
             - |
-              import hashlib, io, os, urllib.request, zipfile
-              url = "https://github.com/mschneider82/opencloud-web-calendar/releases/download/v0.0.7/web-app-calendar.zip"
-              expected_sha256 = "05375d1dad4577d5f48bdbef893e98939aaef029b2baaa22fc8f0369eca6bde9"
+              import hashlib, io, os, shutil, urllib.request, zipfile
+              url = "https://github.com/paulmascarilla/opencloud-calendar-share/releases/download/v0.5.0/calendar-0.5.0.zip"
+              expected_sha256 = "6e8adc3ab964f57d39b89b767cb25422df20f14e5dd3552c0d8b440e4dc9f60a"
               data = urllib.request.urlopen(url).read()
               digest = hashlib.sha256(data).hexdigest()
               assert digest == expected_sha256, f"sha256 mismatch: got {digest}"
-              target = "/var/lib/opencloud/web/assets/apps/web-calendar"
+              target = "/var/lib/opencloud/web/assets/apps"
+              # wipe leftovers: the new "calendar" dir (idempotency) and the abandoned web-calendar one
+              shutil.rmtree(f"{target}/calendar", ignore_errors=True)
+              shutil.rmtree(f"{target}/web-calendar", ignore_errors=True)
               os.makedirs(target, exist_ok=True)
               zipfile.ZipFile(io.BytesIO(data)).extractall(target)
           securityContext:

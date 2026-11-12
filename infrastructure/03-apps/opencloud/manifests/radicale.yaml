@@ -1,8 +1,12 @@
-# Serveur CalDAV/CardDAV dédié à OpenCloud (intégration officielle opencloud-eu),
-# proxifié en /caldav et /carddav par le proxy OpenCloud (voir proxy-config.yaml).
-# Non exposé directement : auth "http_x_remote_user", donc il fait confiance à
-# l'en-tête X-Remote-User posé par le proxy OpenCloud déjà authentifié (OIDC).
-# Doit rester inaccessible depuis l'extérieur du pod opencloud (voir policy.yaml).
+# Radicale (CalDAV/CardDAV) + calshare (sharing/invitations sidecar), adapté du chart Helm
+# paulmascarilla/opencloud-calendar-share (templates/deployment.yaml, radicale-config.yaml) en
+# manifests kustomize statiques : le mode "opencloud.patch.enabled" du chart patche le Deployment
+# opencloud via un Job (hook Helm one-shot), ce qui se bat avec le selfHeal d'ArgoCD — on fait donc
+# l'équivalent déclarativement (voir app.yaml pour l'extension web + le merge des routes proxy).
+#
+# Radicale n'écoute plus que sur 127.0.0.1 : seul calshare (même pod) lui parle. Les clients CalDAV
+# passent par la "gate" de calshare (port 5233), qui vérifie X-Calshare-Secret avant de relayer -
+# Radicale continue de ne faire confiance qu'à X-Remote-User (posé par le proxy OpenCloud), inchangé.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -11,7 +15,7 @@ metadata:
 data:
   config: |
     [server]
-    hosts = 0.0.0.0:5232
+    hosts = 127.0.0.1:5232
 
     [auth]
     type = http_x_remote_user
@@ -21,17 +25,34 @@ data:
 
     [storage]
     filesystem_folder = /var/lib/radicale/collections
+    # Prévient calshare de chaque écriture (invitations). Dans le lock d'écriture, donc
+    # timeout 1s : ça ne fait que notifier, calshare fait le travail après coup.
+    hook = wget -q -T 1 -O /dev/null --post-data= --header=X-Calshare-Request:%(request)s --header=X-Calshare-Path:%(path)s --header=X-Calshare-To:%(to_path)s http://127.0.0.1:8080/internal/storage-changed
     predefined_collections = {
         "def-addressbook": {
-           "D:displayname": "Personal Address Book",
+           "D:displayname": "Contacts",
            "tag": "VADDRESSBOOK"
         },
         "def-calendar": {
-           "C:supported-calendar-component-set": "VEVENT,VJOURNAL,VTODO",
-           "D:displayname": "Personal Calendar",
+           "C:supported-calendar-component-set": "VEVENT",
+           "D:displayname": "Calendar",
+           "ICAL:calendar-color": "#3b82f6",
+           "tag": "VCALENDAR"
+        },
+        "def-tasks": {
+           "C:supported-calendar-component-set": "VTODO",
+           "D:displayname": "Tasks",
+           "ICAL:calendar-color": "#f59e0b",
            "tag": "VCALENDAR"
         }
       }
+
+    [sharing]
+    # Partage de calendrier entre utilisateurs, piloté par calshare (pas l'ACL native de Radicale).
+    type = files
+    collection_by_map = true
+    collection_by_token = false
+    permit_create_map = true
 
     [web]
     type = none
@@ -62,27 +83,25 @@ spec:
         fsGroup: 1000
       containers:
         - name: radicale
-          image: opencloudeu/radicale:latest
+          image: opencloudeu/radicale:v3.8.1
+          args: ["--hosts", "127.0.0.1:5232"]
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
             runAsNonRoot: true
             runAsUser: 1000
             seccompProfile:
               type: RuntimeDefault
-          ports:
-            - containerPort: 5232
-              name: http
-          startupProbe:
-            tcpSocket:
-              port: http
-            periodSeconds: 5
-            failureThreshold: 30
+          readinessProbe:
+            exec:
+              command: ["nc", "-z", "127.0.0.1", "5232"]
+            periodSeconds: 15
           livenessProbe:
-            tcpSocket:
-              port: http
-            periodSeconds: 20
+            exec:
+              command: ["nc", "-z", "127.0.0.1", "5232"]
+            periodSeconds: 30
           volumeMounts:
             - name: config
               mountPath: /etc/radicale/config
@@ -92,11 +111,67 @@ spec:
               mountPath: /var/lib/radicale
           resources:
             limits:
-              cpu: 200m
               memory: 256Mi
             requests:
-              cpu: 50m
+              cpu: 20m
               memory: 64Mi
+        - name: calshare
+          image: ghcr.io/paulmascarilla/opencloud-calendar-share/calshare:0.5.0
+          env:
+            - name: RADICALE_URL
+              value: "http://127.0.0.1:5232"
+            # Graph API d'OpenCloud, en-cluster (voir service.yaml : port 80 -> 9200)
+            - name: OC_URL
+              value: "http://opencloud.opencloud.svc.cluster.local:80"
+            - name: OC_INSECURE
+              value: "false"
+            - name: AUTO_ACCEPT
+              value: "true"
+            - name: FREEBUSY
+              value: "true"
+            - name: PUBLIC_URL
+              value: "https://cloud.tomlab.fr"
+            - name: INVITE_LANGUAGE
+              value: "fr"
+            - name: CALDAV_LISTEN
+              value: "0.0.0.0:5233"
+            - name: PROXY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: opencloud-secrets
+                  key: CALSHARE_PROXY_SECRET
+          ports:
+            - containerPort: 8080
+              name: calshare
+            - containerPort: 5233
+              name: caldav
+          readinessProbe:
+            exec:
+              command: ["/calshare", "check", "http://127.0.0.1:8080/healthz", "127.0.0.1:5233"]
+            periodSeconds: 15
+          livenessProbe:
+            exec:
+              command: ["/calshare", "check", "http://127.0.0.1:8080/healthz"]
+            periodSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            # index des invitations + scan de rattrapage des collections
+            - name: data
+              mountPath: /var/lib/radicale
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 48Mi
       volumes:
         - name: config
           configMap:
@@ -114,6 +189,11 @@ spec:
   selector:
     app: opencloud-radicale
   ports:
-    - protocol: TCP
+    - name: caldav
+      protocol: TCP
       port: 5232
-      targetPort: 5232
+      targetPort: caldav
+    - name: calshare
+      protocol: TCP
+      port: 8080
+      targetPort: calshare

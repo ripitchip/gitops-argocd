@@ -56,9 +56,10 @@ spec:
             - port: "443"
               protocol: TCP
 ---
-# Radicale (calendrier/contacts, voir radicale.yaml) : auth par confiance de
-# l'en-tête X-Remote-User posé par le proxy OpenCloud, donc ne doit jamais être
-# atteignable autrement que depuis le pod opencloud lui-même.
+# Radicale + calshare (calendrier/contacts/partage, voir radicale.yaml) : auth par confiance
+# de l'en-tête X-Remote-User posé par le proxy OpenCloud (+ secret X-Calshare-Secret vérifié
+# par calshare), donc ne doit jamais être atteignable autrement que depuis le pod opencloud.
+# calshare appelle aussi la Graph API d'OpenCloud en sortie (egress 9200, voir service.yaml).
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -76,6 +77,18 @@ spec:
         - ports:
             - port: "5232"
               protocol: TCP
+            - port: "8080"
+              protocol: TCP
     - fromEndpoints:
         - matchLabels:
             "k8s:io.kubernetes.pod.namespace": alloy
+  egress:
+    # calshare -> Graph API d'OpenCloud (in-cluster). DNS est déjà couvert par
+    # baseline-allow-dns (endpointSelector: {}, tout le namespace).
+    - toEndpoints:
+        - matchLabels:
+            app: opencloud
+      toPorts:
+        - ports:
+            - port: "9200"
+              protocol: TCP
