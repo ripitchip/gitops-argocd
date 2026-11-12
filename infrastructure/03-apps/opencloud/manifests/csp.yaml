@@ -1,5 +1,5 @@
 # Content-Security-Policy d'OpenCloud : valeurs par défaut + Keycloak
-# + esm.sh: web-calendar's JS deps, adjust based on actual browser console errors
+# + data: dans font-src pour la police icône (FullCalendar, en data: URI) de calendar-share.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -17,12 +17,11 @@ data:
         - 'https://auth.foobarbaz.fr/'
         - 'https://update.opencloud.eu/'
         - 'https://tile.openstreetmap.org/'
-        - 'https://esm.sh/'
       default-src:
         - '''none'''
       font-src:
         - '''self'''
-        - 'https://esm.sh/'
+        - 'data:'
       frame-ancestors:
         - '''self'''
       frame-src:
@@ -48,7 +47,6 @@ data:
         - '''self'''
         - '''unsafe-inline'''
         - 'https://auth.foobarbaz.fr/'
-        - 'https://esm.sh/'
       style-src:
         - '''self'''
         - '''unsafe-inline'''
