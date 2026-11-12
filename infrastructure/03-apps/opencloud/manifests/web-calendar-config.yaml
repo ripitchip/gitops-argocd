@@ -1,6 +1,7 @@
 # config.json for the "web" service (not a key in opencloud.yaml, see WEB_UI_CONFIG_FILE
-# in app.yaml which replaces its auto-generation). Mirrors the default content
-# + "external_apps" for the calendar extension (files dropped by install-web-calendar).
+# in app.yaml which replaces its auto-generation). Mirrors the default content.
+# opencloud auto-discovers apps dropped into web/assets/apps (see install-web-calendar
+# in app.yaml) and injects them into the served config.json itself — no manual entry needed.
 # Update by hand if the web config changes (WEB_OPTION_*/WEB_OIDC_*, theme...).
 apiVersion: v1
 kind: ConfigMap
@@ -20,9 +21,6 @@ data:
         "scope": "openid profile email"
       },
       "apps": ["files", "search", "text-editor", "pdf-viewer", "external", "admin-settings", "epub-reader", "preview", "app-store"],
-      "external_apps": [
-        { "id": "web-calendar", "path": "web/assets/apps/web-calendar/js/web-calendar.js" }
-      ],
       "options": {
         "accountEditLink": { "href": "https://auth.foobarbaz.fr/realms/foobarbaz/account" },
         "contextHelpersReadMore": true,
