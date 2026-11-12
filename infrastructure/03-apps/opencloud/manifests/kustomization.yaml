@@ -8,6 +8,7 @@ resources:
   - role-mapping.yaml
   - calendar-proxy.yaml
   - radicale.yaml
+  - web-calendar-config.yaml
   - external-secrets.yaml
   - app.yaml
   - service.yaml

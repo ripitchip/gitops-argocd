@@ -106,6 +106,34 @@ spec:
               readOnly: true
             - name: tmp
               mountPath: /tmp
+        # https://github.com/mschneider82/opencloud-web-calendar v0.0.7, sha256-verified,
+        # dropped into $OC_DATA_DIR/web/assets/apps (see opencloud-web-config for registration).
+        - name: install-web-calendar
+          image: python:3.13-alpine
+          command: ["python3", "-c"]
+          args:
+            - |
+              import hashlib, io, os, urllib.request, zipfile
+              url = "https://github.com/mschneider82/opencloud-web-calendar/releases/download/v0.0.7/web-app-calendar.zip"
+              expected_sha256 = "05375d1dad4577d5f48bdbef893e98939aaef029b2baaa22fc8f0369eca6bde9"
+              data = urllib.request.urlopen(url).read()
+              digest = hashlib.sha256(data).hexdigest()
+              assert digest == expected_sha256, f"sha256 mismatch: got {digest}"
+              target = "/var/lib/opencloud/web/assets/apps/web-calendar"
+              os.makedirs(target, exist_ok=True)
+              zipfile.ZipFile(io.BytesIO(data)).extractall(target)
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/opencloud
+              subPath: data
       containers:
         - name: opencloud
           image: opencloudeu/opencloud:7.2.4
@@ -165,6 +193,9 @@ spec:
             # le navigateur doit pouvoir joindre Keycloak (connect-src / frame-src)
             - name: PROXY_CSP_CONFIG_FILE_LOCATION
               value: "/etc/opencloud-csp/csp.yaml"
+            # only way to inject "external_apps" (see web-calendar-config.yaml)
+            - name: WEB_UI_CONFIG_FILE
+              value: "/etc/opencloud-web-config/config.json"
             - name: IDM_CREATE_DEMO_USERS
               value: "false"
             - name: IDM_ADMIN_PASSWORD
@@ -194,6 +225,9 @@ spec:
             - name: csp
               mountPath: /etc/opencloud-csp
               readOnly: true
+            - name: web-config
+              mountPath: /etc/opencloud-web-config
+              readOnly: true
           resources:
             limits:
               cpu: "1"
@@ -208,6 +242,9 @@ spec:
         - name: csp
           configMap:
             name: opencloud-csp
+        - name: web-config
+          configMap:
+            name: opencloud-web-config
         - name: role-mapping
           configMap:
             name: opencloud-role-mapping
