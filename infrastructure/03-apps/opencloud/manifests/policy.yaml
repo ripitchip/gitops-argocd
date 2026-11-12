@@ -75,7 +75,10 @@ spec:
             app: opencloud
       toPorts:
         - ports:
-            - port: "5232"
+            # 5233 : gate CalDAV de calshare (le Service route son port "caldav" 5232 vers
+            # ce port conteneur - Radicale lui-même n'écoute plus que sur 127.0.0.1:5232,
+            # donc pas atteignable via le réseau du pod, pas besoin de l'autoriser ici).
+            - port: "5233"
               protocol: TCP
             - port: "8080"
               protocol: TCP
