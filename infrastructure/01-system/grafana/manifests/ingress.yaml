@@ -10,20 +10,9 @@ spec:
   ingressClassName: cilium
   tls:
     - hosts:
-        - grafana.foobarbaz.fr
         - grafana.tomlab.fr
       secretName: grafana-tls
   rules:
-    - host: grafana.foobarbaz.fr
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: grafana
-                port:
-                  number: 80
     - host: grafana.tomlab.fr
       http:
         paths:

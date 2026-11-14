@@ -98,7 +98,7 @@ spec:
             - port: "8080"
               protocol: TCP
     - toFQDNs:
-        - matchName: "auth.foobarbaz.fr"
+        - matchName: "auth.tomlab.fr"
     - toEntities:
         - world
       toPorts:

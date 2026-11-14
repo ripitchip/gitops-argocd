@@ -19,11 +19,11 @@ spec:
           passwordKey: admin-password
         grafana.ini:
           server:
-            root_url: https://grafana.foobarbaz.fr
+            root_url: https://grafana.tomlab.fr
           smtp:
             enabled: true
             host: mailrise.notifications.svc.cluster.local:25
-            from_address: grafana@foobarbaz.fr
+            from_address: grafana@tomlab.fr
             from_name: Grafana
             startTLS_policy: NoStartTLS
           auth.generic_oauth:
@@ -33,9 +33,9 @@ spec:
             client_id: grafana
             client_secret: $__file{/etc/grafana/secrets/oidc-client-secret}
             scopes: openid profile email groups
-            auth_url: https://auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/auth
-            token_url: https://auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/token
-            api_url: https://auth.foobarbaz.fr/realms/foobarbaz/protocol/openid-connect/userinfo
+            auth_url: https://auth.tomlab.fr/realms/foobarbaz/protocol/openid-connect/auth
+            token_url: https://auth.tomlab.fr/realms/foobarbaz/protocol/openid-connect/token
+            api_url: https://auth.tomlab.fr/realms/foobarbaz/protocol/openid-connect/userinfo
             role_attribute_path: contains(groups[*], 'grafana-admin') && 'Admin' || 'Viewer'
         extraSecretMounts:
           - name: grafana-oidc-secret

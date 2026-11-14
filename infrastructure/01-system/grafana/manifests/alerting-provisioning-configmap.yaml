@@ -31,7 +31,7 @@ data:
           {{ define "falco.gotify.message" -}}
           {{- if .Alerts.Firing -}}🚨 FALCO CRITICAL
           {{ range .Alerts.Firing -}}Règle détectée: {{ .Labels.rule }} | Sévérité: {{ .Labels.priority }} | Namespace: {{ .Labels.k8s_ns_name }} | Pod: {{ .Labels.k8s_pod_name }} | Détail: {{ .Annotations.description }} | Début: {{ .StartsAt }}
-          {{- end }}Vérifier: https://grafana.foobarbaz.fr/alerting/list{{- end }}
+          {{- end }}Vérifier: https://grafana.tomlab.fr/alerting/list{{- end }}
           {{- end }}
   policies.yaml: |
     apiVersion: 1
