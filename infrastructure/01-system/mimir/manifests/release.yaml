@@ -60,6 +60,17 @@ spec:
               cpu: 500m
               memory: 1Gi
 
+        # Lightweight resources for control-plane-ish components that do
+        # routing/metadata work only, not the actual storage/query path
+        smallResources: &smallResources
+          resources:
+            requests:
+              cpu: 25m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+
         ingester:
           replicas: 1
           persistentVolume:
@@ -143,19 +154,20 @@ spec:
           <<: [*commonSharedVolume, *defaultResources]
 
         nginx:
-          <<: *defaultResources
+          <<: *smallResources
 
         rollout_operator:
-          <<: *defaultResources
+          <<: *smallResources
 
         overrides_exporter:
-          <<: *defaultResources
+          <<: *smallResources
 
         query_frontend:
-          <<: *defaultResources
+          <<: *smallResources
 
         query_scheduler:
-          <<: *defaultResources
+          replicas: 1
+          <<: *smallResources
 
         # Security Context for Kyverno compliance (Restricted Profile)
         global:
