@@ -38,12 +38,6 @@ spec:
               data_dir: /data/local/compactor
             ruler:
               rule_path: /data/local/ruler
-            ingester:
-              ring:
-                replication_factor: 1
-            store_gateway:
-              sharding_ring:
-                replication_factor: 1
 
         # Shared Storage Mount (NFS)
         # We mount the shared PVC on all components that need access to the common filesystem backend
@@ -68,8 +62,6 @@ spec:
 
         ingester:
           replicas: 1
-          zoneAwareReplication:
-            enabled: false
           persistentVolume:
             size: 10Gi
             storageClass: truenas-nfs
@@ -90,8 +82,6 @@ spec:
           <<: [*commonSharedVolume, *defaultResources]
 
         store_gateway:
-          zoneAwareReplication:
-            enabled: false
           persistentVolume:
             size: 10Gi
             storageClass: truenas-nfs

@@ -60,6 +60,9 @@ spec:
 
         lokiCanary:
           enabled: true
+
+        chunksCache:
+          allocatedMemory: 1024
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: loki
