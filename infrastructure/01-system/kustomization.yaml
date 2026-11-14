@@ -10,5 +10,7 @@ resources:
   - alloy/alloy-app-definition.yaml
   - loki/loki-app-definition.yaml
   - hubble/app-definition.yaml
+  - mimir/mimir-app-definition.yaml
+  - tempo/tempo-app-definition.yaml
 
 
