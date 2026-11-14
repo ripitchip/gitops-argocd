@@ -55,13 +55,13 @@ spec:
             # CPU-bound when CUDA is unavailable. Keep the native libraries on
             # the same concurrency budget as the container CPU limit.
             - name: OMP_NUM_THREADS
-              value: "12"
+              value: "4"
             - name: MKL_NUM_THREADS
-              value: "12"
+              value: "4"
             - name: OPENBLAS_NUM_THREADS
-              value: "12"
+              value: "4"
             - name: RAYON_NUM_THREADS
-              value: "12"
+              value: "4"
           ports:
             - name: http
               containerPort: 8080
@@ -85,11 +85,11 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: "4"
-              memory: 8Gi
+              cpu: "1"
+              memory: 2Gi
             limits:
-              cpu: "12"
-              memory: 24Gi
+              cpu: "4"
+              memory: 6Gi
           volumeMounts:
             - name: data
               mountPath: /data
